@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_loading"
+          android:actionLayout="@layout/actionbar_indeterminate_progressbar"
+          android:title="@string/action_loading"
+          android:showAsAction="always"
+          android:visible="false"/>
+
+    <item android:id="@+id/action_personal"
+          android:title="@string/action_personal"
+          android:icon="@drawable/ic_action_personal"
+          android:showAsAction="ifRoom"/>
+</menu>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/background_color"
+              android:padding="16dp"
+              android:divider="?android:dividerHorizontal"
+              android:dividerPadding="8dp"
+              android:showDividers="middle">
+
+    <Button
+            style="?android:buttonBarButtonStyle"
+            android:id="@+id/settings_offline_download_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_offline_download"
+            android:textSize="18sp"
+            android:textColor="@color/darker_gray"
+            android:drawableLeft="@drawable/ic_download"
+            android:drawablePadding="8dp"/>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/settings_cache_size_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:textSize="16sp"
+                android:textColor="@color/darker_gray"/>
+
+        <Button style="?android:buttonBarButtonStyle"
+                android:id="@+id/settings_clear_cache_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:text="@string/settings_clear_cache"
+                android:textSize="18sp"
+                android:textColor="@color/darker_gray"
+                android:drawableLeft="@drawable/ic_clear"
+                android:drawablePadding="8dp"/>
+
+    </FrameLayout>
+
+</LinearLayout>

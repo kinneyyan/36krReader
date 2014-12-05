@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="5dp">
+    
+    <ImageView
+            android:id="@+id/index_timeline_item_iv"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"/>
+
+    <TextView
+            android:id="@+id/index_timeline_item_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/index_timeline_item_iv"
+            android:layout_toRightOf="@id/index_timeline_item_iv"
+            android:layout_marginLeft="10dp"
+            android:text="标题"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="@color/darker_gray"/>
+
+    <TextView
+            android:id="@+id/index_timeline_item_content_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/index_timeline_item_iv"
+            android:layout_below="@id/index_timeline_item_title_tv"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:text="概要"
+            android:maxLines="5"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"/>
+
+    <TextView
+            android:id="@+id/index_timeline_item_info_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/index_timeline_item_content_tv"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="作者时间"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"/>
+
+    <TextView
+            android:id="@+id/index_timeline_item_type_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/index_timeline_item_content_tv"
+            android:layout_toLeftOf="@id/index_timeline_item_info_tv"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentBottom="true"
+            android:text="类型"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:background="@color/half_transparent"/>
+</RelativeLayout>

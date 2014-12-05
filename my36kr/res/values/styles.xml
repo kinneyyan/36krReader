@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomActionBarTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
+    </style>
+
+    <!--666666666666666666666666666-->
+    <!--actionBar样式-->
+    <!-- ActionBar styles -->
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/primary_color</item>
+        <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+    </style>
+    <!-- ActionBar title text -->
+    <style name="MyActionBarTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- ActionBar tabs text styles -->
+    <style name="MyActionBarTabText" parent="@android:style/Widget.Holo.ActionBar.TabText">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!--666666666666666666666666666-->
+
+
+    <!--自定义progressBar-->
+    <style name="Custom.Widget.Holo.ProgressBar.Horizontal" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/custom_progress_horizontal</item>
+        <item name="android:minHeight">5dip</item>
+        <item name="android:maxHeight">15dip</item>
+    </style>
+
+    <!--666666666666666666666666666-->
+    <!--viewPagerIndicator样式-->
+    <!--<style name="StyledIndicators" parent="CustomActionBarTheme">-->
+        <!--<item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>-->
+    <!--</style>-->
+
+    <!--<style name="CustomTabPageIndicator" parent="Widget.TabPageIndicator">-->
+        <!--<item name="android:background">@drawable/custom_tab_indicator</item>-->
+        <!--<item name="android:textColor">@color/darker_gray</item>-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="android:divider">@drawable/custom_tab_indicator_divider</item>-->
+        <!--<item name="android:dividerPadding">10dp</item>-->
+        <!--<item name="android:showDividers">middle</item>-->
+        <!--<item name="android:paddingLeft">15dp</item>-->
+        <!--<item name="android:paddingRight">15dp</item>-->
+        <!--<item name="android:fadingEdge">horizontal</item>-->
+        <!--<item name="android:fadingEdgeLength">8dp</item>-->
+    <!--</style>-->
+    <!--666666666666666666666666666-->
+
+</resources>

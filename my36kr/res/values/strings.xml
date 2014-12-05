@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">36氪！</string>
+
+    <string name="drawer_open">打开drawer</string>
+    <string name="drawer_close">关闭drawer</string>
+    <string name="action_loading">载入中</string>
+    <string name="action_settings">设置</string>
+    <string name="action_personal">个人中心</string>
+    <string name="quit_tip">再按一次退出</string>
+    <string name="network_not_access">未找到可用连接</string>
+    <string name="network_time_out">网络不给力&#62;_&#60;，点击刷新</string>
+    <string name="please_wait">请稍后...</string>
+    <string name="action_open_by_browser">在浏览器中打开</string>
+    <string name="action_copy_link">复制链接</string>
+    <string name="has_copied_tip">已复制到剪贴板</string>
+    <string name="action_send">分享</string>
+    <string name="action_collect">收藏</string>
+    <string name="collect_success">收藏成功</string>
+    <string name="collect_failed">收藏失败</string>
+    <string name="collect_empty_list">赶快添加收藏吧</string>
+    <string name="settings_offline_download">离线下载</string>
+    <string name="settings_clear_cache">清除缓存</string>
+    <string name="settings_cache_size">%s MB</string>
+    <string name="settings_clear_cache_success">清除成功</string>
+
+    <string name="chooser_dialog_title">提示</string>
+    <string name="confirm_dialog_title">确认%s吗？</string>
+    <string name="loading_dialog_title">请稍后……</string>
+
+    <string name="user_info">个人资料</string>
+    <string name="user_avatar">头像</string>
+    <string name="user_username">用户名</string>
+    <string name="user_nickname">昵称</string>
+    <string name="user_password">密码</string>
+    <string name="user_sex">性别</string>
+    <string name="user_signature">个性签名</string>
+    <string name="user_signature_default">这个家伙很懒，什么也没留下</string>
+    <string name="user_my_collection">我的收藏</string>
+    <string name="user_logout">退出当前账号</string>
+
+    <string name="personal_login_first">请先登录</string>
+    <string name="personal_update_success">更新成功</string>
+    <string name="personal_update_failed">更新失败：</string>
+
+    <string name="login_login">登录</string>
+    <string name="login_register">注册账号</string>
+    <string name="login_forget_password">忘记密码</string>
+    <string name="login_empty_username">还没填用户名呢</string>
+    <string name="login_empty_password">还没填密码呢</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_failed">登录失败：</string>
+
+    <string-array name="chooser_dialog_items_collect">
+        <item>转发</item>
+        <item>复制链接</item>
+        <item>删除</item>
+    </string-array>
+
+    <string-array name="chooser_dialog_items_list">
+        <item>收藏</item>
+        <item>转发</item>
+        <item>复制链接</item>
+    </string-array>
+</resources>

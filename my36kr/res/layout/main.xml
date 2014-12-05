@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <!-- 包含主要内容的 view -->
+    <FrameLayout
+            android:id="@+id/main_content_fl"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+<!--
+            android:paddingTop="?android:attr/actionBarSize"
+-->
+    </FrameLayout>
+
+    <!-- navigation drawer(抽屉式导航) -->
+    <ListView
+            android:id="@+id/main_left_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:divider="@null"
+            android:background="@color/background_color"
+            android:listSelector="@drawable/main_drawer_list_selector"
+            android:choiceMode="singleChoice"/>
+</android.support.v4.widget.DrawerLayout>

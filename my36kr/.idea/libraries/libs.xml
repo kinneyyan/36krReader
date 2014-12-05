@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/jsoup-1.8.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/universal-image-loader-1.9.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/ormlite-android-4.48.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/ormlite-core-4.48.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/BmobSDK_V3.2.6_1103.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

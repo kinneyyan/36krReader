@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/next_product_content_sl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
+                android:id="@+id/next_product_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:visibility="gone"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <Button
+            android:id="@+id/next_product_reload_btn"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/network_time_out"
+            android:textSize="16sp"
+            android:textColor="@color/darker_gray"
+            android:visibility="gone"/>
+
+</FrameLayout>
