@@ -2,6 +2,7 @@ package com.yanshi.my36kr.biz;
 
 import android.content.Context;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import com.yanshi.my36kr.bean.bmob.User;
@@ -71,6 +72,30 @@ public class UserProxy {
             return user;
         }
         return null;
+    }
+
+    /**
+     * 更新用户头像
+     * @param context
+     * @param user
+     * @param avatarFile
+     * @param userUpdateListener
+     */
+    public static void updateUserAvatar(Context context, User user, BmobFile avatarFile, final UserUpdateListener userUpdateListener) {
+        if(null != user) {
+            if(null != avatarFile) user.setAvatar(avatarFile);
+            user.update(context, new UpdateListener() {
+                @Override
+                public void onSuccess() {
+                    if (null != userUpdateListener) userUpdateListener.onSuccess();
+                }
+
+                @Override
+                public void onFailure(int code, String msg) {
+                    if (null != userUpdateListener) userUpdateListener.onFailure(msg);
+                }
+            });
+        }
     }
 
     /**

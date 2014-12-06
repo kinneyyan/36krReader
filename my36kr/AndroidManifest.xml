@@ -24,7 +24,7 @@
         <activity
                 android:name=".ui.SplashActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
-                android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+                android:theme="@android:style/Theme.Holo.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -80,6 +80,6 @@
         <!--登录页-->
         <activity android:name=".ui.LoginActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize"
-                  android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"/>
+                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
     </application>
 </manifest>

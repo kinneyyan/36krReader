@@ -74,6 +74,7 @@ public class SettingsFragment extends Fragment {
         String str = this.getString(R.string.settings_cache_size, totalCacheSize);
 
         cacheSizeTv.setText(str);
+        Log.d("yslog", "getFileDir--->" + activity.getFilesDir().getAbsolutePath());
         Log.d("yslog", "internalCacheSize--->" + internalCacheSize);
         Log.d("yslog", "externalCacheSize--->" + externalCacheSize);
         Log.d("yslog", "webViewCacheSize--->" + webViewCacheSize);
