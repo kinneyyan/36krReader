@@ -7,6 +7,8 @@ package com.yanshi.my36kr.bean;
  */
 public class Constant {
 
+    public static final String TAG = "yslog";
+
     /**
      * bmob申请的application id
      */

@@ -14,14 +14,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
-import com.yanshi.my36kr.utils.SDCardUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.dialog.ConfirmDialogFragment;
@@ -45,9 +44,7 @@ public class PersonalActivity extends BaseActivity {
     private static final int REQUEST_CODE_LOGIN = 0x1000;
     private static final int REQUEST_CODE_ALBUM = 0x1001;
     private static final int REQUEST_CODE_CAMERA = 0x1002;
-
-    private static final String IMAGE_FILE_LOCATION = "file:///sdcard/temp.jpg";//temp file
-    Uri imageUri = Uri.parse(IMAGE_FILE_LOCATION);//The Uri to store the big bitmap
+    Uri imageUri;//存放头像的uri
 
     ImageView userAvatarIv;//用户头像
     TextView userNicknameTv, userSexTv, userSignatureTv;//昵称、性别、个性签名
@@ -212,17 +209,21 @@ public class PersonalActivity extends BaseActivity {
                     if (null != user) setUserInfo(user);
                     break;
                 case REQUEST_CODE_ALBUM://相册照片选好了
-                    if (data != null) {
-                        Bitmap bitmap = decodeUriAsBitmap(data.getData());//decode bitmap
-                        userAvatarIv.setImageBitmap(bitmap);
-                        uploadAvatar(saveToLocal(bitmap));
+                    if (null != data) {
+                        if (null != imageUri) {
+                            Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
+//                            Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
+//                            userAvatarIv.setImageBitmap(bitmap);
+                            ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
+                            uploadAvatar(getAvatarFile().getAbsolutePath());
+                        }
                     }
                     break;
                 case REQUEST_CODE_CAMERA://照片拍好了
                     break;
             }
         } else {
-            this.finish();
+            if(!UserProxy.isLogin(this)) this.finish();
         }
     }
 
@@ -273,7 +274,9 @@ public class PersonalActivity extends BaseActivity {
      * 去相册选择照片
      */
     private void getAvatarFromAlbum() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+        imageUri = Uri.fromFile(getAvatarFile());
+//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
@@ -289,28 +292,19 @@ public class PersonalActivity extends BaseActivity {
     }
 
     /**
-     * 将选取裁剪好的照片保存到应用目录中
+     * 返回保存头像的file
      *
-     * @param bitmap
      * @return
      */
-    public String saveToLocal(Bitmap bitmap) {
-        String files = this.getFilesDir().getAbsolutePath() + File.separator + "avatar_" + new Date().getTime();
-        File file = new File(files);
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
-                out.flush();
-                out.close();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file.getAbsolutePath();
+    public File getAvatarFile() {
+        return new File(getExternalCacheDir(), "user_icon.jpg");
     }
 
+    /**
+     * 解析uri返回bitmap
+     * @param uri
+     * @return
+     */
     private Bitmap decodeUriAsBitmap(Uri uri) {
         Bitmap bitmap = null;
         try {

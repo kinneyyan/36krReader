@@ -66,4 +66,17 @@ public class MyApplication extends Application {
                 .build();
     }
 
+    public DisplayImageOptions getAvatarOptions() {
+        return new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_user_avatar)
+                .showImageForEmptyUri(R.drawable.ic_user_avatar)
+                .showImageOnFail(R.drawable.ic_user_avatar)
+                .cacheInMemory(false)
+                .cacheOnDisk(false)
+                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
+                .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .displayer(new FadeInBitmapDisplayer(300))
+                .build();
+    }
+
 }

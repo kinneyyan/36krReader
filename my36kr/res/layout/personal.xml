@@ -48,11 +48,10 @@
 
         <ImageView
                 android:id="@+id/personal_user_avatar_iv"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:scaleType="centerInside"
                 android:src="@drawable/ic_user_avatar"/>
 
         <Button
