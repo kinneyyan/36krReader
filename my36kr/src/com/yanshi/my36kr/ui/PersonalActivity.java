@@ -21,6 +21,7 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.SDCardUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.dialog.ConfirmDialogFragment;
@@ -30,8 +31,6 @@ import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -44,6 +43,7 @@ public class PersonalActivity extends BaseActivity {
     private static final int REQUEST_CODE_LOGIN = 0x1000;
     private static final int REQUEST_CODE_ALBUM = 0x1001;
     private static final int REQUEST_CODE_CAMERA = 0x1002;
+    private static final int REQUEST_CODE_CROP_IMG = 0x1003;
     Uri imageUri;//存放头像的uri
 
     ImageView userAvatarIv;//用户头像
@@ -209,21 +209,29 @@ public class PersonalActivity extends BaseActivity {
                     if (null != user) setUserInfo(user);
                     break;
                 case REQUEST_CODE_ALBUM://相册照片选好了
-                    if (null != data) {
-                        if (null != imageUri) {
-                            Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
-//                            Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
-//                            userAvatarIv.setImageBitmap(bitmap);
-                            ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
-                            uploadAvatar(getAvatarFile().getAbsolutePath());
-                        }
+                    if (null != data && null != imageUri) {
+//                        Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
+//                        userAvatarIv.setImageBitmap(bitmap);
+                        Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
+                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
+                        uploadAvatar(imageUri.getPath());
                     }
                     break;
                 case REQUEST_CODE_CAMERA://照片拍好了
+                    if (null != imageUri) {
+                        cropImageUri(imageUri);
+                    }
+                    break;
+                case REQUEST_CODE_CROP_IMG://拍好的照片裁剪好了
+                    if (null != data && null != imageUri) {
+                        Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
+                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
+                        uploadAvatar(imageUri.getPath());
+                    }
                     break;
             }
         } else {
-            if(!UserProxy.isLogin(this)) this.finish();
+            if (!UserProxy.isLogin(this)) this.finish();
         }
     }
 
@@ -259,6 +267,7 @@ public class PersonalActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
+                takePhotoFromCamera();
             }
         });
         albumBtn.setOnClickListener(new View.OnClickListener() {
@@ -271,18 +280,29 @@ public class PersonalActivity extends BaseActivity {
     }
 
     /**
+     * 去拍照
+     */
+    private void takePhotoFromCamera() {
+        imageUri = Uri.fromFile(getCameraAvatarFile());
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, REQUEST_CODE_CAMERA);
+    }
+
+    /**
      * 去相册选择照片
      */
     private void getAvatarFromAlbum() {
-        imageUri = Uri.fromFile(getAvatarFile());
+        imageUri = Uri.fromFile(getAlbumAvatarFile());
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 120);
-        intent.putExtra("outputY", 120);
+        intent.putExtra("outputX", 150);
+        intent.putExtra("outputY", 150);
         intent.putExtra("scale", true);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -292,16 +312,49 @@ public class PersonalActivity extends BaseActivity {
     }
 
     /**
-     * 返回保存头像的file
+     * 去裁剪图片（照片拍完后）
      *
+     * @param uri
+     */
+    private void cropImageUri(Uri uri) {
+        if (null == uri) return;
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        intent.putExtra("scale", true);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, REQUEST_CODE_CROP_IMG);
+    }
+
+    /**
+     * 返回暂存头像图片的file（从相册选取照片时）
      * @return
      */
-    public File getAvatarFile() {
+    public File getAlbumAvatarFile() {
         return new File(getExternalCacheDir(), "user_icon.jpg");
     }
 
     /**
+     * 返回拍摄的图片的file
+     * @return
+     */
+    public File getCameraAvatarFile() {
+        File file = new File(SDCardUtils.getAlbumStorageDir("36kr!"),
+                "user_icon_" + new Date().getTime() + ".jpg");
+        Log.d(Constant.TAG, "Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)--->\n" + file.getAbsolutePath());
+        return file;
+    }
+
+    /**
      * 解析uri返回bitmap
+     *
      * @param uri
      * @return
      */

@@ -2,6 +2,8 @@ package com.yanshi.my36kr.utils;
 
 import android.os.Environment;
 import android.os.StatFs;
+import android.util.Log;
+import com.yanshi.my36kr.bean.Constant;
 
 import java.io.File;
 
@@ -15,6 +17,22 @@ public class SDCardUtils {
         /* cannot be instantiated */
         throw new UnsupportedOperationException("cannot be instantiated");
     }
+
+    /**
+     * 获取公用的存放图片的目录（/storage/emulated/0/Pictures/）
+     * 这些文件对与用户与其他app来说是public的，当用户卸载你的app时，这些文件应该保留。例如，那些被你的app拍摄的图片或者下载的文件。
+     * @param albumName
+     * @return
+     */
+    public static File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs()) {
+            Log.e(Constant.TAG, "Directory not created");
+        }
+        return file;
+    }
+
 
     /**
      * 判断SDCard是否可用

@@ -44,7 +44,7 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp">
+            android:layout_height="72dp">
 
         <ImageView
                 android:id="@+id/personal_user_avatar_iv"
@@ -58,7 +58,7 @@
                 style="?android:buttonBarButtonStyle"
                 android:id="@+id/personal_user_avatar_btn"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="72dp"
                 android:layout_centerVertical="true"
                 android:gravity="start|center_vertical"
                 android:text="@string/user_avatar"
