@@ -2,6 +2,7 @@ package com.yanshi.my36kr.ui;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +32,7 @@ import java.text.DecimalFormat;
 public class SettingsFragment extends Fragment {
 
     Activity activity;
+    Button personalInfoBtn;//个人资料
     Button offlineDownloadBtn;//离线下载
     Button clearCacheBtn;//清除缓存
     TextView cacheSizeTv;//缓存大小
@@ -81,12 +83,19 @@ public class SettingsFragment extends Fragment {
     }
 
     private void initView(View view) {
+        personalInfoBtn = (Button) view.findViewById(R.id.settings_personal_info_btn);
         offlineDownloadBtn = (Button) view.findViewById(R.id.settings_offline_download_btn);
         clearCacheBtn = (Button) view.findViewById(R.id.settings_clear_cache_btn);
         cacheSizeTv = (TextView) view.findViewById(R.id.settings_cache_size_tv);
     }
 
     private void initListener() {
+        personalInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(activity, PersonalActivity.class));
+            }
+        });
         clearCacheBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

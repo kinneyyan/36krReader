@@ -14,16 +14,52 @@ import com.yanshi.my36kr.bean.bmob.User;
  */
 public class UserProxy {
 
+    public interface RegisterListener {
+        public void onSuccess();
+
+        public void onFailure(String msg);
+    }
+
     public interface LoginListener {
         public void onSuccess();
 
         public void onFailure(String msg);
     }
+
     public interface UserUpdateListener {
         public void onSuccess();
 
         public void onFailure(String msg);
     }
+
+    /**
+     * 注册
+     *
+     * @param context
+     * @param username
+     * @param password
+     * @param email
+     * @param registerListener
+     */
+    public static void register(Context context, String username, String password, String email, final RegisterListener registerListener) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setSex("男");
+        user.signUp(context, new SaveListener() {
+            @Override
+            public void onSuccess() {
+                if(null != registerListener) registerListener.onSuccess();
+            }
+
+            @Override
+            public void onFailure(int code, String msg) {
+                if(null != registerListener) registerListener.onFailure(msg);
+            }
+        });
+    }
+
     /**
      * 登录
      *
@@ -76,14 +112,15 @@ public class UserProxy {
 
     /**
      * 更新用户头像
+     *
      * @param context
      * @param user
      * @param avatarFile
      * @param userUpdateListener
      */
     public static void updateUserAvatar(Context context, User user, BmobFile avatarFile, final UserUpdateListener userUpdateListener) {
-        if(null != user) {
-            if(null != avatarFile) user.setAvatar(avatarFile);
+        if (null != user) {
+            if (null != avatarFile) user.setAvatar(avatarFile);
             user.update(context, new UpdateListener() {
                 @Override
                 public void onSuccess() {
@@ -100,6 +137,7 @@ public class UserProxy {
 
     /**
      * 更新用户昵称、性别、个性签名
+     *
      * @param context
      * @param user
      * @param nickname
@@ -107,10 +145,10 @@ public class UserProxy {
      */
     public static void updateUserInfo(Context context, User user, String nickname, String sex, String signature,
                                       final UserUpdateListener userUpdateListener) {
-        if(null != user) {
-            if(null != nickname) user.setNickname(nickname);
-            if(null != sex) user.setSex(sex);
-            if(null != signature) user.setSignature(signature);
+        if (null != user) {
+            if (null != nickname) user.setNickname(nickname);
+            if (null != sex) user.setSex(sex);
+            if (null != signature) user.setSignature(signature);
             user.update(context, new UpdateListener() {
                 @Override
                 public void onSuccess() {
@@ -127,6 +165,7 @@ public class UserProxy {
 
     /**
      * 退出登录
+     *
      * @param context
      */
     public static void logout(Context context) {

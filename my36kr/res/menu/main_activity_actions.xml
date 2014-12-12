@@ -6,8 +6,4 @@
           android:showAsAction="always"
           android:visible="false"/>
 
-    <item android:id="@+id/action_personal"
-          android:title="@string/action_personal"
-          android:icon="@drawable/ic_action_personal"
-          android:showAsAction="ifRoom"/>
 </menu>

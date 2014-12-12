@@ -21,11 +21,11 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
 
     private ActionBar actionBar;
-    private Integer[] mDrawerIcons = {R.drawable.ic_index, R.drawable.ic_label, R.drawable.ic_next, R.drawable.ic_forum, R.drawable.ic_settings};
-    private String[] mDrawerTitles = {"36氪", "热门标签", "NEXT", "北极社区", "设置"};
+    private Integer[] mDrawerIcons = {R.drawable.ic_index, R.drawable.ic_label, R.drawable.ic_next, R.drawable.ic_forum, R.drawable.ic_favorite, R.drawable.ic_settings};
+    private String[] mDrawerTitles = {"36氪", "热门标签", "NEXT", "北极社区", "我的收藏", "设置"};
     private String mTitle;
     private List<Fragment> fragmentList = new ArrayList<Fragment>();
-    private Class[] clzs = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, BbsFragment.class, SettingsFragment.class};
+    private Class[] clzs = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, BbsFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -58,11 +58,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initFragmentList() {
-        fragmentList.add(null);
-        fragmentList.add(null);
-        fragmentList.add(null);
-        fragmentList.add(null);
-        fragmentList.add(null);
+        for (int i = 0; i < 6; i++) {
+            fragmentList.add(null);
+        }
     }
 
     private void initView() {
@@ -174,13 +172,7 @@ public class MainActivity extends BaseActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        switch (item.getItemId()) {
-            case R.id.action_personal:
-                jumpToActivity(this, PersonalActivity.class, null);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class DrawerListAdapter extends BaseAdapter {

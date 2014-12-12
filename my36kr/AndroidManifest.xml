@@ -56,26 +56,16 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".NewsDetailActivity"/>
         </activity>
-        <!--个人中心页-->
+        <!--个人资料页-->
         <activity
                 android:name=".ui.PersonalActivity"
-                android:label="@string/action_personal"
+                android:label="@string/personal_info"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:parentActivityName=".ui.MainActivity">
             <!-- 父activity的meta-data，用来支持4.0以下版本 -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".MainActivity"/>
-        </activity>
-        <!--我的收藏页-->
-        <activity android:name=".ui.MyFavoriteActivity"
-                  android:label="@string/user_my_collection"
-                  android:configChanges="keyboardHidden|orientation|screenSize"
-                  android:parentActivityName=".ui.PersonalActivity">
-            <!-- 父activity的meta-data，用来支持4.0以下版本 -->
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".PersonalActivity"/>
         </activity>
         <!--登录页-->
         <activity android:name=".ui.LoginActivity"

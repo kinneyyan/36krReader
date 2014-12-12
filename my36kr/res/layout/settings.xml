@@ -11,7 +11,20 @@
               android:showDividers="middle">
 
     <Button
-            style="?android:buttonBarButtonStyle"
+            style="?android:borderlessButtonStyle"
+            android:id="@+id/settings_personal_info_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/personal_info"
+            android:textSize="18sp"
+            android:textColor="@color/darker_gray"
+            android:drawableLeft="@drawable/icon_user"
+            android:drawablePadding="8dp"/>
+
+    <Button
+            android:layout_marginTop="16dp"
+            style="?android:borderlessButtonStyle"
             android:id="@+id/settings_offline_download_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

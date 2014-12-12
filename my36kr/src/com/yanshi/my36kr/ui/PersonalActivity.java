@@ -34,7 +34,7 @@ import java.io.FileNotFoundException;
 import java.util.Date;
 
 /**
- * 个人中心页面
+ * 个人资料页面
  * 作者：yanshi
  * 时间：2014-11-28 15:43
  */
@@ -46,9 +46,10 @@ public class PersonalActivity extends BaseActivity {
     private static final int REQUEST_CODE_CROP_IMG = 0x1003;
     Uri imageUri;//存放头像的uri
 
+    TextView usernameTv;//用户名
     ImageView userAvatarIv;//用户头像
     TextView userNicknameTv, userSexTv, userSignatureTv;//昵称、性别、个性签名
-    Button userAvatarBtn, userNicknameBtn, userSexBtn, userSignatureBtn, myFavoriteBtn;
+    Button userAvatarBtn, userNicknameBtn, userSexBtn, userSignatureBtn;
     Button userLogoutBtn;//退出账号按钮
     LoadingDialogFragment loadingDialogFragment;
 
@@ -77,9 +78,6 @@ public class PersonalActivity extends BaseActivity {
         public void onClick(View v) {
             EditTextDialogFragment editTextDialogFragment = new EditTextDialogFragment();
             switch (v.getId()) {
-                case R.id.personal_my_favorite_btn://我的收藏
-                    jumpToActivity(PersonalActivity.this, MyFavoriteActivity.class, null);
-                    break;
                 case R.id.personal_user_logout_btn://退出登录
                     String title = getResources().getString(R.string.confirm_dialog_title, "退出登录");
                     ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
@@ -175,7 +173,6 @@ public class PersonalActivity extends BaseActivity {
     };
 
     private void initListener() {
-        myFavoriteBtn.setOnClickListener(mOnClickListener);
         userLogoutBtn.setOnClickListener(mOnClickListener);
         userAvatarBtn.setOnClickListener(mOnClickListener);
         userNicknameBtn.setOnClickListener(mOnClickListener);
@@ -184,6 +181,7 @@ public class PersonalActivity extends BaseActivity {
     }
 
     private void initView() {
+        usernameTv = (TextView) findViewById(R.id.personal_username_tv);
         userAvatarIv = (ImageView) findViewById(R.id.personal_user_avatar_iv);
         userNicknameTv = (TextView) findViewById(R.id.personal_user_nickname_tv);
         userSexTv = (TextView) findViewById(R.id.personal_user_sex_tv);
@@ -192,7 +190,6 @@ public class PersonalActivity extends BaseActivity {
         userNicknameBtn = (Button) findViewById(R.id.personal_user_nickname_btn);
         userSexBtn = (Button) findViewById(R.id.personal_user_sex_btn);
         userSignatureBtn = (Button) findViewById(R.id.personal_user_signature_btn);
-        myFavoriteBtn = (Button) findViewById(R.id.personal_my_favorite_btn);
         userLogoutBtn = (Button) findViewById(R.id.personal_user_logout_btn);
 
         loadingDialogFragment = new LoadingDialogFragment();
@@ -239,17 +236,31 @@ public class PersonalActivity extends BaseActivity {
      * 设置登录用户的信息
      */
     private void setUserInfo(User user) {
+        //用户名
+        usernameTv.setText(user.getUsername());
         //头像
         String imgUrl;
         if (null != user.getAvatar() && null != (imgUrl = user.getAvatar().getFileUrl())) {
             ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
         }
         //昵称
-        userNicknameTv.setText(user.getNickname());
+        if(null != user.getNickname()) {
+            userNicknameTv.setText(user.getNickname());
+        } else {
+            userNicknameTv.setText(user.getUsername());
+        }
         //性别
-        userSexTv.setText(user.getSex());
+        if(null != user.getSex()) {
+            userSexTv.setText(user.getSex());
+        } else {
+            userSexTv.setText("男");
+        }
         //个性签名
-        userSignatureTv.setText(user.getSignature());
+        if(null != user.getSignature()) {
+            userSignatureTv.setText(user.getSignature());
+        } else {
+            userSignatureTv.setText(getString(R.string.user_signature_default));
+        }
     }
 
     /**

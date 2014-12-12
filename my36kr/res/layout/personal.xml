@@ -9,38 +9,13 @@
               android:dividerPadding="8dp"
               android:showDividers="middle">
 
-    <Button
-            style="?android:borderlessButtonStyle"
-            android:id="@+id/personal_my_favorite_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:text="@string/user_my_collection"
-            android:textSize="18sp"
-            android:textColor="@color/darker_gray"
-            android:drawableLeft="@drawable/ic_favorite"
-            android:drawablePadding="8dp"/>
-
-    <Button
-            style="?android:borderlessButtonStyle"
-            android:id="@+id/personal_user_logout_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:text="@string/user_logout"
-            android:textSize="18sp"
-            android:textColor="@color/darker_gray"
-            android:drawableLeft="@drawable/ic_logout"
-            android:drawablePadding="8dp"/>
-
     <TextView
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
+            android:id="@+id/personal_username_tv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/user_info"
-            android:textSize="14sp"
-            android:textColor="@color/white"
-            android:background="@color/half_transparent"/>
+            android:text="@string/user_username"
+            android:textSize="22sp"
+            android:textColor="@color/darker_gray"/>
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -149,5 +124,18 @@
                 android:textSize="18sp"
                 android:textColor="@color/darker_gray"/>
     </RelativeLayout>
+
+    <Button
+            android:layout_marginTop="16dp"
+            style="?android:borderlessButtonStyle"
+            android:id="@+id/personal_user_logout_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/user_logout"
+            android:textSize="18sp"
+            android:textColor="@color/darker_gray"
+            android:drawableLeft="@drawable/ic_logout"
+            android:drawablePadding="8dp"/>
 
 </LinearLayout>

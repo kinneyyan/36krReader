@@ -6,7 +6,6 @@
     <string name="drawer_close">关闭drawer</string>
     <string name="action_loading">载入中</string>
     <string name="action_settings">设置</string>
-    <string name="action_personal">个人中心</string>
     <string name="quit_tip">再按一次退出</string>
     <string name="network_not_access">未找到可用连接</string>
     <string name="network_time_out">网络不给力&#62;_&#60;，点击刷新</string>
@@ -28,11 +27,12 @@
     <string name="confirm_dialog_title">确认%s吗？</string>
     <string name="loading_dialog_title">请稍后……</string>
 
-    <string name="user_info">个人资料</string>
+    <string name="personal_info">个人资料</string>
     <string name="user_avatar">头像</string>
     <string name="user_username">用户名</string>
     <string name="user_nickname">昵称</string>
     <string name="user_password">密码</string>
+    <string name="user_email">邮箱</string>
     <string name="user_sex">性别</string>
     <string name="user_signature">个性签名</string>
     <string name="user_signature_default">这个家伙很懒，什么也没留下</string>
@@ -48,12 +48,16 @@
     <string name="personal_upload_avatar_failed">上传头像失败：</string>
 
     <string name="login_login">登录</string>
-    <string name="login_register">注册账号</string>
+    <string name="login_register">注册</string>
+    <string name="login_register_now">注册账号</string>
     <string name="login_forget_password">忘记密码</string>
     <string name="login_empty_username">还没填用户名呢</string>
     <string name="login_empty_password">还没填密码呢</string>
+    <string name="login_register_empty_email">还没填邮箱呢</string>
     <string name="login_success">登录成功</string>
     <string name="login_failed">登录失败：</string>
+    <string name="login_register_success">注册成功</string>
+    <string name="login_register_failed">注册失败：</string>
 
     <string-array name="chooser_dialog_items_collect">
         <item>转发</item>

@@ -44,10 +44,26 @@
                 android:drawableRight="@drawable/ic_edit_text_delete"
                 android:drawablePadding="8dp"
                 android:inputType="textPassword"/>
+        <com.yanshi.my36kr.view.DeletableEditText
+                android:id="@+id/login_register_email_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:ems="12"
+                android:singleLine="true"
+                android:gravity="start"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:hint="@string/user_email"
+                android:drawableLeft="@drawable/ic_email"
+                android:drawableRight="@drawable/ic_edit_text_delete"
+                android:drawablePadding="8dp"
+                android:inputType="textEmailAddress"
+                android:visibility="gone"/>
         <Button
                 android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:id="@+id/login_login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="@string/login_register"
+            android:text="@string/login_register_now"
             android:textSize="18sp"
             android:textColor="@color/primary_color"/>
 </RelativeLayout>
