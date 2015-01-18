@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/user_username"
-            android:textSize="22sp"
+            android:textSize="26sp"
             android:textColor="@color/darker_gray"/>
 
     <RelativeLayout
@@ -30,7 +30,7 @@
                 android:src="@drawable/ic_user_avatar"/>
 
         <Button
-                style="?android:buttonBarButtonStyle"
+                style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_avatar_btn"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
@@ -59,7 +59,7 @@
                 android:ellipsize="end"/>
 
         <Button
-                style="?android:buttonBarButtonStyle"
+                style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_nickname_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                 android:textColor="@color/darker_gray"/>
 
         <Button
-                style="?android:buttonBarButtonStyle"
+                style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_sex_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,11 +110,11 @@
                 android:textSize="16sp"
                 android:textColor="@color/darker_gray"
                 android:maxEms="12"
-                android:maxLines="2"
+                android:maxLines="5"
                 android:ellipsize="end"/>
 
         <Button
-                style="?android:buttonBarButtonStyle"
+                style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_signature_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -126,8 +126,8 @@
     </RelativeLayout>
 
     <Button
-            android:layout_marginTop="16dp"
             style="?android:borderlessButtonStyle"
+            android:layout_marginTop="16dp"
             android:id="@+id/personal_user_logout_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

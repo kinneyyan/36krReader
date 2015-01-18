@@ -45,6 +45,8 @@ public class NewsDetailActivity extends BaseActivity implements ObservableScroll
     private String title = "";
     private String webUrl = "";
 
+    private NewsItemDao newsItemDao;
+    private NextItemDao nextItemDao;
     private ShareActionProvider mShareActionProvider;
 
     @Override
@@ -61,12 +63,18 @@ public class NewsDetailActivity extends BaseActivity implements ObservableScroll
                     //新闻
                     title = newsItem.getTitle();
                     webUrl = newsItem.getUrl();
+
+                    newsItemDao = new NewsItemDao(this);
                 } else if (null != nextItem) {
                     //NEXT
                     title = nextItem.getTitle();
                     webUrl = nextItem.getUrl();
+
+                    nextItemDao = new NextItemDao(this);
                 }
 
+                //重新调用一次onCreateOptionsMenu，更新收藏状态
+                this.invalidateOptionsMenu();
             }
             initView();
             initWebView();
@@ -132,6 +140,19 @@ public class NewsDetailActivity extends BaseActivity implements ObservableScroll
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.news_detail_activity_actions, menu);
 
+        //收藏按钮
+        MenuItem collectItem = menu.findItem(R.id.action_collect);
+        if (null != newsItemDao && null != newsItem) {
+            if (newsItemDao.findItemByTitle(newsItem.getTitle())) {
+                collectItem.setIcon(R.drawable.ic_action_favorite);
+            }
+        } else if (null != nextItemDao && null != nextItem) {
+            if (nextItemDao.findItemByTitle(nextItem.getTitle())) {
+                collectItem.setIcon(R.drawable.ic_action_favorite);
+            }
+        }
+
+        //分享按钮
         MenuItem item = menu.findItem(R.id.action_send);
         mShareActionProvider = (ShareActionProvider) item.getActionProvider();
         if (mShareActionProvider != null) {
@@ -151,16 +172,20 @@ public class NewsDetailActivity extends BaseActivity implements ObservableScroll
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_collect:
-                if (newsItem != null) {
-                    if (new NewsItemDao(this).add(newsItem)) {
+                if (newsItem != null && newsItemDao != null) {
+                    if (newsItemDao.add(newsItem)) {
+                        item.setIcon(R.drawable.ic_action_favorite);
                         ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
                     } else {
+                        item.setIcon(R.drawable.ic_action_not_favorite);
                         ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
                     }
-                } else if (nextItem != null) {
-                    if (new NextItemDao(this).add(nextItem)) {
+                } else if (nextItem != null && nextItemDao != null) {
+                    if (nextItemDao.add(nextItem)) {
+                        item.setIcon(R.drawable.ic_action_favorite);
                         ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
                     } else {
+                        item.setIcon(R.drawable.ic_action_not_favorite);
                         ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
                     }
                 }

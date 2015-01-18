@@ -19,12 +19,13 @@
             android:theme="@style/CustomActionBarTheme"
             android:name=".MyApplication"
             android:hardwareAccelerated="true">
-        <activity android:name=".ui.base.BaseActivity"/>
+        <!--<activity android:name=".ui.base.BaseActivity"/>-->
         <!--splash界面-->
         <activity
                 android:name=".ui.SplashActivity"
+                android:theme="@android:style/Theme.Holo.Light.NoActionBar"
                 android:configChanges="keyboardHidden|orientation|screenSize"
-                android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -35,41 +36,46 @@
                 android:name=".ui.MainActivity"
                 android:label="@string/app_name"
                 android:launchMode="singleTop"
-                android:configChanges="keyboardHidden|orientation|screenSize">
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait">
         </activity>
         <!--新闻详情页-->
         <activity
                 android:name=".ui.NewsDetailActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait"
                 android:parentActivityName=".ui.MainActivity">
             <!-- 父activity的meta-data，用来支持4.0以下版本 -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                    android:value=".ui.MainActivity"/>
         </activity>
         <!--图片终端页-->
         <activity
                 android:name=".ui.ImageTerminalActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait"
                 android:parentActivityName=".ui.NewsDetailActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".NewsDetailActivity"/>
+                    android:value=".ui.NewsDetailActivity"/>
         </activity>
         <!--个人资料页-->
         <activity
                 android:name=".ui.PersonalActivity"
                 android:label="@string/personal_info"
                 android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait"
                 android:parentActivityName=".ui.MainActivity">
             <!-- 父activity的meta-data，用来支持4.0以下版本 -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                    android:value=".ui.MainActivity"/>
         </activity>
         <!--登录页-->
         <activity android:name=".ui.LoginActivity"
+                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"
                   android:configChanges="keyboardHidden|orientation|screenSize"
-                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
+                  android:screenOrientation="portrait"/>
     </application>
 </manifest>

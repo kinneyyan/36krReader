@@ -47,7 +47,7 @@
             android:layout_below="@id/index_timeline_item_content_tv"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="作者时间"
+            android:text="作者/时间"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
 
@@ -61,6 +61,5 @@
             android:layout_alignParentBottom="true"
             android:text="类型"
             android:textSize="12sp"
-            android:textColor="@android:color/white"
-            android:background="@color/half_transparent"/>
+            android:textColor="@color/primary_color"/>
 </RelativeLayout>

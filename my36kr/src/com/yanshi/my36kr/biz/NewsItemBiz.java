@@ -104,8 +104,9 @@ public class NewsItemBiz {
                 if (newsType_a_ele.size() != 0) {
                     String newsType = newsType_a_ele.get(0).text();
 
-                    if(newsType.contains("8点1氪晚间版")) {
-                        newsItem.setNewsType("8点1氪晚间版");
+                    if(newsType.length() > 5) {
+                        //当解析到的字符数>5时，通常是网页中无类型字符（比如8点1氪晚间版）
+                        newsItem.setNewsType(null);
                     } else {
                         newsItem.setNewsType(newsType);
                     }

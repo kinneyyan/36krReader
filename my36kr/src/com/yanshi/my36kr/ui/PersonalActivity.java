@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -182,6 +183,7 @@ public class PersonalActivity extends BaseActivity {
 
     private void initView() {
         usernameTv = (TextView) findViewById(R.id.personal_username_tv);
+        usernameTv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         userAvatarIv = (ImageView) findViewById(R.id.personal_user_avatar_iv);
         userNicknameTv = (TextView) findViewById(R.id.personal_user_nickname_tv);
         userSexTv = (TextView) findViewById(R.id.personal_user_sex_tv);

@@ -4,7 +4,7 @@
 
     <item android:id="@+id/action_collect"
           android:title="@string/action_collect"
-          android:icon="@drawable/ic_action_favorite"
+          android:icon="@drawable/ic_action_not_favorite"
           android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_send"

@@ -70,4 +70,30 @@ public class NewsItemDao {
 
         return null;
     }
+
+    //根据主键查询
+    public boolean findItemById(int id) {
+        try {
+            return null != (newsItemDao.queryForId(id));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //条件查询
+    public boolean findItemByTitle(String title) {
+        try {
+            List<NewsItem> list = newsItemDao.queryBuilder().where().eq("title", title).query();
+            if (null != list && !list.isEmpty()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.yanshi.my36kr.dao;
 
 import android.content.Context;
 import com.j256.ormlite.dao.Dao;
+import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.utils.DatabaseHelper;
 
@@ -70,4 +71,30 @@ public class NextItemDao {
 
         return null;
     }
+
+    //根据主键查询
+    public boolean findItemById(int id) {
+        try {
+            return null != (nextItemDao.queryForId(id));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //条件查询
+    public boolean findItemByTitle(String title) {
+        try {
+            List<NextItem> list = nextItemDao.queryBuilder().where().eq("title", title).query();
+            if (null != list && !list.isEmpty()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
