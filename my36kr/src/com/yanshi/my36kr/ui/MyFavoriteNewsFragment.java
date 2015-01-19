@@ -113,7 +113,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 int realPosition = position - mListView.getHeaderViewsCount();
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(activity, NewsDetailActivity.class);
+                    Intent intent = new Intent(activity, ItemDetailActivity.class);
                     intent.putExtra(Constant.OBJECT_1, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());

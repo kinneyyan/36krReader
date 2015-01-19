@@ -41,7 +41,7 @@
         </activity>
         <!--新闻详情页-->
         <activity
-                android:name=".ui.NewsDetailActivity"
+                android:name=".ui.ItemDetailActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:screenOrientation="portrait"
                 android:parentActivityName=".ui.MainActivity">
@@ -55,7 +55,7 @@
                 android:name=".ui.ImageTerminalActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:screenOrientation="portrait"
-                android:parentActivityName=".ui.NewsDetailActivity">
+                android:parentActivityName=".ui.ItemDetailActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.NewsDetailActivity"/>

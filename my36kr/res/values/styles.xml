@@ -6,11 +6,11 @@
         <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
         <item name="android:actionMenuTextColor">@color/white</item>
 
+        <!--使ActionBar浮于布局之上不占用空间-->
         <!--<item name="android:windowActionBarOverlay">true</item>-->
     </style>
 
-    <!--666666666666666666666666666-->
-    <!--actionBar样式-->
+    <!--**********actionBar样式**********-->
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/primary_color</item>
@@ -24,8 +24,7 @@
     <style name="MyActionBarTabText" parent="@android:style/Widget.Holo.ActionBar.TabText">
         <item name="android:textColor">@color/white</item>
     </style>
-    <!--666666666666666666666666666-->
-
+    <!--**********actionBar样式**********-->
 
     <!--自定义progressBar-->
     <style name="Custom.Widget.Holo.ProgressBar.Horizontal" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
@@ -34,7 +33,6 @@
         <item name="android:maxHeight">15dip</item>
     </style>
 
-    <!--666666666666666666666666666-->
     <!--viewPagerIndicator样式-->
     <!--<style name="StyledIndicators" parent="CustomActionBarTheme">-->
         <!--<item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>-->
@@ -52,6 +50,5 @@
         <!--<item name="android:fadingEdge">horizontal</item>-->
         <!--<item name="android:fadingEdgeLength">8dp</item>-->
     <!--</style>-->
-    <!--666666666666666666666666666-->
 
 </resources>

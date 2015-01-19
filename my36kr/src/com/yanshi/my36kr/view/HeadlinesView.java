@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
-import com.yanshi.my36kr.ui.NewsDetailActivity;
+import com.yanshi.my36kr.ui.ItemDetailActivity;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 
@@ -82,7 +82,7 @@ public class HeadlinesView extends LinearLayout {
         @Override
         public void onClick(View view) {
             NewsItem item;
-            Intent intent = new Intent(getContext(), NewsDetailActivity.class);
+            Intent intent = new Intent(getContext(), ItemDetailActivity.class);
             switch (view.getId()) {
                 case R.id.headlines_one_fl:
                     if ((item = headlinesList.get(0)) != null) {

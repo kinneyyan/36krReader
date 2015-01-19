@@ -1,6 +1,8 @@
 package com.yanshi.my36kr.ui;
 
+import android.app.ActionBar;
 import android.content.*;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +40,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
 
     private static final int LOAD_COMPLETE = 0X110;
     private MainActivity activity;
+    private ActionBar actionBar;
     private ACache mCache;
 
     private SwipeRefreshLayout mSwipeLayout;
@@ -50,9 +53,26 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     private NextItemBiz nextItemBiz = new NextItemBiz();
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden) {
+            if (null != actionBar) {
+                actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.next_product_title_color)));
+            }
+        } else {
+            if (null != actionBar) {
+                actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary_color)));
+            }
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) this.getActivity();
+        actionBar = activity.getActionBar();
+        if (null != actionBar) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.next_product_title_color)));
+        }
         mCache = ACache.get(activity);
     }
 
@@ -89,7 +109,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(activity, NewsDetailActivity.class);
+                    Intent intent = new Intent(activity, ItemDetailActivity.class);
                     intent.putExtra(Constant.OBJECT_2, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());

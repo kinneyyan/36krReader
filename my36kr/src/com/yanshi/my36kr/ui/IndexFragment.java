@@ -1,5 +1,6 @@
 package com.yanshi.my36kr.ui;
 
+import android.app.ActionBar;
 import android.content.*;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +11,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
@@ -24,6 +28,9 @@ import com.yanshi.my36kr.utils.*;
 import com.yanshi.my36kr.view.FooterView;
 import com.yanshi.my36kr.view.HeadlinesView;
 import com.yanshi.my36kr.view.dialog.ListDialogFragment;
+import com.yanshi.my36kr.view.observableScrollview.ObservableListView;
+import com.yanshi.my36kr.view.observableScrollview.ObservableScrollViewCallbacks;
+import com.yanshi.my36kr.view.observableScrollview.ScrollState;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,11 +47,12 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private static final int LOAD_COMPLETE = 0X110;
     private static final int LOAD_MORE_COMPLETE = 0X111;
     private MainActivity activity;
+    private ActionBar actionBar;
     private ACache mCache;
 
     private HeadlinesView headlinesView;
     private SwipeRefreshLayout mSwipeLayout;
-    private ListView mListView;
+    private ObservableListView mListView;
     private FooterView footerView;
     private CommonAdapter<NewsItem> mAdapter;
     private Button reloadBtn;
@@ -59,10 +67,21 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private int currentPage = 1;
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        //fragment隐藏时显示ActionBar
+        if (hidden) {
+            if (null != actionBar && !actionBar.isShowing()) {
+                actionBar.show();
+            }
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
+        actionBar = activity.getActionBar();
         mCache = ACache.get(activity);
     }
 
@@ -79,7 +98,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
         mSwipeLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
         mSwipeLayout.setOnRefreshListener(this);
-        mListView = (ListView) view.findViewById(R.id.index_timeline_lv);
+        mListView = (ObservableListView) view.findViewById(R.id.index_timeline_lv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
         footerView = new FooterView(activity);
         mListView.addFooterView(footerView);
@@ -136,6 +155,26 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
             }
         });
+        mListView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+            }
+            @Override
+            public void onDownMotionEvent() {
+            }
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                if (scrollState == ScrollState.UP) {
+                    if (null != actionBar && actionBar.isShowing()) {
+                        actionBar.hide();
+                    }
+                } else if (scrollState == ScrollState.DOWN) {
+                    if (null != actionBar && !actionBar.isShowing()) {
+                        actionBar.show();
+                    }
+                }
+            }
+        });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -143,7 +182,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 int realPosition = position - mListView.getHeaderViewsCount();
                 NewsItem item;
                 if (size > 0 && (item = timelinesList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(activity, NewsDetailActivity.class);
+                    Intent intent = new Intent(activity, ItemDetailActivity.class);
                     intent.putExtra(Constant.OBJECT_1, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());
