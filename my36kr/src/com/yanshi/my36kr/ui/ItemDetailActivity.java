@@ -24,6 +24,7 @@ import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.MyWebView;
 import com.yanshi.my36kr.view.observableScrollview.ObservableScrollViewCallbacks;
@@ -57,16 +58,14 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();
             if (null != bundle) {
-                newsItem = (NewsItem) bundle.getSerializable(Constant.OBJECT_1);
-                nextItem = (NextItem) bundle.getSerializable(Constant.OBJECT_2);
-                if (null != newsItem) {
-                    //新闻
+                newsItem = (NewsItem) bundle.getSerializable(Constant.NEWS_ITEM);
+                nextItem = (NextItem) bundle.getSerializable(Constant.NEXT_ITEM);
+                if (null != newsItem) { //新闻详情
                     title = newsItem.getTitle();
                     webUrl = newsItem.getUrl();
 
                     newsItemDao = new NewsItemDao(this);
-                } else if (null != nextItem) {
-                    //NEXT
+                } else if (null != nextItem) {  //NEXT详情
                     title = nextItem.getTitle();
                     webUrl = nextItem.getUrl();
 
@@ -123,7 +122,7 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
             }
         });
 
-        if (null != webUrl) webView.loadUrl(webUrl);
+        if (!StringUtils.isBlank(webUrl)) webView.loadUrl(webUrl);
 
     }
 
@@ -145,10 +144,12 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         if (null != newsItemDao && null != newsItem) {
             if (newsItemDao.findItemByTitle(newsItem.getTitle())) {
                 collectItem.setIcon(R.drawable.ic_action_favorite);
+                setCollected(true);
             }
         } else if (null != nextItemDao && null != nextItem) {
             if (nextItemDao.findItemByTitle(nextItem.getTitle())) {
                 collectItem.setIcon(R.drawable.ic_action_favorite);
+                setCollected(true);
             }
         }
 
@@ -172,21 +173,47 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_collect:
+                //新闻详情
                 if (newsItem != null && newsItemDao != null) {
-                    if (newsItemDao.add(newsItem)) {
-                        item.setIcon(R.drawable.ic_action_favorite);
-                        ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
-                    } else {
-                        item.setIcon(R.drawable.ic_action_not_favorite);
-                        ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
+                    if (!isCollected) { //未收藏时
+                        if (newsItemDao.add(newsItem)) {
+                            item.setIcon(R.drawable.ic_action_favorite);
+                            ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
+                            setCollected(true);
+                            setResult(RESULT_OK);
+                        } else {
+                            ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
+                        }
+                    } else {    //已收藏时
+                        if (newsItemDao.deleteByItem(newsItem)) {
+                            item.setIcon(R.drawable.ic_action_not_favorite);
+                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_success)).show();
+                            setCollected(false);
+                            setResult(RESULT_OK);
+                        } else {
+                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_failed)).show();
+                        }
                     }
+                //NEXT详情
                 } else if (nextItem != null && nextItemDao != null) {
-                    if (nextItemDao.add(nextItem)) {
-                        item.setIcon(R.drawable.ic_action_favorite);
-                        ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
-                    } else {
-                        item.setIcon(R.drawable.ic_action_not_favorite);
-                        ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
+                    if (!isCollected) { //未收藏时
+                        if (nextItemDao.add(nextItem)) {
+                            item.setIcon(R.drawable.ic_action_favorite);
+                            ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
+                            setCollected(true);
+                            setResult(RESULT_OK);
+                        } else {
+                            ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
+                        }
+                    } else {    //已收藏时
+                        if (nextItemDao.deleteByItem(nextItem)) {
+                            item.setIcon(R.drawable.ic_action_not_favorite);
+                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_success)).show();
+                            setCollected(false);
+                            setResult(RESULT_OK);
+                        } else {
+                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_failed)).show();
+                        }
                     }
                 }
                 break;
@@ -205,6 +232,12 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isCollected = false;//是否收藏
+
+    private void setCollected(boolean collected) {
+        isCollected = collected;
     }
 
     @Override

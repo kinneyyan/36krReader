@@ -2,7 +2,6 @@ package com.yanshi.my36kr.dao;
 
 import android.content.Context;
 import com.j256.ormlite.dao.Dao;
-import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.utils.DatabaseHelper;
 
@@ -44,6 +43,16 @@ public class NextItemDao {
 
         try {
             nextItemDao.deleteById(id);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteByItem(NextItem nextItem) {
+        try {
+            nextItemDao.delete(nextItem);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

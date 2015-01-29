@@ -3,14 +3,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:padding="5dp">
+              android:padding="8dp">
     
     <ImageView
             android:id="@+id/index_timeline_item_iv"
             android:layout_width="144dp"
-            android:layout_height="wrap_content"
+            android:layout_height="96dp"
             android:layout_centerVertical="true"
-            android:scaleType="centerInside"/>
+            android:scaleType="centerCrop"/>
 
     <TextView
             android:id="@+id/index_timeline_item_title_tv"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/index_timeline_item_iv"
             android:layout_toRightOf="@id/index_timeline_item_iv"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:text="标题"
             android:maxLines="2"
             android:ellipsize="end"
@@ -31,9 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/index_timeline_item_iv"
             android:layout_below="@id/index_timeline_item_title_tv"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="8dp"
             android:text="概要"
             android:maxLines="5"
             android:ellipsize="end"
@@ -44,8 +43,9 @@
             android:id="@+id/index_timeline_item_info_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/index_timeline_item_content_tv"
+            android:layout_marginTop="6dp"
             android:layout_alignParentBottom="true"
+            android:layout_below="@id/index_timeline_item_content_tv"
             android:layout_alignParentRight="true"
             android:text="作者/时间"
             android:textSize="12sp"
@@ -55,10 +55,11 @@
             android:id="@+id/index_timeline_item_type_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_alignParentBottom="true"
             android:layout_below="@id/index_timeline_item_content_tv"
             android:layout_toLeftOf="@id/index_timeline_item_info_tv"
-            android:layout_marginRight="5dp"
-            android:layout_alignParentBottom="true"
+            android:layout_marginRight="4dp"
             android:text="类型"
             android:textSize="12sp"
             android:textColor="@color/primary_color"/>

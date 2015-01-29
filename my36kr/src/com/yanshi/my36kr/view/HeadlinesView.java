@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.ui.ItemDetailActivity;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
+import com.yanshi.my36kr.utils.ScreenUtils;
 
 import java.util.List;
 
@@ -49,7 +51,6 @@ public class HeadlinesView extends LinearLayout {
             headline3Tv.setText(headlinesList.get(2).getTitle());
             headline4Tv.setText(headlinesList.get(3).getTitle());
             headline5Tv.setText(headlinesList.get(4).getTitle());
-
         }
     }
 
@@ -72,6 +73,10 @@ public class HeadlinesView extends LinearLayout {
         headline1Fl = (FrameLayout) findViewById(R.id.headlines_one_fl);
         headline1Tv = (TextView) findViewById(R.id.headlines_one);
         headline1Iv = (ImageView) findViewById(R.id.headlines_one_iv);
+        ViewGroup.LayoutParams layoutParams = headline1Iv.getLayoutParams();
+        layoutParams.height = (ScreenUtils.getScreenHeight(getContext())) / 3;
+        headline1Iv.setLayoutParams(layoutParams);//设置焦点大图高度为屏幕的1/3
+
         headline2Tv = (TextView) findViewById(R.id.headlines_two);
         headline3Tv = (TextView) findViewById(R.id.headlines_three);
         headline4Tv = (TextView) findViewById(R.id.headlines_four);
@@ -86,37 +91,27 @@ public class HeadlinesView extends LinearLayout {
             switch (view.getId()) {
                 case R.id.headlines_one_fl:
                     if ((item = headlinesList.get(0)) != null) {
-                        intent.putExtra(Constant.OBJECT_1, item);
-//                        intent.putExtra(Constant.TITLE, item.getTitle());
-//                        intent.putExtra(Constant.URL, item.getUrl());
+                        intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
                 case R.id.headlines_two:
                     if ((item = headlinesList.get(1)) != null) {
-                        intent.putExtra(Constant.OBJECT_1, item);
-//                        intent.putExtra(Constant.TITLE, item.getTitle());
-//                        intent.putExtra(Constant.URL, item.getUrl());
+                        intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
                 case R.id.headlines_three:
                     if ((item = headlinesList.get(2)) != null) {
-                        intent.putExtra(Constant.OBJECT_1, item);
-//                        intent.putExtra(Constant.TITLE, item.getTitle());
-//                        intent.putExtra(Constant.URL, item.getUrl());
+                        intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
                 case R.id.headlines_four:
                     if ((item = headlinesList.get(3)) != null) {
-                        intent.putExtra(Constant.OBJECT_1, item);
-//                        intent.putExtra(Constant.TITLE, item.getTitle());
-//                        intent.putExtra(Constant.URL, item.getUrl());
+                        intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
                 case R.id.headlines_five:
                     if ((item = headlinesList.get(4)) != null) {
-                        intent.putExtra(Constant.OBJECT_1, item);
-//                        intent.putExtra(Constant.TITLE, item.getTitle());
-//                        intent.putExtra(Constant.URL, item.getUrl());
+                        intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
                 default:

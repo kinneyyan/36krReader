@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -64,7 +65,7 @@ public class PersonalActivity extends BaseActivity {
         initListener();
 
         if (!UserProxy.isLogin(this)) {
-            ToastFactory.getToast(this, getResources().getString(R.string.personal_login_first)).show();
+            ToastFactory.getToast(this, getString(R.string.personal_login_first)).show();
             jumpToActivityForResult(this, LoginActivity.class, REQUEST_CODE_LOGIN, null);
             return;
         }
@@ -80,7 +81,7 @@ public class PersonalActivity extends BaseActivity {
             EditTextDialogFragment editTextDialogFragment = new EditTextDialogFragment();
             switch (v.getId()) {
                 case R.id.personal_user_logout_btn://退出登录
-                    String title = getResources().getString(R.string.confirm_dialog_title, "退出登录");
+                    String title = getString(R.string.confirm_dialog_title, "退出登录");
                     ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
                     confirmDialogFragment.setParams(title, new DialogInterface.OnClickListener() {
                         @Override
@@ -99,20 +100,20 @@ public class PersonalActivity extends BaseActivity {
                     editTextDialogFragment.setMyOnClickListener(new EditTextDialogFragment.MyOnClickListener() {
                         @Override
                         public void onClick(String str) {
-                            if (null == str || StringUtils.isBlank(str)) return;
+                            if (StringUtils.isBlank(str)) return;
                             loadingDialogFragment.show(getFragmentManager(), "set_nickname_loading_dialog");
                             UserProxy.updateUserInfo(mContext, user, str, null, null, new UserProxy.UserUpdateListener() {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_success)).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
                                     userNicknameTv.setText(user.getNickname());
                                 }
 
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_failed) + msg).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
                                 }
                             });
                         }
@@ -130,14 +131,14 @@ public class PersonalActivity extends BaseActivity {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_success)).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
                                     userSexTv.setText(user.getSex());
                                 }
 
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_failed) + msg).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
                                 }
                             });
                         }
@@ -145,24 +146,28 @@ public class PersonalActivity extends BaseActivity {
                     listDialogFragment.show(getSupportFragmentManager(), "set_sex_list_dialog");
                     break;
                 case R.id.personal_user_signature_btn://个性签名
-                    editTextDialogFragment.setEditTextParams(userSignatureTv.getText().toString(), false, 100);
+                    editTextDialogFragment.setEditTextParams(userSignatureTv.getText().toString(), false, 12);
                     editTextDialogFragment.setMyOnClickListener(new EditTextDialogFragment.MyOnClickListener() {
                         @Override
                         public void onClick(String str) {
-                            if (null == str || StringUtils.isBlank(str)) return;
+                            if (StringUtils.isBlank(str)) return;
+                            if (!TextUtils.isEmpty(str) && str.length() > 140) {
+                                ToastFactory.getToast(mContext, getString(R.string.user_signature_exceed_140_words)).show();
+                                return;
+                            }
                             loadingDialogFragment.show(getFragmentManager(), "set_signature_loading_dialog");
                             UserProxy.updateUserInfo(mContext, user, null, null, str, new UserProxy.UserUpdateListener() {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_success)).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
                                     userSignatureTv.setText(user.getSignature());
                                 }
 
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_failed) + msg).show();
+                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
                                 }
                             });
                         }
@@ -195,7 +200,7 @@ public class PersonalActivity extends BaseActivity {
         userLogoutBtn = (Button) findViewById(R.id.personal_user_logout_btn);
 
         loadingDialogFragment = new LoadingDialogFragment();
-        loadingDialogFragment.setParams(getResources().getString(R.string.loading_dialog_title));
+        loadingDialogFragment.setParams(getString(R.string.loading_dialog_title));
     }
 
     @Override
@@ -212,7 +217,7 @@ public class PersonalActivity extends BaseActivity {
 //                        Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
 //                        userAvatarIv.setImageBitmap(bitmap);
                         Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
-                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
+                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
                         uploadAvatar(imageUri.getPath());
                     }
                     break;
@@ -224,7 +229,7 @@ public class PersonalActivity extends BaseActivity {
                 case REQUEST_CODE_CROP_IMG://拍好的照片裁剪好了
                     if (null != data && null != imageUri) {
                         Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
-                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getAvatarOptions());
+                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
                         uploadAvatar(imageUri.getPath());
                     }
                     break;
@@ -246,22 +251,18 @@ public class PersonalActivity extends BaseActivity {
             ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
         }
         //昵称
-        if(null != user.getNickname()) {
+        if(!TextUtils.isEmpty(user.getNickname())) {
             userNicknameTv.setText(user.getNickname());
         } else {
             userNicknameTv.setText(user.getUsername());
         }
         //性别
-        if(null != user.getSex()) {
+        if(!TextUtils.isEmpty(user.getSex())) {
             userSexTv.setText(user.getSex());
-        } else {
-            userSexTv.setText("男");
         }
         //个性签名
-        if(null != user.getSignature()) {
+        if(!TextUtils.isEmpty(user.getSignature())) {
             userSignatureTv.setText(user.getSignature());
-        } else {
-            userSignatureTv.setText(getString(R.string.user_signature_default));
         }
     }
 
@@ -388,7 +389,7 @@ public class PersonalActivity extends BaseActivity {
      * @param avatarPath
      */
     private void uploadAvatar(String avatarPath) {
-        if (avatarPath == null || StringUtils.isBlank(avatarPath)) return;
+        if (StringUtils.isBlank(avatarPath)) return;
         if (loadingDialogFragment != null) {
             loadingDialogFragment.show(getFragmentManager(), "upload_avatar_loading_dialog");
         }
@@ -396,18 +397,18 @@ public class PersonalActivity extends BaseActivity {
         bmobFile.upload(mContext, new UploadFileListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(mContext, getResources().getString(R.string.personal_upload_avatar_success)).show();
+                ToastFactory.getToast(mContext, getString(R.string.personal_upload_avatar_success)).show();
                 UserProxy.updateUserAvatar(mContext, user, bmobFile, new UserProxy.UserUpdateListener() {
                     @Override
                     public void onSuccess() {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                        ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_success)).show();
+                        ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
                     }
 
                     @Override
                     public void onFailure(String msg) {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                        ToastFactory.getToast(mContext, getResources().getString(R.string.personal_update_failed) + msg).show();
+                        ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
                     }
                 });
             }
@@ -419,7 +420,7 @@ public class PersonalActivity extends BaseActivity {
             @Override
             public void onFailure(int code, String msg) {
                 if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                ToastFactory.getToast(mContext, getResources().getString(R.string.personal_upload_avatar_failed) + msg).show();
+                ToastFactory.getToast(mContext, getString(R.string.personal_upload_avatar_failed) + msg).show();
             }
         });
     }

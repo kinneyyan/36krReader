@@ -16,7 +16,7 @@
             android:text="@string/user_username"
             android:textSize="26sp"
             android:textColor="@color/darker_gray"/>
-
+    <!--头像-->
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="72dp">
@@ -33,14 +33,14 @@
                 style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_avatar_btn"
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:gravity="start|center_vertical"
                 android:text="@string/user_avatar"
                 android:textSize="18sp"
                 android:textColor="@color/darker_gray"/>
     </RelativeLayout>
-
+    <!--昵称-->
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -69,7 +69,7 @@
                 android:textSize="18sp"
                 android:textColor="@color/darker_gray"/>
     </RelativeLayout>
-
+    <!--性别-->
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:text="男"
+                android:text="-"
                 android:textSize="16sp"
                 android:textColor="@color/darker_gray"/>
 
@@ -95,7 +95,7 @@
                 android:textSize="18sp"
                 android:textColor="@color/darker_gray"/>
     </RelativeLayout>
-
+    <!--个性签名-->
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -104,20 +104,22 @@
                 android:id="@+id/personal_user_signature_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:text="@string/user_signature_default"
                 android:textSize="16sp"
                 android:textColor="@color/darker_gray"
-                android:maxEms="12"
-                android:maxLines="5"
-                android:ellipsize="end"/>
+                android:maxEms="12"/>
 
         <Button
                 style="?android:borderlessButtonStyle"
                 android:id="@+id/personal_user_signature_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignTop="@id/personal_user_signature_tv"
+                android:layout_alignBottom="@id/personal_user_signature_tv"
                 android:layout_centerVertical="true"
                 android:gravity="start|center_vertical"
                 android:text="@string/user_signature"

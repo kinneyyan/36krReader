@@ -41,8 +41,6 @@ public class LoginActivity extends BaseActivity {
         initView();
         initListener();
 
-        usernameEt.setText("kingars");
-        passwordEt.setText("123456");
     }
 
     /**

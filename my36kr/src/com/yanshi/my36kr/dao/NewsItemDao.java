@@ -50,6 +50,16 @@ public class NewsItemDao {
         return false;
     }
 
+    public boolean deleteByItem(NewsItem newsItem) {
+        try {
+            newsItemDao.delete(newsItem);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void update(NewsItem newsItem) {
 
         try {

@@ -40,6 +40,7 @@ public class MyApplication extends Application {
         ImageLoader.getInstance().init(config);
     }
 
+    //默认的
     public DisplayImageOptions getOptions() {
         return new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_app_logo)
@@ -53,6 +54,7 @@ public class MyApplication extends Application {
                 .build();
     }
 
+    //自定义默认图的
     public DisplayImageOptions getOptions(int defaultImgResourceId) {
         return new DisplayImageOptions.Builder()
                 .showImageOnLoading(defaultImgResourceId)
@@ -66,16 +68,16 @@ public class MyApplication extends Application {
                 .build();
     }
 
-    public DisplayImageOptions getAvatarOptions() {
+    //没有加载上去时fade效果的
+    public DisplayImageOptions getOptionsWithNoFade() {
         return new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_user_avatar)
-                .showImageForEmptyUri(R.drawable.ic_user_avatar)
-                .showImageOnFail(R.drawable.ic_user_avatar)
-                .cacheInMemory(false)
-                .cacheOnDisk(false)
+                .showImageOnLoading(R.drawable.ic_app_logo)
+                .showImageForEmptyUri(R.drawable.ic_app_logo)
+                .showImageOnFail(R.drawable.ic_app_logo)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
                 .bitmapConfig(Bitmap.Config.ARGB_8888) // default
-                .displayer(new FadeInBitmapDisplayer(300))
                 .build();
     }
 

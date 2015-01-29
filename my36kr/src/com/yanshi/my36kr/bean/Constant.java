@@ -26,8 +26,8 @@ public class Constant {
     public static final String BOOLEAN = "boolean";
     public static final String TITLE = "title";
     public static final String URL = "url";
-    public static final String OBJECT_1 = "object_1";
-    public static final String OBJECT_2 = "object_2";
+    public static final String NEWS_ITEM = "news_item";
+    public static final String NEXT_ITEM = "next_item";
 
     /**
      * 缓存json文件名

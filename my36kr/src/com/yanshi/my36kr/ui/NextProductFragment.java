@@ -110,7 +110,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
                     Intent intent = new Intent(activity, ItemDetailActivity.class);
-                    intent.putExtra(Constant.OBJECT_2, item);
+                    intent.putExtra(Constant.NEXT_ITEM, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());
                     startActivity(intent);

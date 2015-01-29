@@ -58,7 +58,7 @@
                 android:parentActivityName=".ui.ItemDetailActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.NewsDetailActivity"/>
+                    android:value=".ui.ItemDetailActivity"/>
         </activity>
         <!--个人资料页-->
         <activity

@@ -111,7 +111,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
                 helper.setText(R.id.index_timeline_item_type_tv, item.getNewsType());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
-                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptions());
+                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithNoFade());
 
                 //去除时间文本中的多余信息
                 String info = item.getDate();
@@ -155,26 +155,26 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
             }
         });
-        mListView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-            }
-            @Override
-            public void onDownMotionEvent() {
-            }
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                if (scrollState == ScrollState.UP) {
-                    if (null != actionBar && actionBar.isShowing()) {
-                        actionBar.hide();
-                    }
-                } else if (scrollState == ScrollState.DOWN) {
-                    if (null != actionBar && !actionBar.isShowing()) {
-                        actionBar.show();
-                    }
-                }
-            }
-        });
+//        mListView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+//            @Override
+//            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+//            }
+//            @Override
+//            public void onDownMotionEvent() {
+//            }
+//            @Override
+//            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+//                if (scrollState == ScrollState.UP) {
+//                    if (null != actionBar && actionBar.isShowing()) {
+//                        actionBar.hide();
+//                    }
+//                } else if (scrollState == ScrollState.DOWN) {
+//                    if (null != actionBar && !actionBar.isShowing()) {
+//                        actionBar.show();
+//                    }
+//                }
+//            }
+//        });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -183,7 +183,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 NewsItem item;
                 if (size > 0 && (item = timelinesList.get(realPosition % size)) != null) {
                     Intent intent = new Intent(activity, ItemDetailActivity.class);
-                    intent.putExtra(Constant.OBJECT_1, item);
+                    intent.putExtra(Constant.NEWS_ITEM, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());
                     startActivity(intent);

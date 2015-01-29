@@ -34,8 +34,9 @@ import java.util.List;
  */
 public class MyFavoriteNewsFragment extends Fragment implements FragmentInterface, SwipeRefreshLayout.OnRefreshListener {
 
-    private Activity activity;
+    private static final int REQUEST_CODE = 0X100;
 
+    private Activity activity;
     private SwipeRefreshLayout mSwipeLayout;
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
@@ -114,10 +115,8 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
                     Intent intent = new Intent(activity, ItemDetailActivity.class);
-                    intent.putExtra(Constant.OBJECT_1, item);
-//                    intent.putExtra(Constant.TITLE, item.getTitle());
-//                    intent.putExtra(Constant.URL, item.getUrl());
-                    startActivity(intent);
+                    intent.putExtra(Constant.NEWS_ITEM, item);
+                    startActivityForResult(intent, REQUEST_CODE);
                 }
             }
         });
@@ -193,5 +192,13 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     @Override
     public void callBack() {
         loadData();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
+            loadData();
+        }
     }
 }

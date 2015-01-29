@@ -155,7 +155,7 @@ public class TopicItemFragment extends Fragment implements SwipeRefreshLayout.On
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
                     Intent intent = new Intent(activity, ItemDetailActivity.class);
-                    intent.putExtra(Constant.OBJECT_1, item);
+                    intent.putExtra(Constant.NEWS_ITEM, item);
 //                    intent.putExtra(Constant.TITLE, item.getTitle());
 //                    intent.putExtra(Constant.URL, item.getUrl());
                     startActivity(intent);

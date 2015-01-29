@@ -13,7 +13,7 @@
             android:id="@+id/headlines_one_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary_color"/>
+            android:scaleType="centerCrop"/>
 
     <TextView
             android:id="@+id/headlines_one"
