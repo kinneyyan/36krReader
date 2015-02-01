@@ -47,7 +47,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private static final int LOAD_COMPLETE = 0X110;
     private static final int LOAD_MORE_COMPLETE = 0X111;
     private MainActivity activity;
-    private ActionBar actionBar;
+//    private ActionBar actionBar;
     private ACache mCache;
 
     private HeadlinesView headlinesView;
@@ -66,22 +66,22 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private boolean needLoadMore = true;
     private int currentPage = 1;
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        //fragment隐藏时显示ActionBar
-        if (hidden) {
-            if (null != actionBar && !actionBar.isShowing()) {
-                actionBar.show();
-            }
-        }
-    }
+//    @Override
+//    public void onHiddenChanged(boolean hidden) {
+//        //fragment隐藏时显示ActionBar
+//        if (hidden) {
+//            if (null != actionBar && !actionBar.isShowing()) {
+//                actionBar.show();
+//            }
+//        }
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
-        actionBar = activity.getActionBar();
+//        actionBar = activity.getActionBar();
         mCache = ACache.get(activity);
     }
 
@@ -190,7 +190,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 int size = timelinesList.size();
@@ -229,7 +229,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
                 return true;
             }
-        });
+        });*/
 /*        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {

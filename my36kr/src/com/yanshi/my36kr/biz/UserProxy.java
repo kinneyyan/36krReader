@@ -1,11 +1,24 @@
 package com.yanshi.my36kr.biz;
 
 import android.content.Context;
+import android.util.Log;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.bean.NewsItem;
+import com.yanshi.my36kr.bean.NextItem;
+import com.yanshi.my36kr.bean.bmob.FavoriteNews;
+import com.yanshi.my36kr.bean.bmob.FavoriteNext;
 import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.dao.NewsItemDao;
+import com.yanshi.my36kr.dao.NextItemDao;
+import com.yanshi.my36kr.utils.ToastFactory;
+
+import java.util.List;
 
 /**
  * 用户操作代理类
@@ -67,19 +80,77 @@ public class UserProxy {
      * @param username
      * @param password
      */
-    public static void login(Context context, String username, String password, final LoginListener loginListener) {
+    public static void login(final Context context, String username, String password, final LoginListener loginListener) {
         final User user = new User();
         user.setUsername(username);
         user.setPassword(password);
         user.login(context, new SaveListener() {
             @Override
             public void onSuccess() {
+                syncFavoriteToLocal(context);
+
                 if (null != loginListener) loginListener.onSuccess();
             }
 
             @Override
             public void onFailure(int code, String msg) {
                 if (null != loginListener) loginListener.onFailure(msg);
+            }
+        });
+    }
+
+    /**
+     * 同步线上的收藏数据到本地数据库
+     */
+    private static void syncFavoriteToLocal(final Context context) {
+        BmobQuery<FavoriteNews> newsQuery = new BmobQuery<FavoriteNews>();
+        newsQuery.setLimit(100);
+        BmobQuery<FavoriteNext> nextBmobQuery = new BmobQuery<FavoriteNext>();
+        nextBmobQuery.setLimit(100);
+        newsQuery.findObjects(context, new FindListener<FavoriteNews>() {
+            @Override
+            public void onSuccess(List<FavoriteNews> list) {
+                if (null != list && !list.isEmpty()) {
+                    NewsItemDao newsItemDao = new NewsItemDao(context);
+                    for (FavoriteNews fNews : list) {
+                        NewsItem newsItem = new NewsItem();
+                        newsItem.setTitle(fNews.getTitle());
+                        newsItem.setContent(fNews.getContent());
+                        newsItem.setUrl(fNews.getUrl());
+                        newsItem.setNewsType(fNews.getNewsType());
+                        newsItem.setImgUrl(fNews.getImgUrl());
+                        newsItem.setObjectId(fNews.getObjectId());
+
+                        newsItemDao.add(newsItem);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                ToastFactory.getToast(context, "新闻"+context.getString(R.string.sync_failed)+s).show();
+            }
+        });
+        nextBmobQuery.findObjects(context, new FindListener<FavoriteNext>() {
+            @Override
+            public void onSuccess(List<FavoriteNext> list) {
+                if (null != list && !list.isEmpty()) {
+                    NextItemDao nextItemDao = new NextItemDao(context);
+                    for (FavoriteNext fNext : list) {
+                        NextItem nextItem = new NextItem();
+                        nextItem.setTitle(fNext.getTitle());
+                        nextItem.setContent(fNext.getContent());
+                        nextItem.setUrl(fNext.getUrl());
+                        nextItem.setObjectId(fNext.getObjectId());
+
+                        nextItemDao.add(nextItem);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                ToastFactory.getToast(context, "NEXT"+context.getString(R.string.sync_failed)+s).show();
             }
         });
     }
@@ -170,5 +241,24 @@ public class UserProxy {
      */
     public static void logout(Context context) {
         BmobUser.logOut(context);
+        clearDataBase(context);
+    }
+
+    /**
+     * 清空数据库
+     * @param context
+     */
+    private static void clearDataBase(Context context) {
+        NewsItemDao newsItemDao = new NewsItemDao(context);
+        NextItemDao nextItemDao = new NextItemDao(context);
+        List<NewsItem> news = newsItemDao.getAll();
+        List<NextItem> next = nextItemDao.getAll();
+
+        if (null != news && !news.isEmpty()) {
+            newsItemDao.deleteBatch(news);
+        }
+        if (null != next && !next.isEmpty()) {
+            nextItemDao.deleteBatch(next);
+        }
     }
 }

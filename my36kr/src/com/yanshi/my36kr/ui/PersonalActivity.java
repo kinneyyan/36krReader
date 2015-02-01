@@ -67,12 +67,13 @@ public class PersonalActivity extends BaseActivity {
         if (!UserProxy.isLogin(this)) {
             ToastFactory.getToast(this, getString(R.string.personal_login_first)).show();
             jumpToActivityForResult(this, LoginActivity.class, REQUEST_CODE_LOGIN, null);
-            return;
+        } else {
+            user = UserProxy.getCurrentUser(this);
+            if (null != user) {
+                setUserInfo(user);
+            }
         }
-        user = UserProxy.getCurrentUser(this);
-        if (null != user) {
-            setUserInfo(user);
-        }
+
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -86,7 +87,7 @@ public class PersonalActivity extends BaseActivity {
                     confirmDialogFragment.setParams(title, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            UserProxy.logout(PersonalActivity.this);
+                            UserProxy.logout(getApplicationContext());
                             PersonalActivity.this.finish();
                         }
                     }, null);
@@ -217,7 +218,6 @@ public class PersonalActivity extends BaseActivity {
 //                        Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
 //                        userAvatarIv.setImageBitmap(bitmap);
                         Log.d(Constant.TAG, "imgUri--->" + imageUri.toString());
-                        ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
                         uploadAvatar(imageUri.getPath());
                     }
                     break;
@@ -297,7 +297,7 @@ public class PersonalActivity extends BaseActivity {
      * 去拍照
      */
     private void takePhotoFromCamera() {
-        imageUri = Uri.fromFile(getCameraAvatarFile());
+        imageUri = Uri.fromFile(getAvatarFile());
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -308,15 +308,15 @@ public class PersonalActivity extends BaseActivity {
      * 去相册选择照片
      */
     private void getAvatarFromAlbum() {
-        imageUri = Uri.fromFile(getAlbumAvatarFile());
+        imageUri = Uri.fromFile(getAvatarFile());
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
         intent.putExtra("scale", true);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -348,19 +348,11 @@ public class PersonalActivity extends BaseActivity {
     }
 
     /**
-     * 返回暂存头像图片的file（从相册选取照片时）
+     * 返回存储图片的file
      * @return
      */
-    public File getAlbumAvatarFile() {
-        return new File(getExternalCacheDir(), "user_icon.jpg");
-    }
-
-    /**
-     * 返回拍摄的图片的file
-     * @return
-     */
-    public File getCameraAvatarFile() {
-        File file = new File(SDCardUtils.getAlbumStorageDir("36kr!"),
+    public File getAvatarFile() {
+        File file = new File(SDCardUtils.getAlbumStorageDir(getString(R.string.app_name)),
                 "user_icon_" + new Date().getTime() + ".jpg");
         Log.d(Constant.TAG, "Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)--->\n" + file.getAbsolutePath());
         return file;
@@ -403,6 +395,10 @@ public class PersonalActivity extends BaseActivity {
                     public void onSuccess() {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
                         ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+
+                        if (null != imageUri) {
+                            ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
+                        }
                     }
 
                     @Override

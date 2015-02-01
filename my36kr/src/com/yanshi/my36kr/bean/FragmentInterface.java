@@ -6,4 +6,7 @@ package com.yanshi.my36kr.bean;
 public interface FragmentInterface {
 
     public void callBack();
+
+    public void callBack2();
+
 }

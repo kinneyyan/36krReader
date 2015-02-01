@@ -35,6 +35,9 @@ public class NextItem implements Serializable {
     @DatabaseField(columnName = "date")
     private String date;
 
+    @DatabaseField(columnName = "objectId")
+    private String objectId;
+
     public int getId() {
         return id;
     }
@@ -91,17 +94,12 @@ public class NextItem implements Serializable {
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return "NextItem{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", voteCount=" + voteCount +
-                ", commentCount=" + commentCount +
-                ", url='" + url + '\'' +
-                ", date='" + date + '\'' +
-                '}';
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public JSONObject toJSONObj() {
@@ -114,6 +112,7 @@ public class NextItem implements Serializable {
             jsonObject.put("commentCount", commentCount);
             jsonObject.put("url", url);
             jsonObject.put("date", date);
+            jsonObject.put("objectId", objectId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,6 +130,7 @@ public class NextItem implements Serializable {
         nextItem.setVoteCount(jsonObject.optInt("voteCount"));
         nextItem.setCommentCount(jsonObject.optInt("commentCount"));
         nextItem.setDate(jsonObject.optString("date"));
+        nextItem.setObjectId(jsonObject.optString("objectId"));
         return nextItem;
     }
 

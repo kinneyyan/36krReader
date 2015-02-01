@@ -29,6 +29,8 @@ public class NewsItem implements Serializable {
     private String date;
     @DatabaseField(columnName = "newsType")
     private String newsType;
+    @DatabaseField(columnName = "objectId")
+    private String objectId;
 
     public int getId() {
         return id;
@@ -86,17 +88,12 @@ public class NewsItem implements Serializable {
         this.newsType = newsType;
     }
 
-    @Override
-    public String toString() {
-        return "NewsItem{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                ", imgUrl='" + imgUrl + '\'' +
-                ", content='" + content + '\'' +
-                ", date='" + date + '\'' +
-                ", newsType=" + newsType +
-                '}';
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public JSONObject toJSONObj() {
@@ -109,6 +106,7 @@ public class NewsItem implements Serializable {
             jsonObject.put("content", content);
             jsonObject.put("date", date);
             jsonObject.put("newsType", newsType);
+            jsonObject.put("objectId", objectId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -127,6 +125,7 @@ public class NewsItem implements Serializable {
         newsItem.setContent(jsonObject.optString("content"));
         newsItem.setDate(jsonObject.optString("date"));
         newsItem.setNewsType(jsonObject.optString("newsType"));
+        newsItem.setObjectId(jsonObject.optString("objectId"));
         return newsItem;
     }
 

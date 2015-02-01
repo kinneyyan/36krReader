@@ -9,6 +9,8 @@
       <root url="jar://$PROJECT_DIR$/libs/BmobSDK_V3.2.6_1103.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://E:/android-sdk-windows/sources/android-21" />
+    </SOURCES>
   </library>
 </component>

@@ -33,22 +33,29 @@
         <item name="android:maxHeight">15dip</item>
     </style>
 
+    <!--我的收藏同步按钮的progressBar-->
+    <style name="SycnProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/my_favorite_sync_rotate_btn</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
     <!--viewPagerIndicator样式-->
     <!--<style name="StyledIndicators" parent="CustomActionBarTheme">-->
-        <!--<item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>-->
+    <!--<item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>-->
     <!--</style>-->
 
     <!--<style name="CustomTabPageIndicator" parent="Widget.TabPageIndicator">-->
-        <!--<item name="android:background">@drawable/custom_tab_indicator</item>-->
-        <!--<item name="android:textColor">@color/darker_gray</item>-->
-        <!--<item name="android:textSize">16sp</item>-->
-        <!--<item name="android:divider">@drawable/custom_tab_indicator_divider</item>-->
-        <!--<item name="android:dividerPadding">10dp</item>-->
-        <!--<item name="android:showDividers">middle</item>-->
-        <!--<item name="android:paddingLeft">15dp</item>-->
-        <!--<item name="android:paddingRight">15dp</item>-->
-        <!--<item name="android:fadingEdge">horizontal</item>-->
-        <!--<item name="android:fadingEdgeLength">8dp</item>-->
+    <!--<item name="android:background">@drawable/custom_tab_indicator</item>-->
+    <!--<item name="android:textColor">@color/darker_gray</item>-->
+    <!--<item name="android:textSize">16sp</item>-->
+    <!--<item name="android:divider">@drawable/custom_tab_indicator_divider</item>-->
+    <!--<item name="android:dividerPadding">10dp</item>-->
+    <!--<item name="android:showDividers">middle</item>-->
+    <!--<item name="android:paddingLeft">15dp</item>-->
+    <!--<item name="android:paddingRight">15dp</item>-->
+    <!--<item name="android:fadingEdge">horizontal</item>-->
+    <!--<item name="android:fadingEdgeLength">8dp</item>-->
     <!--</style>-->
 
 </resources>

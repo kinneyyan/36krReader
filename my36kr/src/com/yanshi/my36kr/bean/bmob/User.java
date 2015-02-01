@@ -15,8 +15,6 @@ public class User extends BmobUser {
     private String nickname;
     private String sex;
     private String signature;
-    private BmobRelation favoriteNews;
-    private BmobRelation favoriteNextProduct;
 
     public BmobFile getAvatar() {
         return avatar;
@@ -50,22 +48,6 @@ public class User extends BmobUser {
         this.signature = signature;
     }
 
-    public BmobRelation getFavoriteNews() {
-        return favoriteNews;
-    }
-
-    public void setFavoriteNews(BmobRelation favoriteNews) {
-        this.favoriteNews = favoriteNews;
-    }
-
-    public BmobRelation getFavoriteNextProduct() {
-        return favoriteNextProduct;
-    }
-
-    public void setFavoriteNextProduct(BmobRelation favoriteNextProduct) {
-        this.favoriteNextProduct = favoriteNextProduct;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -73,8 +55,6 @@ public class User extends BmobUser {
                 ", nickname='" + nickname + '\'' +
                 ", sex='" + sex + '\'' +
                 ", signature='" + signature + '\'' +
-                ", favoriteNews=" + favoriteNews +
-                ", favoriteNextProduct=" + favoriteNextProduct +
                 '}';
     }
 }

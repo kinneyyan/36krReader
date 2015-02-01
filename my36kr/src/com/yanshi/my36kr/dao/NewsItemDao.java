@@ -60,6 +60,16 @@ public class NewsItemDao {
         return false;
     }
 
+    public boolean deleteBatch(List<NewsItem> list) {
+        try {
+            newsItemDao.delete(list);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void update(NewsItem newsItem) {
 
         try {
@@ -92,17 +102,17 @@ public class NewsItemDao {
     }
 
     //条件查询
-    public boolean findItemByTitle(String title) {
+    public NewsItem findItemByTitle(String title) {
         try {
             List<NewsItem> list = newsItemDao.queryBuilder().where().eq("title", title).query();
             if (null != list && !list.isEmpty()) {
-                return true;
+                return list.get(0);
             } else {
-                return false;
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

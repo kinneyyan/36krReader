@@ -8,12 +8,12 @@ import cn.bmob.v3.datatype.BmobRelation;
  * 作者：yanshi
  * 时间：2014-12-04 16:14
  */
-public class FavoriteNextProduct extends BmobObject {
+public class FavoriteNext extends BmobObject {
 
     private String title;
     private String content;
     private String url;
-    private BmobRelation user;
+    private String userId;
 
     public String getTitle() {
         return title;
@@ -39,11 +39,11 @@ public class FavoriteNextProduct extends BmobObject {
         this.url = url;
     }
 
-    public BmobRelation getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(BmobRelation user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -5,23 +5,30 @@ import android.content.*;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.CommonAdapter;
 import com.yanshi.my36kr.adapter.ViewHolder;
 import com.yanshi.my36kr.bean.Constant;
+import com.yanshi.my36kr.bean.FavoriteNewsIntf;
 import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NewsItem;
+import com.yanshi.my36kr.bean.bmob.FavoriteNews;
+import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
-import com.yanshi.my36kr.utils.StringUtils;
-import com.yanshi.my36kr.utils.ToastFactory;
+import com.yanshi.my36kr.utils.*;
 import com.yanshi.my36kr.view.dialog.ListDialogFragment;
+import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,12 +39,11 @@ import java.util.List;
  * 作者：yanshi
  * 时间：2014-11-04 12:08
  */
-public class MyFavoriteNewsFragment extends Fragment implements FragmentInterface, SwipeRefreshLayout.OnRefreshListener {
+public class MyFavoriteNewsFragment extends Fragment implements FragmentInterface, FavoriteNewsIntf {
 
     private static final int REQUEST_CODE = 0X100;
 
-    private Activity activity;
-    private SwipeRefreshLayout mSwipeLayout;
+    private MainActivity activity;
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
     private TextView emptyTv;
@@ -45,11 +51,14 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     private List<NewsItem> newsItemList = new ArrayList<NewsItem>();
     private List<NewsItem> loadingNewsItemList = new ArrayList<NewsItem>();//加载时候的list
 
+    private User user;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = this.getActivity();
+        activity = (MainActivity) this.getActivity();
+        if (UserProxy.isLogin(activity)) user = UserProxy.getCurrentUser(activity);
     }
 
     @Override
@@ -64,13 +73,15 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadData();
+        if (!UserProxy.isLogin(activity) || null == user) return;
+        if (NetUtils.isConnected(activity)) {
+            loadDataByNet();
+        } else {
+            loadData();
+        }
     }
 
     private void initView(View view) {
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.my_collection_item_sl);
-        mSwipeLayout.setColorSchemeResources(R.color.primary_color, R.color.secondary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mSwipeLayout.setOnRefreshListener(this);
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
         mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, newsItemList, R.layout.index_timeline_item) {
             @Override
@@ -81,26 +92,16 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
                 ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptions());
 
-                //去除时间文本中的多余信息
-                String info = item.getDate();
-                if (null != info && info.contains("+08:00")) {
-//                    int start = info.indexOf("•")+1;
-//                    int end = start+11;
-//                    String removeStr = info.substring(start, end);
-                    info = info.replace("T", " ").replace("+08:00", "");
+                TextView newsTypeTv = helper.getView(R.id.index_timeline_item_type_tv);
+                if (null != newsTypeTv) {
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                    newsTypeTv.setLayoutParams(layoutParams);
                 }
-                helper.setText(R.id.index_timeline_item_info_tv, info);
-
-                TextView tv = helper.getView(R.id.index_timeline_item_title_tv);
-                ImageView iv = helper.getView(R.id.index_timeline_item_iv);
-                if (StringUtils.isBlank(item.getDate())) {
-                    //8点一氪晚间版
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-                    iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                    iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                }
+                //隐藏时间的TextView
+                TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
+                if(null != tv) tv.setVisibility(View.GONE);
             }
         });
         emptyTv = (TextView) view.findViewById(R.id.my_collection_item_empty_tv);
@@ -120,7 +121,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final NewsItem newsItem = newsItemList.get(position);
@@ -161,9 +162,12 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
 
                 return true;
             }
-        });
+        });*/
     }
 
+    /**
+     * 读取本地数据库数据
+     */
     private void loadData() {
         NewsItemDao newsItemDao = new NewsItemDao(activity);
         loadingNewsItemList.clear();
@@ -178,20 +182,67 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             }
             emptyTv.setVisibility(View.GONE);
         } else {
+            //无数据
             emptyTv.setVisibility(View.VISIBLE);
         }
-        mSwipeLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onRefresh() {
-        loadData();
-    }
+    /**
+     * 读取网络数据
+     */
+    private void loadDataByNet() {
+        activity.refreshOptionsMenu(true);//actionbar的进度圈
 
+        BmobQuery<FavoriteNews> query = new BmobQuery<FavoriteNews>();
+        query.setLimit(100);//设置单次查询返回的条目数
+        query.addWhereEqualTo("userId", user.getObjectId());
+        query.findObjects(activity, new FindListener<FavoriteNews>() {
+            @Override
+            public void onSuccess(List<FavoriteNews> list) {
+                activity.refreshOptionsMenu(false);
+                if (null != list && !list.isEmpty()) {
+                    newsItemList.clear();
+                    for (FavoriteNews fNews : list) {
+                        NewsItem newsItem = new NewsItem();
+                        newsItem.setTitle(fNews.getTitle());
+                        newsItem.setContent(fNews.getContent());
+                        newsItem.setUrl(fNews.getUrl());
+                        newsItem.setImgUrl(fNews.getImgUrl());
+                        newsItem.setNewsType(fNews.getNewsType());
+                        newsItemList.add(newsItem);
+                    }
+                    Collections.reverse(newsItemList);
+                    if (null != mAdapter) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    emptyTv.setVisibility(View.GONE);
+                } else {
+                    //无数据
+                    emptyTv.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e("yslog", s);
+                activity.refreshOptionsMenu(false);
+                loadData();
+            }
+        });
+
+    }
 
     @Override
     public void callBack() {
         loadData();
+    }
+
+    @Override
+    public void callBack2() {
+        user = UserProxy.getCurrentUser(activity);
+        if (null != user) {
+            loadDataByNet();
+        }
     }
 
     @Override
@@ -200,5 +251,10 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
         if (REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
             loadData();
         }
+    }
+
+    @Override
+    public List<NewsItem> getNewsList() {
+        return newsItemList;
     }
 }

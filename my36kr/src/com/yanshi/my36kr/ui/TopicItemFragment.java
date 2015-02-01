@@ -162,7 +162,7 @@ public class TopicItemFragment extends Fragment implements SwipeRefreshLayout.On
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final NewsItem newsItem = newsItemList.get(position);
@@ -199,7 +199,7 @@ public class TopicItemFragment extends Fragment implements SwipeRefreshLayout.On
 
                 return true;
             }
-        });
+        });*/
 /*        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {

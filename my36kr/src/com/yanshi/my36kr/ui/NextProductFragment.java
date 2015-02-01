@@ -117,7 +117,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 int size = nextItemList.size();
@@ -155,7 +155,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
 
                 return true;
             }
-        });
+        });*/
     }
 
     @Override

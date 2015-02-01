@@ -15,7 +15,7 @@ public class FavoriteNews extends BmobObject {
     private String imgUrl;
     private String content;
     private String newsType;
-    private BmobRelation user;
+    private String userId;//用户收藏的objectId
 
     public String getTitle() {
         return title;
@@ -57,11 +57,11 @@ public class FavoriteNews extends BmobObject {
         this.newsType = newsType;
     }
 
-    public BmobRelation getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(BmobRelation user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

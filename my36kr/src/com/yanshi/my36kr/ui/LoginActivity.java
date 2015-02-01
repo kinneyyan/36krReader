@@ -82,7 +82,7 @@ public class LoginActivity extends BaseActivity {
                     if(userOperation == UserOperation.LOGIN) {
                         if (!isUserInfoComplete()) return;
                         loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_loading_dialog");
-                        UserProxy.login(mContext, username, password, new UserProxy.LoginListener() {
+                        UserProxy.login(getApplicationContext(), username, password, new UserProxy.LoginListener() {
                             @Override
                             public void onSuccess() {
                                 loadingDialogFragment.dismiss();

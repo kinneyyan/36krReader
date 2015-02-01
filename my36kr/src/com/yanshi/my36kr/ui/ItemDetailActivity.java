@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,9 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
+import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.biz.CollectHelper;
+import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.ui.base.BaseActivity;
@@ -50,10 +54,13 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     private NextItemDao nextItemDao;
     private ShareActionProvider mShareActionProvider;
 
+    private User user;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_detail);
+        if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();
@@ -139,17 +146,23 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.news_detail_activity_actions, menu);
 
-        //收藏按钮
-        MenuItem collectItem = menu.findItem(R.id.action_collect);
-        if (null != newsItemDao && null != newsItem) {
-            if (newsItemDao.findItemByTitle(newsItem.getTitle())) {
-                collectItem.setIcon(R.drawable.ic_action_favorite);
-                setCollected(true);
-            }
-        } else if (null != nextItemDao && null != nextItem) {
-            if (nextItemDao.findItemByTitle(nextItem.getTitle())) {
-                collectItem.setIcon(R.drawable.ic_action_favorite);
-                setCollected(true);
+        if (UserProxy.isLogin(this)) {
+            //收藏按钮
+            MenuItem collectItem = menu.findItem(R.id.action_collect);
+            if (null != newsItemDao && null != newsItem) {
+                NewsItem localItem = newsItemDao.findItemByTitle(newsItem.getTitle());
+                if (null != localItem) {
+                    newsItem = localItem;
+                    collectItem.setIcon(R.drawable.ic_action_favorite);
+                    setCollected(true);
+                }
+            } else if (null != nextItemDao && null != nextItem) {
+                NextItem localItem = nextItemDao.findItemByTitle(nextItem.getTitle());
+                if (null != localItem) {
+                    collectItem.setIcon(R.drawable.ic_action_favorite);
+                    nextItem = localItem;
+                    setCollected(true);
+                }
             }
         }
 
@@ -173,47 +186,73 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_collect:
+                if (!UserProxy.isLogin(this) || null == user) {
+                    ToastFactory.getToast(this, getString(R.string.personal_login_first)).show();
+                    return true;
+                }
                 //新闻详情
                 if (newsItem != null && newsItemDao != null) {
                     if (!isCollected) { //未收藏时
-                        if (newsItemDao.add(newsItem)) {
-                            item.setIcon(R.drawable.ic_action_favorite);
-                            ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
-                            setCollected(true);
-                            setResult(RESULT_OK);
-                        } else {
-                            ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
-                        }
+                        CollectHelper.collectNews(this, newsItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
+                            @Override
+                            public void onSuccess(String objectId) {
+                                newsItem.setObjectId(objectId);
+                                newsItemDao.add(newsItem);
+                                setCollected(true);
+                                setResult(RESULT_OK);
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
                     } else {    //已收藏时
-                        if (newsItemDao.deleteByItem(newsItem)) {
-                            item.setIcon(R.drawable.ic_action_not_favorite);
-                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_success)).show();
-                            setCollected(false);
-                            setResult(RESULT_OK);
-                        } else {
-                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_failed)).show();
-                        }
+                        CollectHelper.unCollectNews(this, newsItem.getObjectId(), item, new CollectHelper.CollectListener() {
+                            @Override
+                            public void onSuccess(String objectId) {
+                                newsItemDao.deleteByItem(newsItem);
+                                setCollected(false);
+                                setResult(RESULT_OK);
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
                     }
-                //NEXT详情
+                    //NEXT详情
                 } else if (nextItem != null && nextItemDao != null) {
                     if (!isCollected) { //未收藏时
-                        if (nextItemDao.add(nextItem)) {
-                            item.setIcon(R.drawable.ic_action_favorite);
-                            ToastFactory.getToast(this, getResources().getString(R.string.collect_success)).show();
-                            setCollected(true);
-                            setResult(RESULT_OK);
-                        } else {
-                            ToastFactory.getToast(this, getResources().getString(R.string.collect_failed)).show();
-                        }
+                        CollectHelper.collectNext(this, nextItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
+                            @Override
+                            public void onSuccess(String objectId) {
+                                newsItem.setObjectId(objectId);
+                                nextItemDao.add(nextItem);
+                                setCollected(true);
+                                setResult(RESULT_OK);
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
                     } else {    //已收藏时
-                        if (nextItemDao.deleteByItem(nextItem)) {
-                            item.setIcon(R.drawable.ic_action_not_favorite);
-                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_success)).show();
-                            setCollected(false);
-                            setResult(RESULT_OK);
-                        } else {
-                            ToastFactory.getToast(this, getResources().getString(R.string.un_collect_failed)).show();
-                        }
+                        CollectHelper.unCollectNext(this, nextItem.getObjectId(), item, new CollectHelper.CollectListener() {
+                            @Override
+                            public void onSuccess(String objectId) {
+                                nextItemDao.deleteByItem(nextItem);
+                                setCollected(false);
+                                setResult(RESULT_OK);
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
                     }
                 }
                 break;

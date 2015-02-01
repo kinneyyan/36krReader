@@ -5,19 +5,26 @@ import android.content.*;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.listener.FindListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.CommonAdapter;
 import com.yanshi.my36kr.adapter.ViewHolder;
-import com.yanshi.my36kr.bean.Constant;
-import com.yanshi.my36kr.bean.FragmentInterface;
-import com.yanshi.my36kr.bean.NextItem;
+import com.yanshi.my36kr.bean.*;
+import com.yanshi.my36kr.bean.bmob.FavoriteNews;
+import com.yanshi.my36kr.bean.bmob.FavoriteNext;
+import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NextItemDao;
+import com.yanshi.my36kr.utils.NetUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.dialog.ListDialogFragment;
 
@@ -30,12 +37,11 @@ import java.util.List;
  * 作者：yanshi
  * 时间：2014-11-04 12:55
  */
-public class MyFavoriteNextFragment extends Fragment implements FragmentInterface, SwipeRefreshLayout.OnRefreshListener {
+public class MyFavoriteNextFragment extends Fragment implements FragmentInterface, FavoriteNextIntf {
 
     private static final int REQUEST_CODE = 0X100;
 
-    private Activity activity;
-    private SwipeRefreshLayout mSwipeLayout;
+    private MainActivity activity;
     private ListView mListView;
     private CommonAdapter<NextItem> mAdapter;
     private TextView emptyTv;
@@ -43,11 +49,14 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     private List<NextItem> nextItemList = new ArrayList<NextItem>();
     private List<NextItem> loadingNextItemList = new ArrayList<NextItem>();//加载时候的list
 
+    private User user;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = this.getActivity();
+        activity = (MainActivity) this.getActivity();
+        if (UserProxy.isLogin(activity)) user = UserProxy.getCurrentUser(activity);
     }
 
     @Override
@@ -62,21 +71,26 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadData();
+        if (!UserProxy.isLogin(activity) || null == user) return;
+        if (NetUtils.isConnected(activity)) {
+            loadDataByNet();
+        } else {
+            loadData();
+        }
     }
 
     private void initView(View view) {
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.my_collection_item_sl);
-        mSwipeLayout.setColorSchemeResources(R.color.primary_color, R.color.secondary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mSwipeLayout.setOnRefreshListener(this);
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
         mListView.setAdapter(mAdapter = new CommonAdapter<NextItem>(activity, nextItemList, R.layout.next_product_item) {
             @Override
             public void convert(ViewHolder helper, NextItem item) {
                 helper.setText(R.id.next_product_item_title_tv, item.getTitle());
                 helper.setText(R.id.next_product_item_content_tv, item.getContent());
-                helper.setText(R.id.next_product_item_vote_count_tv, "票数\n" + item.getVoteCount());
-                helper.setText(R.id.next_product_item_comment_count_tv, item.getCommentCount() + "");
+
+                TextView tv1 = helper.getView(R.id.next_product_item_vote_count_tv);
+                TextView tv2 = helper.getView(R.id.next_product_item_comment_count_tv);
+                if (null != tv1) tv1.setVisibility(View.GONE);
+                if (null != tv2) tv2.setVisibility(View.GONE);
             }
         });
         emptyTv = (TextView) view.findViewById(R.id.my_collection_item_empty_tv);
@@ -95,7 +109,7 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                 }
             }
         });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+/*        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final NextItem next = nextItemList.get(position);
@@ -136,9 +150,12 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
 
                 return true;
             }
-        });
+        });*/
     }
 
+    /**
+     * 读取本地数据库数据
+     */
     private void loadData() {
         NextItemDao nextItemdao = new NextItemDao(activity);
         loadingNextItemList.clear();
@@ -155,12 +172,48 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
         } else {
             emptyTv.setVisibility(View.VISIBLE);
         }
-        mSwipeLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onRefresh() {
-        loadData();
+    /**
+     * 读取网络数据
+     */
+    private void loadDataByNet() {
+        activity.refreshOptionsMenu(true);//actionbar的进度圈
+
+        BmobQuery<FavoriteNext> query = new BmobQuery<FavoriteNext>();
+        query.setLimit(100);//设置单次查询返回的条目数
+        query.addWhereEqualTo("userId", user.getObjectId());
+        query.findObjects(activity, new FindListener<FavoriteNext>() {
+            @Override
+            public void onSuccess(List<FavoriteNext> list) {
+                activity.refreshOptionsMenu(false);
+                if (null != list && !list.isEmpty()) {
+                    nextItemList.clear();
+                    for (FavoriteNext fNext : list) {
+                        NextItem nextItem = new NextItem();
+                        nextItem.setTitle(fNext.getTitle());
+                        nextItem.setContent(fNext.getContent());
+                        nextItem.setUrl(fNext.getUrl());
+                        nextItemList.add(nextItem);
+                    }
+                    Collections.reverse(nextItemList);
+                    if (null != mAdapter) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    emptyTv.setVisibility(View.GONE);
+                } else {
+                    //无数据
+                    emptyTv.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                Log.e("yslog", s);
+                activity.refreshOptionsMenu(false);
+                loadData();
+            }
+        });
     }
 
     @Override
@@ -169,10 +222,23 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     }
 
     @Override
+    public void callBack2() {
+        user = UserProxy.getCurrentUser(activity);
+        if (null != user) {
+            loadDataByNet();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
             loadData();
         }
+    }
+
+    @Override
+    public List<NextItem> getNextList() {
+        return nextItemList;
     }
 }

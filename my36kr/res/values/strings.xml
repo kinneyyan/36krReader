@@ -10,11 +10,16 @@
     <string name="network_not_access">未找到可用连接</string>
     <string name="network_time_out">网络不给力&#62;_&#60;，点击刷新</string>
     <string name="please_wait">请稍后...</string>
+    <string name="syncing">同步中</string>
+    <string name="sync_success">同步成功</string>
+    <string name="sync_failed">同步失败：</string>
+    <string name="sync_no_data">没有数据需要同步</string>
     <string name="action_open_by_browser">在浏览器中打开</string>
     <string name="action_copy_link">复制链接</string>
     <string name="has_copied_tip">已复制到剪贴板</string>
     <string name="action_send">分享</string>
     <string name="action_collect">收藏</string>
+    <string name="action_sync">同步</string>
     <string name="collect_success">收藏成功</string>
     <string name="collect_failed">收藏失败</string>
     <string name="un_collect_success">取消收藏成功</string>
