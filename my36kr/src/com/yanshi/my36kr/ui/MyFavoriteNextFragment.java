@@ -1,10 +1,9 @@
 package com.yanshi.my36kr.ui;
 
 import android.app.Activity;
-import android.content.*;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,20 +12,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.listener.FindListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.CommonAdapter;
 import com.yanshi.my36kr.adapter.ViewHolder;
-import com.yanshi.my36kr.bean.*;
-import com.yanshi.my36kr.bean.bmob.FavoriteNews;
+import com.yanshi.my36kr.bean.Constant;
+import com.yanshi.my36kr.bean.FavoriteNextIntf;
+import com.yanshi.my36kr.bean.FragmentInterface;
+import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.bean.bmob.FavoriteNext;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.utils.NetUtils;
-import com.yanshi.my36kr.utils.ToastFactory;
-import com.yanshi.my36kr.view.dialog.ListDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +69,11 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!UserProxy.isLogin(activity) || null == user) return;
+        if (!UserProxy.isLogin(activity) || null == user) {
+            emptyTv.setVisibility(View.VISIBLE);
+            emptyTv.setText(getString(R.string.personal_login_first));
+            return;
+        }
         if (NetUtils.isConnected(activity)) {
             loadDataByNet();
         } else {
@@ -240,5 +242,15 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     @Override
     public List<NextItem> getNextList() {
         return nextItemList;
+    }
+
+    @Override
+    public void setNotLoginStr() {
+        if (null != emptyTv) {
+            emptyTv.setVisibility(View.VISIBLE);
+            emptyTv.setText(getString(R.string.personal_login_first));
+        }
+        nextItemList.clear();
+        if (null != mAdapter) mAdapter.notifyDataSetChanged();
     }
 }

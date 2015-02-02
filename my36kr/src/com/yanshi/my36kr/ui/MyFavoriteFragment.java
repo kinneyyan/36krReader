@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.view.*;
-import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.datatype.BmobRelation;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.SmartFragmentStatePagerAdapter;
-import com.yanshi.my36kr.bean.*;
-import com.yanshi.my36kr.bean.bmob.FavoriteNews;
-import com.yanshi.my36kr.bean.bmob.FavoriteNext;
-import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.utils.ScreenUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
-import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 import com.yanshi.my36kr.view.slidingTab.SlidingTabLayout;
 
 import java.util.ArrayList;
@@ -138,13 +132,21 @@ public class MyFavoriteFragment extends Fragment {
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-        //当fragment显示时，收藏的数据再加载一遍
         if (!hidden) {
-            for (Fragment fragment : fragmentList) {
-                if (null != fragment && fragment instanceof FragmentInterface) {
-                    ((FragmentInterface) fragment).callBack();
+            if (UserProxy.isLogin(activity)) {
+                for (Fragment fragment : fragmentList) {
+                    if (null != fragment && fragment instanceof FragmentInterface) {
+                        ((FragmentInterface) fragment).callBack();
+                    }
+                }
+            } else {
+                for (Fragment fragment : fragmentList) {
+                    if (null != fragment && fragment instanceof FragmentInterface) {
+                        ((FragmentInterface) fragment).setNotLoginStr();
+                    }
                 }
             }
+
         }
     }
 

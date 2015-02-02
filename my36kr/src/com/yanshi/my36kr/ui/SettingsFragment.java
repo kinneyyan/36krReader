@@ -19,6 +19,7 @@ import com.yanshi.my36kr.utils.ACache;
 import com.yanshi.my36kr.utils.DataCleanManager;
 import com.yanshi.my36kr.utils.SDCardUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
+import com.yanshi.my36kr.view.MyWebView;
 import com.yanshi.my36kr.view.dialog.ConfirmDialogFragment;
 import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 
@@ -36,8 +37,6 @@ public class SettingsFragment extends Fragment {
     Button offlineDownloadBtn;//离线下载
     Button clearCacheBtn;//清除缓存
     TextView cacheSizeTv;//缓存大小
-    //WebView的缓存路径
-    final String WEBVIEW_CACHE_PATH = "/data/data/com.yanshi.my36kr/app_webview/Cache";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +61,8 @@ public class SettingsFragment extends Fragment {
      * 初始化缓存大小并显示
      */
     private void initCacheSize() {
+        String WEBVIEW_CACHE_PATH = "/data/data/com.yanshi.my36kr/app_webview/Cache";//WebView的缓存路径
+
         //内置存储cache
         double internalCacheSize = SDCardUtils.getDirSize(activity.getCacheDir());
         //外置存储cache
@@ -76,7 +77,6 @@ public class SettingsFragment extends Fragment {
         String str = this.getString(R.string.settings_cache_size, totalCacheSize);
 
         cacheSizeTv.setText(str);
-        Log.d("yslog", "getFileDir--->" + activity.getFilesDir().getAbsolutePath());
         Log.d("yslog", "internalCacheSize--->" + internalCacheSize);
         Log.d("yslog", "externalCacheSize--->" + externalCacheSize);
         Log.d("yslog", "webViewCacheSize--->" + webViewCacheSize);
@@ -108,11 +108,7 @@ public class SettingsFragment extends Fragment {
                         loadingDialogFragment.setParams(getResources().getString(R.string.loading_dialog_title));
                         loadingDialogFragment.show(activity.getFragmentManager(), "settings_loading_dialog");
 
-                        ACache.get(activity).clear();
-                        ImageLoader.getInstance().clearDiskCache();
-                        DataCleanManager.cleanInternalCache(activity);
-                        DataCleanManager.cleanExternalCache(activity);
-                        DataCleanManager.cleanCustomCache(WEBVIEW_CACHE_PATH);
+                        clearAppCache();
 
                         new DialogHandler(loadingDialogFragment).sendEmptyMessageDelayed(0, 1000);
                     }
@@ -120,6 +116,18 @@ public class SettingsFragment extends Fragment {
                 confirmDialogFragment.show(activity.getFragmentManager(), "settings_confirm_dialog");
             }
         });
+    }
+
+    /**
+     * 清除app所有的缓存
+     */
+    private void clearAppCache() {
+        ACache.get(activity).clear();
+        ImageLoader.getInstance().clearDiskCache();
+        DataCleanManager.cleanInternalCache(activity);
+        DataCleanManager.cleanExternalCache(activity);
+        new MyWebView(activity).clearCache();
+//        DataCleanManager.cleanCustomCache(WEBVIEW_CACHE_PATH);//root时可用
     }
 
     private class DialogHandler extends Handler {

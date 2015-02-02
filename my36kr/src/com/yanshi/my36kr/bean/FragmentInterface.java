@@ -9,4 +9,6 @@ public interface FragmentInterface {
 
     public void callBack2();
 
+    public void setNotLoginStr();
+
 }

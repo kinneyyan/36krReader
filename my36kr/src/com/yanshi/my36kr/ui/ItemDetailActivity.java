@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -228,7 +227,7 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                         CollectHelper.collectNext(this, nextItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
                             @Override
                             public void onSuccess(String objectId) {
-                                newsItem.setObjectId(objectId);
+                                nextItem.setObjectId(objectId);
                                 nextItemDao.add(nextItem);
                                 setCollected(true);
                                 setResult(RESULT_OK);

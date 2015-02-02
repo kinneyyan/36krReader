@@ -1,12 +1,10 @@
 package com.yanshi.my36kr.ui;
 
 import android.app.Activity;
-import android.content.*;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +24,7 @@ import com.yanshi.my36kr.bean.bmob.FavoriteNews;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
-import com.yanshi.my36kr.utils.*;
-import com.yanshi.my36kr.view.dialog.ListDialogFragment;
-import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
+import com.yanshi.my36kr.utils.NetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +69,13 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!UserProxy.isLogin(activity) || null == user) return;
+        if (!UserProxy.isLogin(activity) || null == user) {
+            if (null != emptyTv) {
+                emptyTv.setVisibility(View.VISIBLE);
+                emptyTv.setText(getString(R.string.personal_login_first));
+            }
+            return;
+        }
         if (NetUtils.isConnected(activity)) {
             loadDataByNet();
         } else {
@@ -101,7 +103,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 }
                 //隐藏时间的TextView
                 TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
-                if(null != tv) tv.setVisibility(View.GONE);
+                if (null != tv) tv.setVisibility(View.GONE);
             }
         });
         emptyTv = (TextView) view.findViewById(R.id.my_collection_item_empty_tv);
@@ -256,5 +258,15 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     @Override
     public List<NewsItem> getNewsList() {
         return newsItemList;
+    }
+
+    @Override
+    public void setNotLoginStr() {
+        if (null != emptyTv) {
+            emptyTv.setVisibility(View.VISIBLE);
+            emptyTv.setText(getString(R.string.personal_login_first));
+        }
+        newsItemList.clear();
+        if (null != mAdapter) mAdapter.notifyDataSetChanged();
     }
 }
