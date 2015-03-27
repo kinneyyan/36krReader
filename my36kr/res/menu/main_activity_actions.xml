@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:id="@+id/action_loading"
-          android:actionLayout="@layout/actionbar_indeterminate_progressbar"
-          android:title="@string/action_loading"
-          android:showAsAction="always"
-          android:visible="false"/>
-
-</menu>
