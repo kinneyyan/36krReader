@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- toolbar（actionbar）颜色 -->
+        <item name="colorPrimary">@color/primary_color</item>
+        <!-- 状态栏颜色 -->
+        <item name="colorPrimaryDark">@color/primary_color_dark</item>
+        <item name="colorAccent">@color/secondary_color</item>
+
+        <!-- 窗口的背景颜色 -->
+        <item name="android:windowBackground">@color/background_color</item>
+    </style>
+
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+    </style>
+
+    <!--自定义progressBar-->
+    <style name="Custom.Widget.Holo.ProgressBar.Horizontal" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/custom_progress_horizontal</item>
+        <item name="android:minHeight">5dip</item>
+        <item name="android:maxHeight">15dip</item>
+    </style>
+    
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/topic_item_sl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/topic_item_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:cacheColorHint="@android:color/transparent"
+            android:visibility="gone" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/topic_item_loading_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:gravity="center"
+        android:text="@string/app_loading_tv_text"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@color/half_transparent"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/topic_item_reload_btn"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/network_time_out"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</FrameLayout>

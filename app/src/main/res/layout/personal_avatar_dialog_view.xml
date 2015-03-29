@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:buttonBarStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/personal_avatar_dialog_view_camera_btn"
+        style="?android:buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawablePadding="4dp"
+        android:drawableTop="@drawable/ic_camera"
+        android:padding="16dp"
+        android:text="@string/personal_camera"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/personal_avatar_dialog_view_album_btn"
+        style="?android:buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawablePadding="4dp"
+        android:drawableTop="@drawable/ic_album"
+        android:padding="16dp"
+        android:text="@string/personal_album"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="16sp" />
+</LinearLayout>

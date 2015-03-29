@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    android:divider="?android:dividerHorizontal"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:showDividers="middle">
+
+    <Button
+        android:id="@+id/settings_personal_info_btn"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/icon_user"
+        android:drawablePadding="8dp"
+        android:gravity="start|center_vertical"
+        android:text="@string/personal_info"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/settings_offline_download_btn"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableLeft="@drawable/ic_download"
+        android:drawablePadding="8dp"
+        android:gravity="start|center_vertical"
+        android:text="@string/settings_offline_download"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="20sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/settings_cache_size_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/settings_clear_cache_btn"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_clear"
+            android:drawablePadding="8dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_clear_cache"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="20sp" />
+
+    </FrameLayout>
+
+</LinearLayout>

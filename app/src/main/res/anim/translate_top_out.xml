@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!--从顶部退出的动画-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1000"
+    android:fillAfter="true"
+    android:fromYDelta="0.0%"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:toYDelta="-100.0%" />

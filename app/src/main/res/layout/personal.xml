@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        android:divider="?android:dividerHorizontal"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/personal_username_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_username"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="26sp" />
+        <!--头像-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp">
+
+            <ImageView
+                android:id="@+id/personal_user_avatar_iv"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_user_avatar" />
+
+            <Button
+                android:id="@+id/personal_user_avatar_btn"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:gravity="start|center_vertical"
+                android:text="@string/user_avatar"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="18sp" />
+        </RelativeLayout>
+        <!--昵称-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/personal_user_nickname_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:maxEms="10"
+                android:singleLine="true"
+                android:text="-"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/personal_user_nickname_btn"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="start|center_vertical"
+                android:text="@string/user_nickname"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="18sp" />
+        </RelativeLayout>
+        <!--性别-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/personal_user_sex_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="-"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/personal_user_sex_btn"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="start|center_vertical"
+                android:text="@string/user_sex"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="18sp" />
+        </RelativeLayout>
+        <!--个性签名-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/personal_user_signature_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:maxEms="12"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:text="@string/user_signature_default"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/personal_user_signature_btn"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/personal_user_signature_tv"
+                android:layout_alignTop="@id/personal_user_signature_tv"
+                android:layout_centerVertical="true"
+                android:gravity="start|center_vertical"
+                android:text="@string/user_signature"
+                android:textColor="@color/tv_primary_color"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/personal_user_logout_btn"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_logout"
+            android:drawablePadding="8dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/user_logout"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

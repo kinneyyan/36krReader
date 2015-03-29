@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><!--缩放变大、渐显的动画-->
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <scale
+        android:duration="1000"
+        android:fillAfter="true"
+        android:fromXScale="0.5"
+        android:fromYScale="0.5"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="1.0"
+        android:toYScale="1.0" />
+    <alpha
+        android:duration="1000"
+        android:fillAfter="true"
+        android:fromAlpha="0.7"
+        android:toAlpha="1.0" />
+
+</set>

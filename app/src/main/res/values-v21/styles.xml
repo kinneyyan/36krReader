@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+        <!-- 底部导航栏颜色 -->
+        <item name="android:navigationBarColor">@color/primary_color</item>
+        <!--设置波纹颜色-->
+        <!--<item name="android:colorControlHighlight">@android:color/holo_red_light</item>-->
+    </style>
+
+</resources>
