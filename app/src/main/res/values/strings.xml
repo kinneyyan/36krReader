@@ -28,6 +28,7 @@
     <string name="settings_clear_cache">清除缓存</string>
     <string name="settings_cache_size">%s MB</string>
     <string name="settings_clear_cache_success">清除成功</string>
+    <string name="image_terminal_img_failed">啊噢……加载图片失败</string>
 
     <string name="chooser_dialog_title">提示</string>
     <string name="confirm_dialog_title">确认%s吗？</string>

@@ -6,10 +6,22 @@
 
     <include layout="@layout/toolbar" />
 
-    <uk.co.senab.photoview.PhotoView
-        android:id="@+id/image_terminal_photo_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"/>
+        android:layout_height="match_parent">
+
+        <uk.co.senab.photoview.PhotoView
+            android:id="@+id/image_terminal_photo_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ProgressBar
+            android:id="@+id/image_terminal_pb"
+            style="@android:style/Widget.Holo.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
 
 </LinearLayout>

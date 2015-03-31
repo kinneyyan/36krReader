@@ -248,10 +248,15 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     //设置加载Tv的退出动画
     private void setLoadingTvOut() {
         if (loadingTv.getVisibility() == View.VISIBLE) {
-            loadingTv.setVisibility(View.GONE);
-            Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
-            loadingTv.setAnimation(am);
-            am.start();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadingTv.setVisibility(View.GONE);
+                    Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
+                    loadingTv.setAnimation(am);
+                    am.start();
+                }
+            }, 1000);
         }
     }
 

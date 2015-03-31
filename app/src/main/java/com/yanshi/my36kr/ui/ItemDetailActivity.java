@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +21,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.ShareActionProvider;
 import com.yanshi.my36kr.R;
@@ -29,6 +34,7 @@ import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.HttpUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.MyWebView;
@@ -45,6 +51,7 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     private ActionBar actionBar;
     private ProgressBar progressBar;
     private MyWebView webView;
+    private Button reloadBtn;
 
     private NewsItem newsItem;
     private NextItem nextItem;
@@ -53,7 +60,6 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
 
     private NewsItemDao newsItemDao;
     private NextItemDao nextItemDao;
-    private ShareActionProvider mShareActionProvider;
 
     private User user;
 
@@ -84,9 +90,67 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                 this.invalidateOptionsMenu();
             }
             findViews();
+            setListener();
             initWebView();
+            doRequest();
+
         }
 
+    }
+
+    private void setListener() {
+        reloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doRequest();
+            }
+        });
+    }
+
+    //请求接口获取html
+    private void doRequest() {
+        if (!StringUtils.isBlank(webUrl)) {
+            HttpUtils.doGetAsyn(webUrl, new HttpUtils.CallBack() {
+                @Override
+                public void onRequestComplete(String result) {
+                    mHandler.obtainMessage(0, result).sendToTarget();
+                }
+            });
+        }
+    }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String result = (String) msg.obj;
+            if (!TextUtils.isEmpty(result)) {
+                reloadBtn.setVisibility(View.GONE);
+
+                if (null != newsItem) result = filtHtmlStr(result);
+                webView.loadDataWithBaseURL(webUrl, result, "text/html", "UTF-8", null);
+            }
+            else {
+                reloadBtn.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    //去除html字符串一些标签
+    private String filtHtmlStr(String result) {
+        int start = result.indexOf("<header class=\"header header-normal\">");
+        int end = result.indexOf("</header>", start)+"</header>".length();
+
+        //获取html中文章的第一张图片url
+//        int divStart = result.indexOf("<div class=\"single-post-header__headline\">");
+//        int divEnd = result.indexOf("</div>", divStart)+"</div>".length();
+//        String imgStr = result.substring(divStart, divEnd);
+//        int imgStart = imgStr.indexOf("src=\"")+"src=\"".length();
+//        int imgEnd = imgStr.indexOf("\"", imgStart);
+//        firstImgUrl = imgStr.substring(imgStart, imgEnd);
+//        Log.d("yslog", "firstPic url:" + firstImgUrl);
+
+//        return result.replace(result.substring(start, end), "").replace(imgStr, "");
+        return result.replace(result.substring(start, end), "");
     }
 
     private void initWebView() {
@@ -130,8 +194,6 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
             }
         });
 
-        if (!StringUtils.isBlank(webUrl)) webView.loadUrl(webUrl);
-
     }
 
     private void findViews() {
@@ -141,6 +203,7 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar = (ProgressBar) this.findViewById(R.id.news_detail_pb);
         webView = (MyWebView) this.findViewById(R.id.news_detail_wb);
+        reloadBtn = (Button) this.findViewById(R.id.news_detail_reload_btn);
     }
 
     @Override
@@ -315,6 +378,9 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         if (webView != null) {
             webView.destroy();
             webView = null;
+        }
+        if (null != mHandler) {
+            mHandler.removeCallbacksAndMessages(null);
         }
         super.onDestroy();
     }
