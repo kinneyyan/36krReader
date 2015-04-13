@@ -8,22 +8,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.ShareActionProvider;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
@@ -48,7 +48,7 @@ import com.yanshi.my36kr.view.observableScrollview.ScrollState;
  */
 public class ItemDetailActivity extends BaseActivity implements ObservableScrollViewCallbacks {
 
-    private ActionBar actionBar;
+    private Toolbar toolbar;
     private ProgressBar progressBar;
     private MyWebView webView;
     private Button reloadBtn;
@@ -93,7 +93,6 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
             setListener();
             initWebView();
             doRequest();
-
         }
 
     }
@@ -110,48 +109,50 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     //请求接口获取html
     private void doRequest() {
         if (!StringUtils.isBlank(webUrl)) {
-            HttpUtils.doGetAsyn(webUrl, new HttpUtils.CallBack() {
-                @Override
-                public void onRequestComplete(String result) {
-                    mHandler.obtainMessage(0, result).sendToTarget();
-                }
-            });
+            webView.loadUrl(webUrl);
+
+//            HttpUtils.doGetAsyn(webUrl, new HttpUtils.CallBack() {
+//                @Override
+//                public void onRequestComplete(String result) {
+//                    mHandler.obtainMessage(0, result).sendToTarget();
+//                }
+//            });
         }
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String result = (String) msg.obj;
-            if (!TextUtils.isEmpty(result)) {
-                reloadBtn.setVisibility(View.GONE);
-
-                if (null != newsItem) result = filtHtmlStr(result);
-                webView.loadDataWithBaseURL(webUrl, result, "text/html", "UTF-8", null);
-            }
-            else {
-                reloadBtn.setVisibility(View.VISIBLE);
-            }
-        }
-    };
+//    private Handler mHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            String result = (String) msg.obj;
+//            if (!TextUtils.isEmpty(result)) {
+//                reloadBtn.setVisibility(View.GONE);
+//
+//                if (null != newsItem) result = filtHtmlStr(result);
+//                webView.loadDataWithBaseURL(webUrl, result, "text/html", "UTF-8", null);
+//            }
+//            else {
+//                reloadBtn.setVisibility(View.VISIBLE);
+//            }
+//        }
+//    };
 
     //去除html字符串一些标签
-    private String filtHtmlStr(String result) {
-        int start = result.indexOf("<header class=\"header header-normal\">");
-        int end = result.indexOf("</header>", start)+"</header>".length();
-
-        //获取html中文章的第一张图片url
-//        int divStart = result.indexOf("<div class=\"single-post-header__headline\">");
-//        int divEnd = result.indexOf("</div>", divStart)+"</div>".length();
-//        String imgStr = result.substring(divStart, divEnd);
-//        int imgStart = imgStr.indexOf("src=\"")+"src=\"".length();
-//        int imgEnd = imgStr.indexOf("\"", imgStart);
-//        firstImgUrl = imgStr.substring(imgStart, imgEnd);
-//        Log.d("yslog", "firstPic url:" + firstImgUrl);
-
-//        return result.replace(result.substring(start, end), "").replace(imgStr, "");
-        return result.replace(result.substring(start, end), "");
-    }
+//    private String filtHtmlStr(String result) {
+//        int start = result.indexOf("<header class=\"header header-normal\">");
+//        int end = result.indexOf("</header>", start)+"</header>".length();
+//
+//        //获取html中文章的第一张图片url
+////        int divStart = result.indexOf("<div class=\"single-post-header__headline\">");
+////        int divEnd = result.indexOf("</div>", divStart)+"</div>".length();
+////        String imgStr = result.substring(divStart, divEnd);
+////        int imgStart = imgStr.indexOf("src=\"")+"src=\"".length();
+////        int imgEnd = imgStr.indexOf("\"", imgStart);
+////        firstImgUrl = imgStr.substring(imgStart, imgEnd);
+////        Log.d("yslog", "firstPic url:" + firstImgUrl);
+//
+////        return result.replace(result.substring(start, end), "").replace(imgStr, "");
+//        return result.replace(result.substring(start, end), "");
+//    }
 
     private void initWebView() {
         webView.setScrollViewCallbacks(this);
@@ -197,9 +198,8 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     }
 
     private void findViews() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar = (ProgressBar) this.findViewById(R.id.news_detail_pb);
         webView = (MyWebView) this.findViewById(R.id.news_detail_wb);
@@ -379,9 +379,9 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
             webView.destroy();
             webView = null;
         }
-        if (null != mHandler) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
+//        if (null != mHandler) {
+//            mHandler.removeCallbacksAndMessages(null);
+//        }
         super.onDestroy();
     }
 
@@ -413,14 +413,18 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         if (scrollState == ScrollState.UP) {
-            if (null != actionBar && actionBar.isShowing()) {
-                actionBar.hide();
-            }
+            hideViews();
         } else if (scrollState == ScrollState.DOWN) {
-            if (null != actionBar && !actionBar.isShowing()) {
-                actionBar.show();
-            }
+            showViews();
         }
+    }
+
+    private void hideViews() {
+        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    private void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     // js通信接口

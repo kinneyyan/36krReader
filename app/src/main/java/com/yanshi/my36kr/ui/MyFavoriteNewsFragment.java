@@ -43,7 +43,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     private Activity activity;
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
-    private TextView emptyTv;
+    private TextView tipTv;
 
     private List<NewsItem> newsItemList = new ArrayList<NewsItem>();
     private List<NewsItem> loadingNewsItemList = new ArrayList<NewsItem>();//加载时候的list
@@ -68,13 +68,11 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
         setListener();
 
         if (!UserProxy.isLogin(activity) || null == user) {
-            if (null != emptyTv) {
-                emptyTv.setVisibility(View.VISIBLE);
-                emptyTv.setText(getString(R.string.personal_login_first));
-            }
+            setTipTvNotLogin();
             return;
         }
         if (NetUtils.isConnected(activity)) {
+            setTipTvloading();
             loadDataByNet();
         } else {
             loadLocalData();
@@ -104,7 +102,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 if (null != tv) tv.setVisibility(View.GONE);
             }
         });
-        emptyTv = (TextView) view.findViewById(R.id.my_collection_item_empty_tv);
+        tipTv = (TextView) view.findViewById(R.id.my_collection_item_tip_tv);
     }
 
     private void setListener() {
@@ -138,10 +136,10 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
             }
-            emptyTv.setVisibility(View.GONE);
+            tipTv.setVisibility(View.GONE);
         } else {
             //无数据
-            emptyTv.setVisibility(View.VISIBLE);
+            setTipTvEmptyData();
         }
     }
 
@@ -171,10 +169,10 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                     if (null != mAdapter) {
                         mAdapter.notifyDataSetChanged();
                     }
-                    emptyTv.setVisibility(View.GONE);
+                    tipTv.setVisibility(View.GONE);
                 } else {
                     //无数据
-                    emptyTv.setVisibility(View.VISIBLE);
+                    setTipTvEmptyData();
                 }
             }
 
@@ -185,6 +183,30 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             }
         });
 
+    }
+
+    //设置未登录时的提示
+    private void setTipTvNotLogin() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.personal_login_first));
+        }
+    }
+
+    //设置无数据时的提示
+    private void setTipTvEmptyData() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.collect_empty_list));
+        }
+    }
+
+    //设置正在加载的提示
+    private void setTipTvloading() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.app_loading_tv_text));
+        }
     }
 
     @Override
@@ -215,10 +237,8 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
 
     @Override
     public void setNotLoginStr() {
-        if (null != emptyTv) {
-            emptyTv.setVisibility(View.VISIBLE);
-            emptyTv.setText(getString(R.string.personal_login_first));
-        }
+        setTipTvNotLogin();
+
         newsItemList.clear();
         if (null != mAdapter) mAdapter.notifyDataSetChanged();
     }

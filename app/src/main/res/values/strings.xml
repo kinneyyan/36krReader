@@ -49,7 +49,7 @@
 
     <string name="personal_camera">照相</string>
     <string name="personal_album">相册</string>
-    <string name="personal_login_first">请先登录</string>
+    <string name="personal_login_first">您还未登录哦</string>
     <string name="personal_update_success">更新成功</string>
     <string name="personal_update_failed">更新失败：</string>
     <string name="personal_upload_avatar_success">上传头像成功</string>

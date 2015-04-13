@@ -43,7 +43,7 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     private Activity activity;
     private ListView mListView;
     private CommonAdapter<NextItem> mAdapter;
-    private TextView emptyTv;
+    private TextView tipTv;
 
     private List<NextItem> nextItemList = new ArrayList<NextItem>();
     private List<NextItem> loadingNextItemList = new ArrayList<NextItem>();//加载时候的list
@@ -68,11 +68,11 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
         setListener();
 
         if (!UserProxy.isLogin(activity) || null == user) {
-            emptyTv.setVisibility(View.VISIBLE);
-            emptyTv.setText(getString(R.string.personal_login_first));
+            setTipTvNotLogin();
             return;
         }
         if (NetUtils.isConnected(activity)) {
+            setTipTvloading();
             loadDataByNet();
         } else {
             loadLocalData();
@@ -93,7 +93,7 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                 if (null != tv2) tv2.setVisibility(View.GONE);
             }
         });
-        emptyTv = (TextView) view.findViewById(R.id.my_collection_item_empty_tv);
+        tipTv = (TextView) view.findViewById(R.id.my_collection_item_tip_tv);
     }
 
     private void setListener() {
@@ -126,9 +126,9 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
             }
-            emptyTv.setVisibility(View.GONE);
+            tipTv.setVisibility(View.GONE);
         } else {
-            emptyTv.setVisibility(View.VISIBLE);
+            setTipTvEmptyData();
         }
     }
 
@@ -156,10 +156,10 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                     if (null != mAdapter) {
                         mAdapter.notifyDataSetChanged();
                     }
-                    emptyTv.setVisibility(View.GONE);
+                    tipTv.setVisibility(View.GONE);
                 } else {
                     //无数据
-                    emptyTv.setVisibility(View.VISIBLE);
+                    setTipTvEmptyData();
                 }
             }
 
@@ -169,6 +169,30 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                 loadLocalData();
             }
         });
+    }
+
+    //设置未登录时的提示
+    private void setTipTvNotLogin() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.personal_login_first));
+        }
+    }
+
+    //设置无数据时的提示
+    private void setTipTvEmptyData() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.collect_empty_list));
+        }
+    }
+
+    //设置正在加载的提示
+    private void setTipTvloading() {
+        if (null != tipTv) {
+            tipTv.setVisibility(View.VISIBLE);
+            tipTv.setText(getString(R.string.app_loading_tv_text));
+        }
     }
 
     @Override
@@ -199,10 +223,8 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
 
     @Override
     public void setNotLoginStr() {
-        if (null != emptyTv) {
-            emptyTv.setVisibility(View.VISIBLE);
-            emptyTv.setText(getString(R.string.personal_login_first));
-        }
+        setTipTvNotLogin();
+
         nextItemList.clear();
         if (null != mAdapter) mAdapter.notifyDataSetChanged();
     }

@@ -34,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
     List<Fragment> fragmentList = new ArrayList<Fragment>();
     Class[] clzs = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
     ListView mDrawerList;
+    String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
 
         // 高亮被选择的item字体颜色, 更新标题, 并关闭drawer
         mDrawerList.setItemChecked(position, true);
+        mTitle = mDrawerTitles[position];
         setTitle(mDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
@@ -90,7 +92,20 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
+
+            /** 当drawer处于完全关闭的状态时调用 */
+            public void onDrawerClosed(View view) {
+                mToolbar.setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** 当drawer处于完全打开的状态时调用 */
+            public void onDrawerOpened(View drawerView) {
+                mToolbar.setTitle(getResources().getString(R.string.app_name));
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
         mDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 

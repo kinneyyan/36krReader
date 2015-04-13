@@ -12,11 +12,10 @@
             android:animateLayoutChanges="true"/>
 
     <TextView
-            android:id="@+id/my_collection_item_empty_tv"
+            android:id="@+id/my_collection_item_tip_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/collect_empty_list"
             android:textSize="18sp"
             android:textColor="@color/tv_primary_color"
             android:visibility="gone"/>
