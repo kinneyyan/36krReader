@@ -1,9 +1,9 @@
 36krReader
 ======
 
-个人制作的36氪安卓客户端，MD风格（尽量- -）。
+个人制作的36氪安卓客户端，希望遵循Material Design。
 
-1、自己的练手项目，包含了android项目中一些常用的工具类、代码段。
+1、个人的业余项目，包含了android工程中一些常用的工具类、知识点。
 
 2、数据通过jsoup解析网页的html获取。
 
@@ -11,6 +11,7 @@
 
 4、依赖的开源项目有：
 
+- 轻量级的缓存框架：[ASimpleCache](https://github.com/yangfuhai/ASimpleCache "")
 - 图片加载框架：[universal-image-loader](https://github.com/nostra13/Android-Universal-Image-Loader "")
 - orm：[ormlite](https://github.com/j256/ormlite-android "")
 - [StickyListHeaders](https://github.com/emilsjolander/StickyListHeaders "")
