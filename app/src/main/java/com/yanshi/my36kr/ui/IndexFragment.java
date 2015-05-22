@@ -239,7 +239,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     loadingHeadlinesList = newsItemBiz.getHeadLines(result);
                     loadingTimelinesList = newsItemBiz.getNewsItems(result);
 
-                    mCache.put(Constant.INDEX_CACHE, saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY);
+                    mCache.put(Constant.INDEX_CACHE, saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY*3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
                 }
             }

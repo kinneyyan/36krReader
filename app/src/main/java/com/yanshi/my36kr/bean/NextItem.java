@@ -7,12 +7,14 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Next栏目的每个item
  * Created by kingars on 2014/10/29.
  */
 @DatabaseTable(tableName = "tb_next_item")
-public class NextItem implements Serializable {
+public class NextItem extends BmobObject implements Serializable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -35,8 +37,10 @@ public class NextItem implements Serializable {
     @DatabaseField(columnName = "date")
     private String date;
 
-    @DatabaseField(columnName = "objectId")
-    private String objectId;
+    private String userId;
+
+    @DatabaseField(columnName = "bmobId")
+    private String bmobId;
 
     public int getId() {
         return id;
@@ -94,12 +98,20 @@ public class NextItem implements Serializable {
         this.date = date;
     }
 
-    public String getObjectId() {
-        return objectId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getBmobId() {
+        return bmobId;
+    }
+
+    public void setBmobId(String bmobId) {
+        this.bmobId = bmobId;
     }
 
     public JSONObject toJSONObj() {
@@ -112,7 +124,6 @@ public class NextItem implements Serializable {
             jsonObject.put("commentCount", commentCount);
             jsonObject.put("url", url);
             jsonObject.put("date", date);
-            jsonObject.put("objectId", objectId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -130,7 +141,6 @@ public class NextItem implements Serializable {
         nextItem.setVoteCount(jsonObject.optInt("voteCount"));
         nextItem.setCommentCount(jsonObject.optInt("commentCount"));
         nextItem.setDate(jsonObject.optString("date"));
-        nextItem.setObjectId(jsonObject.optString("objectId"));
         return nextItem;
     }
 

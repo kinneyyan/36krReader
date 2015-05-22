@@ -21,7 +21,6 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.FavoriteNewsIntf;
 import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NewsItem;
-import com.yanshi.my36kr.bean.bmob.FavoriteNews;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
@@ -43,18 +42,16 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
     private Activity activity;
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
-    private TextView tipTv;
+    private TextView tipTv;//数据为空or未登录时 的提示TextView
 
-    private List<NewsItem> newsItemList = new ArrayList<NewsItem>();
-    private List<NewsItem> loadingNewsItemList = new ArrayList<NewsItem>();//加载时候的list
-
-    private User user;
+    private List<NewsItem> newsItemList = new ArrayList<>();
+    private NewsItemDao newsItemDao;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this.getActivity();
-        if (UserProxy.isLogin(activity)) user = UserProxy.getCurrentUser(activity);
+        activity = getActivity();
+        newsItemDao = new NewsItemDao(activity);
     }
 
     @Override
@@ -67,14 +64,16 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(activity) || null == user) {
+        if (!UserProxy.isLogin(activity)) {
             setTipTvNotLogin();
             return;
         }
         if (NetUtils.isConnected(activity)) {
             setTipTvloading();
             loadDataByNet();
-        } else {
+        }
+        //无网络时读取本地数据库
+        else {
             loadLocalData();
         }
     }
@@ -97,7 +96,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                     layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                     newsTypeTv.setLayoutParams(layoutParams);
                 }
-                //隐藏时间的TextView
+                //隐藏时间TextView
                 TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
                 if (null != tv) tv.setVisibility(View.GONE);
             }
@@ -125,14 +124,10 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
      * 读取本地数据库数据
      */
     private void loadLocalData() {
-        NewsItemDao newsItemDao = new NewsItemDao(activity);
-        loadingNewsItemList.clear();
-        loadingNewsItemList.addAll(newsItemDao.getAll());
-        if (!loadingNewsItemList.isEmpty()) {
-            Collections.reverse(loadingNewsItemList);
-            newsItemList.clear();
-            newsItemList.addAll(loadingNewsItemList);
-
+        newsItemList.clear();
+        newsItemList.addAll(newsItemDao.getAll());
+        Collections.reverse(newsItemList);
+        if (!newsItemList.isEmpty()) {
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
             }
@@ -147,22 +142,22 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
      * 读取网络数据
      */
     private void loadDataByNet() {
-
-        BmobQuery<FavoriteNews> query = new BmobQuery<FavoriteNews>();
+        User user = UserProxy.getCurrentUser(activity);
+        if (null == user) {
+            setTipTvNotLogin();
+            return;
+        }
+        BmobQuery<NewsItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(activity, new FindListener<FavoriteNews>() {
+        query.findObjects(activity, new FindListener<NewsItem>() {
             @Override
-            public void onSuccess(List<FavoriteNews> list) {
+            public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
                     newsItemList.clear();
-                    for (FavoriteNews fNews : list) {
-                        NewsItem newsItem = new NewsItem();
-                        newsItem.setTitle(fNews.getTitle());
-                        newsItem.setContent(fNews.getContent());
-                        newsItem.setUrl(fNews.getUrl());
-                        newsItem.setImgUrl(fNews.getImgUrl());
-                        newsItem.setNewsType(fNews.getNewsType());
+                    for(int i = 0; i < list.size(); i++) {
+                        NewsItem newsItem = list.get(i);
+                        newsItem.setBmobId(newsItem.getObjectId());
                         newsItemList.add(newsItem);
                     }
                     Collections.reverse(newsItemList);
@@ -170,6 +165,8 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                         mAdapter.notifyDataSetChanged();
                     }
                     tipTv.setVisibility(View.GONE);
+
+                    updateDataBase(list);
                 } else {
                     //无数据
                     setTipTvEmptyData();
@@ -183,6 +180,14 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             }
         });
 
+    }
+
+    //更新本地数据库中的数据
+    private void updateDataBase(List<NewsItem> list) {
+        newsItemDao.clearAll();
+        for (int i = 0; i < list.size(); i++) {
+            newsItemDao.add(list.get(i));
+        }
     }
 
     //设置未登录时的提示
@@ -211,14 +216,17 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
 
     @Override
     public void callBack() {
-        loadLocalData();
-    }
-
-    @Override
-    public void callBack2() {
-        user = UserProxy.getCurrentUser(activity);
-        if (null != user) {
-            loadDataByNet();
+        if (UserProxy.isLogin(activity)) {
+            if (newsItemList.isEmpty()) {
+                setTipTvloading();
+                loadDataByNet();
+            } else {
+                loadLocalData();
+            }
+        } else {
+            setTipTvNotLogin();
+            newsItemList.clear();
+            if (null != mAdapter) mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -235,11 +243,4 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
         return newsItemList;
     }
 
-    @Override
-    public void setNotLoginStr() {
-        setTipTvNotLogin();
-
-        newsItemList.clear();
-        if (null != mAdapter) mAdapter.notifyDataSetChanged();
-    }
 }

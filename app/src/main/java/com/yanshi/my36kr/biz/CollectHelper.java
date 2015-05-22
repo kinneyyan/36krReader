@@ -3,14 +3,13 @@ package com.yanshi.my36kr.biz;
 import android.app.Activity;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import cn.bmob.v3.BmobQuery;
+
+import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.SaveListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.bean.bmob.FavoriteNews;
-import com.yanshi.my36kr.bean.bmob.FavoriteNext;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 
@@ -21,8 +20,8 @@ import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 public class CollectHelper {
 
     public interface CollectListener {
-        public void onSuccess(String objectId);
-        public void onFailed();
+        void onSuccess(BmobObject bmobObject);
+        void onFailed();
     }
 
     /**
@@ -31,27 +30,20 @@ public class CollectHelper {
      * @param newsItem
      * @param userId
      */
-    public static void collectNews(final Activity activity, NewsItem newsItem, String userId, final MenuItem menuItem, final CollectListener listener) {
+    public static void collectNews(final Activity activity, final NewsItem newsItem, String userId, final MenuItem menuItem, final CollectListener listener) {
         if (null == activity || null == newsItem || TextUtils.isEmpty(userId) || null == menuItem) return;
         final LoadingDialogFragment dialog = new LoadingDialogFragment();
         dialog.setParams(activity.getString(R.string.loading_dialog_title));
         dialog.show(activity.getFragmentManager(), "collect_news_dialog");
 
-        final FavoriteNews fNews = new FavoriteNews();
-        fNews.setTitle(newsItem.getTitle());
-        fNews.setContent(newsItem.getContent());
-        fNews.setUrl(newsItem.getUrl());
-        fNews.setImgUrl(newsItem.getImgUrl());
-        fNews.setNewsType(newsItem.getNewsType());
-        fNews.setUserId(userId);
-
-        fNews.save(activity, new SaveListener() {
+        newsItem.setUserId(userId);
+        newsItem.save(activity, new SaveListener() {
             @Override
             public void onSuccess() {
                 ToastFactory.getToast(activity, activity.getString(R.string.collect_success)).show();
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
-                if (null != listener) listener.onSuccess(fNews.getObjectId());
+                if (null != listener) listener.onSuccess(newsItem);
             }
 
             @Override
@@ -77,20 +69,20 @@ public class CollectHelper {
         dialog.setParams(activity.getString(R.string.loading_dialog_title));
         dialog.show(activity.getFragmentManager(), "collect_news_dialog");
 
-        final FavoriteNews fNews = new FavoriteNews();
-        fNews.setObjectId(objectId);
-        fNews.delete(activity, new DeleteListener() {
+        final NewsItem newsItem = new NewsItem();
+        newsItem.setObjectId(objectId);
+        newsItem.delete(activity, new DeleteListener() {
             @Override
             public void onSuccess() {
                 ToastFactory.getToast(activity, activity.getString(R.string.un_collect_success)).show();
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
-                if (null != listener) listener.onSuccess(fNews.getObjectId());
+                if (null != listener) listener.onSuccess(newsItem);
             }
 
             @Override
             public void onFailure(int i, String s) {
-                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_failed)+s).show();
+                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_failed) + s).show();
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
                 if (null != listener) listener.onFailed();
@@ -105,25 +97,20 @@ public class CollectHelper {
      * @param userId
      * @param menuItem
      */
-    public static void collectNext(final Activity activity, NextItem nextItem, String userId, final MenuItem menuItem, final CollectListener listener) {
+    public static void collectNext(final Activity activity, final NextItem nextItem, String userId, final MenuItem menuItem, final CollectListener listener) {
         if (null == activity || null == nextItem || TextUtils.isEmpty(userId) || null == menuItem) return;
         final LoadingDialogFragment dialog = new LoadingDialogFragment();
         dialog.setParams(activity.getString(R.string.loading_dialog_title));
         dialog.show(activity.getFragmentManager(), "collect_news_dialog");
 
-        final FavoriteNext fNext = new FavoriteNext();
-        fNext.setTitle(nextItem.getTitle());
-        fNext.setContent(nextItem.getContent());
-        fNext.setUrl(nextItem.getUrl());
-        fNext.setUserId(userId);
-
-        fNext.save(activity, new SaveListener() {
+        nextItem.setUserId(userId);
+        nextItem.save(activity, new SaveListener() {
             @Override
             public void onSuccess() {
                 ToastFactory.getToast(activity, activity.getString(R.string.collect_success)).show();
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
-                if (null != listener) listener.onSuccess(fNext.getObjectId());
+                if (null != listener) listener.onSuccess(nextItem);
             }
 
             @Override
@@ -149,15 +136,15 @@ public class CollectHelper {
         dialog.setParams(activity.getString(R.string.loading_dialog_title));
         dialog.show(activity.getFragmentManager(), "collect_news_dialog");
 
-        final FavoriteNext fNext = new FavoriteNext();
-        fNext.setObjectId(objectId);
-        fNext.delete(activity, new DeleteListener() {
+        final NextItem nextItem = new NextItem();
+        nextItem.setObjectId(objectId);
+        nextItem.delete(activity, new DeleteListener() {
             @Override
             public void onSuccess() {
                 ToastFactory.getToast(activity, activity.getString(R.string.un_collect_success)).show();
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
-                if (null != listener) listener.onSuccess(fNext.getObjectId());
+                if (null != listener) listener.onSuccess(nextItem);
             }
 
             @Override

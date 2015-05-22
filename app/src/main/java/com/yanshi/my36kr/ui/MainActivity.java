@@ -3,7 +3,6 @@ package com.yanshi.my36kr.ui;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -17,12 +16,13 @@ import android.widget.TextView;
 
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
+import com.yanshi.my36kr.ui.base.BaseActivity;
 import com.yanshi.my36kr.utils.ToastFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseActivity {
 
     Toolbar mToolbar;
     DrawerLayout mDrawerLayout;
@@ -37,17 +37,14 @@ public class MainActivity extends ActionBarActivity {
     String mTitle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
         findViews();
         initFragmentList();
 
-        if (savedInstanceState == null) {
-            selectItem(0);
-        }
-
+        selectItem(0);
     }
 
     private void selectItem(int position) {

@@ -1,7 +1,7 @@
 package com.yanshi.my36kr.biz;
 
 import android.content.Context;
-import android.util.Log;
+
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -11,8 +11,6 @@ import cn.bmob.v3.listener.UpdateListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.bean.bmob.FavoriteNews;
-import com.yanshi.my36kr.bean.bmob.FavoriteNext;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
@@ -28,21 +26,21 @@ import java.util.List;
 public class UserProxy {
 
     public interface RegisterListener {
-        public void onSuccess();
+        void onSuccess();
 
-        public void onFailure(String msg);
+        void onFailure(String msg);
     }
 
     public interface LoginListener {
-        public void onSuccess();
+        void onSuccess();
 
-        public void onFailure(String msg);
+        void onFailure(String msg);
     }
 
     public interface UserUpdateListener {
-        public void onSuccess();
+        void onSuccess();
 
-        public void onFailure(String msg);
+        void onFailure(String msg);
     }
 
     /**
@@ -87,7 +85,7 @@ public class UserProxy {
         user.login(context, new SaveListener() {
             @Override
             public void onSuccess() {
-                syncFavoriteToLocal(context);
+//                syncFavoriteToLocal(context);
 
                 if (null != loginListener) loginListener.onSuccess();
             }
@@ -103,54 +101,40 @@ public class UserProxy {
      * 同步线上的收藏数据到本地数据库
      */
     private static void syncFavoriteToLocal(final Context context) {
-        BmobQuery<FavoriteNews> newsQuery = new BmobQuery<FavoriteNews>();
+        BmobQuery<NewsItem> newsQuery = new BmobQuery<>();
         newsQuery.setLimit(100);
-        BmobQuery<FavoriteNext> nextBmobQuery = new BmobQuery<FavoriteNext>();
+        BmobQuery<NextItem> nextBmobQuery = new BmobQuery<>();
         nextBmobQuery.setLimit(100);
-        newsQuery.findObjects(context, new FindListener<FavoriteNews>() {
+        newsQuery.findObjects(context, new FindListener<NewsItem>() {
             @Override
-            public void onSuccess(List<FavoriteNews> list) {
+            public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
                     NewsItemDao newsItemDao = new NewsItemDao(context);
-                    for (FavoriteNews fNews : list) {
-                        NewsItem newsItem = new NewsItem();
-                        newsItem.setTitle(fNews.getTitle());
-                        newsItem.setContent(fNews.getContent());
-                        newsItem.setUrl(fNews.getUrl());
-                        newsItem.setNewsType(fNews.getNewsType());
-                        newsItem.setImgUrl(fNews.getImgUrl());
-                        newsItem.setObjectId(fNews.getObjectId());
-
-                        newsItemDao.add(newsItem);
+                    for (NewsItem item : list) {
+                        newsItemDao.add(item);
                     }
                 }
             }
 
             @Override
             public void onError(int i, String s) {
-                ToastFactory.getToast(context, "新闻"+context.getString(R.string.sync_failed)+s).show();
+                ToastFactory.getToast(context, "新闻" + context.getString(R.string.sync_failed) + s).show();
             }
         });
-        nextBmobQuery.findObjects(context, new FindListener<FavoriteNext>() {
+        nextBmobQuery.findObjects(context, new FindListener<NextItem>() {
             @Override
-            public void onSuccess(List<FavoriteNext> list) {
+            public void onSuccess(List<NextItem> list) {
                 if (null != list && !list.isEmpty()) {
                     NextItemDao nextItemDao = new NextItemDao(context);
-                    for (FavoriteNext fNext : list) {
-                        NextItem nextItem = new NextItem();
-                        nextItem.setTitle(fNext.getTitle());
-                        nextItem.setContent(fNext.getContent());
-                        nextItem.setUrl(fNext.getUrl());
-                        nextItem.setObjectId(fNext.getObjectId());
-
-                        nextItemDao.add(nextItem);
+                    for (NextItem item : list) {
+                        nextItemDao.add(item);
                     }
                 }
             }
 
             @Override
             public void onError(int i, String s) {
-                ToastFactory.getToast(context, "NEXT"+context.getString(R.string.sync_failed)+s).show();
+                ToastFactory.getToast(context, "NEXT" + context.getString(R.string.sync_failed) + s).show();
             }
         });
     }

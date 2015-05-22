@@ -37,6 +37,8 @@ import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.MyWebView;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * 新闻详情页/NEXT详情页
  * 作者：yanshi
@@ -263,8 +265,8 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                     if (!isCollected) { //未收藏时
                         CollectHelper.collectNews(this, newsItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
                             @Override
-                            public void onSuccess(String objectId) {
-                                newsItem.setObjectId(objectId);
+                            public void onSuccess(BmobObject bmobObject) {
+                                newsItem.setBmobId(bmobObject.getObjectId());
                                 newsItemDao.add(newsItem);
                                 setCollected(true);
                                 setResult(RESULT_OK);
@@ -276,9 +278,9 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                             }
                         });
                     } else {    //已收藏时
-                        CollectHelper.unCollectNews(this, newsItem.getObjectId(), item, new CollectHelper.CollectListener() {
+                        CollectHelper.unCollectNews(this, newsItem.getBmobId(), item, new CollectHelper.CollectListener() {
                             @Override
-                            public void onSuccess(String objectId) {
+                            public void onSuccess(BmobObject bmobObject) {
                                 newsItemDao.deleteByItem(newsItem);
                                 setCollected(false);
                                 setResult(RESULT_OK);
@@ -295,8 +297,8 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                     if (!isCollected) { //未收藏时
                         CollectHelper.collectNext(this, nextItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
                             @Override
-                            public void onSuccess(String objectId) {
-                                nextItem.setObjectId(objectId);
+                            public void onSuccess(BmobObject bmobObject) {
+                                nextItem.setBmobId(bmobObject.getObjectId());
                                 nextItemDao.add(nextItem);
                                 setCollected(true);
                                 setResult(RESULT_OK);
@@ -308,9 +310,9 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
                             }
                         });
                     } else {    //已收藏时
-                        CollectHelper.unCollectNext(this, nextItem.getObjectId(), item, new CollectHelper.CollectListener() {
+                        CollectHelper.unCollectNext(this, nextItem.getBmobId(), item, new CollectHelper.CollectListener() {
                             @Override
-                            public void onSuccess(String objectId) {
+                            public void onSuccess(BmobObject bmobObject) {
                                 nextItemDao.deleteByItem(nextItem);
                                 setCollected(false);
                                 setResult(RESULT_OK);

@@ -59,6 +59,7 @@
             android:padding="6dp"
             android:singleLine="true"
             android:textColor="@color/white"
+            android:textColorHint="@color/tv_primary_color"
             android:textSize="18sp"
             android:visibility="gone" />
 

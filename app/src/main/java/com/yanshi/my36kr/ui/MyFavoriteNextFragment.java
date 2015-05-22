@@ -21,7 +21,6 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.FavoriteNextIntf;
 import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.bean.bmob.FavoriteNext;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NextItemDao;
@@ -43,18 +42,16 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     private Activity activity;
     private ListView mListView;
     private CommonAdapter<NextItem> mAdapter;
-    private TextView tipTv;
+    private TextView tipTv;//数据为空or未登录时 的提示TextView
 
-    private List<NextItem> nextItemList = new ArrayList<NextItem>();
-    private List<NextItem> loadingNextItemList = new ArrayList<NextItem>();//加载时候的list
-
-    private User user;
+    private List<NextItem> nextItemList = new ArrayList<>();
+    private NextItemDao nextItemDao;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this.getActivity();
-        if (UserProxy.isLogin(activity)) user = UserProxy.getCurrentUser(activity);
+        nextItemDao = new NextItemDao(activity);
     }
 
     @Override
@@ -67,14 +64,16 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(activity) || null == user) {
+        if (!UserProxy.isLogin(activity)) {
             setTipTvNotLogin();
             return;
         }
         if (NetUtils.isConnected(activity)) {
             setTipTvloading();
             loadDataByNet();
-        } else {
+        }
+        //无网络时读取本地数据库
+        else {
             loadLocalData();
         }
     }
@@ -115,19 +114,16 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
      * 读取本地数据库数据
      */
     private void loadLocalData() {
-        NextItemDao nextItemdao = new NextItemDao(activity);
-        loadingNextItemList.clear();
-        loadingNextItemList.addAll(nextItemdao.getAll());
-        if (!loadingNextItemList.isEmpty()) {
-            Collections.reverse(loadingNextItemList);
-            nextItemList.clear();
-            nextItemList.addAll(loadingNextItemList);
-
+        nextItemList.clear();
+        nextItemList.addAll(nextItemDao.getAll());
+        Collections.reverse(nextItemList);
+        if (!nextItemList.isEmpty()) {
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
             }
             tipTv.setVisibility(View.GONE);
         } else {
+            //无数据
             setTipTvEmptyData();
         }
     }
@@ -136,20 +132,22 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
      * 读取网络数据
      */
     private void loadDataByNet() {
-
-        BmobQuery<FavoriteNext> query = new BmobQuery<FavoriteNext>();
+        User user = UserProxy.getCurrentUser(activity);
+        if (null == user) {
+            setTipTvNotLogin();
+            return;
+        }
+        BmobQuery<NextItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(activity, new FindListener<FavoriteNext>() {
+        query.findObjects(activity, new FindListener<NextItem>() {
             @Override
-            public void onSuccess(List<FavoriteNext> list) {
+            public void onSuccess(List<NextItem> list) {
                 if (null != list && !list.isEmpty()) {
                     nextItemList.clear();
-                    for (FavoriteNext fNext : list) {
-                        NextItem nextItem = new NextItem();
-                        nextItem.setTitle(fNext.getTitle());
-                        nextItem.setContent(fNext.getContent());
-                        nextItem.setUrl(fNext.getUrl());
+                    for(int i = 0; i < list.size(); i++) {
+                        NextItem nextItem = list.get(i);
+                        nextItem.setBmobId(nextItem.getObjectId());
                         nextItemList.add(nextItem);
                     }
                     Collections.reverse(nextItemList);
@@ -157,6 +155,8 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                         mAdapter.notifyDataSetChanged();
                     }
                     tipTv.setVisibility(View.GONE);
+
+                    updateDataBase(list);
                 } else {
                     //无数据
                     setTipTvEmptyData();
@@ -169,6 +169,14 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                 loadLocalData();
             }
         });
+    }
+
+    //更新本地数据库中的数据
+    private void updateDataBase(List<NextItem> list) {
+        nextItemDao.clearAll();
+        for (int i = 0; i < list.size(); i++) {
+            nextItemDao.add(list.get(i));
+        }
     }
 
     //设置未登录时的提示
@@ -197,14 +205,17 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
 
     @Override
     public void callBack() {
-        loadLocalData();
-    }
-
-    @Override
-    public void callBack2() {
-        user = UserProxy.getCurrentUser(activity);
-        if (null != user) {
-            loadDataByNet();
+        if (UserProxy.isLogin(activity)) {
+            if (nextItemList.isEmpty()) {
+                setTipTvloading();
+                loadDataByNet();
+            } else {
+                loadLocalData();
+            }
+        } else {
+            setTipTvNotLogin();
+            nextItemList.clear();
+            if (null != mAdapter) mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -221,11 +232,4 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
         return nextItemList;
     }
 
-    @Override
-    public void setNotLoginStr() {
-        setTipTvNotLogin();
-
-        nextItemList.clear();
-        if (null != mAdapter) mAdapter.notifyDataSetChanged();
-    }
 }

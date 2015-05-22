@@ -151,7 +151,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 if (null != result) {
                     loadingNextItemList = nextItemBiz.getNextItems(result);
 
-                    mCache.put(Constant.NEXT_PRODUCT_CACHE, saveToJSONObj(loadingNextItemList), ACache.TIME_DAY);
+                    mCache.put(Constant.NEXT_PRODUCT_CACHE, saveToJSONObj(loadingNextItemList), ACache.TIME_DAY*3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
                 }
             }

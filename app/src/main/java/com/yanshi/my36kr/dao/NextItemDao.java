@@ -2,6 +2,8 @@ package com.yanshi.my36kr.dao;
 
 import android.content.Context;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
+import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.utils.DatabaseHelper;
 
@@ -15,14 +17,11 @@ import java.util.List;
  */
 public class NextItemDao {
 
-    private Context context;
     private Dao<NextItem, Integer> nextItemDao;
-    private DatabaseHelper helper;
 
     public NextItemDao(Context context) {
-        this.context = context;
         try {
-            helper = DatabaseHelper.getHelper(context);
+            DatabaseHelper helper = DatabaseHelper.getHelper(context);
             nextItemDao = helper.getDao(NextItem.class);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,6 +113,12 @@ public class NextItemDao {
             e.printStackTrace();
             return null;
         }
+    }
+
+    //清空表
+    public boolean clearAll() {
+        List<NextItem> next = getAll();
+        return deleteBatch(next);
     }
 
 }

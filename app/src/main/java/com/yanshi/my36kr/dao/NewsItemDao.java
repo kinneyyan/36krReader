@@ -2,6 +2,7 @@ package com.yanshi.my36kr.dao;
 
 import android.content.Context;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.utils.DatabaseHelper;
 
@@ -15,14 +16,11 @@ import java.util.List;
  */
 public class NewsItemDao {
 
-    private Context context;
     private Dao<NewsItem, Integer> newsItemDao;
-    private DatabaseHelper helper;
 
     public NewsItemDao(Context context) {
-        this.context = context;
         try {
-            helper = DatabaseHelper.getHelper(context);
+            DatabaseHelper helper = DatabaseHelper.getHelper(context);
             newsItemDao = helper.getDao(NewsItem.class);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,4 +114,9 @@ public class NewsItemDao {
         }
     }
 
+    //清空表
+    public boolean clearAll() {
+        List<NewsItem> news = getAll();
+        return deleteBatch(news);
+    }
 }

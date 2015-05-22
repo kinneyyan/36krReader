@@ -3,19 +3,16 @@ package com.yanshi.my36kr.ui.base;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 
-import com.yanshi.my36kr.BuildConfig;
 import com.yanshi.my36kr.MyApplication;
 
 /**
  * 作者：yanshi
  * 时间：2014-12-02 16:05
  */
-public class BaseActivity extends ActionBarActivity {
+public class BaseActivity extends AppCompatActivity {
 
     protected static String TAG;
     protected MyApplication mMyApplication;
