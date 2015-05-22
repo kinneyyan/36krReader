@@ -6,11 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,8 +18,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
@@ -38,8 +36,6 @@ import com.yanshi.my36kr.utils.HttpUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.MyWebView;
-import com.yanshi.my36kr.view.observableScrollview.ObservableScrollViewCallbacks;
-import com.yanshi.my36kr.view.observableScrollview.ScrollState;
 
 /**
  * 新闻详情页/NEXT详情页

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.yanshi.my36kr.view.observableScrollview.ObservableListView
+        <com.github.ksoichiro.android.observablescrollview.ObservableListView
             android:id="@+id/index_timeline_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

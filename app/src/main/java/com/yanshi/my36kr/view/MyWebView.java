@@ -3,8 +3,9 @@ package com.yanshi.my36kr.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableWebView;
 import com.yanshi.my36kr.utils.NetUtils;
-import com.yanshi.my36kr.view.observableScrollview.ObservableWebView;
 
 /**
  * app自定义的WebView，封装了一些设置

@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/splash_logo_iv"
             android:layout_centerHorizontal="true"
-            android:text="Powered By Yanshi"
+            android:text="Made By KinneyYan"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
 

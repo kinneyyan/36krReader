@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
@@ -31,7 +33,6 @@ import com.yanshi.my36kr.biz.NewsItemBiz;
 import com.yanshi.my36kr.utils.*;
 import com.yanshi.my36kr.view.FooterView;
 import com.yanshi.my36kr.view.HeadlinesView;
-import com.yanshi.my36kr.view.observableScrollview.ObservableListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
