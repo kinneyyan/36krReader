@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
 import com.yanshi.my36kr.MyApplication;
 
 /**
@@ -14,7 +16,6 @@ import com.yanshi.my36kr.MyApplication;
  */
 public class BaseActivity extends AppCompatActivity {
 
-    protected static String TAG;
     protected MyApplication mMyApplication;
     protected Resources mResources;
     protected Context mContext;
@@ -22,7 +23,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TAG = this.getClass().getSimpleName();
         initConfigure();
     }
 
@@ -32,6 +32,16 @@ public class BaseActivity extends AppCompatActivity {
             mMyApplication = MyApplication.getInstance();
         }
         mResources = getResources();
+    }
+
+    /**
+     * 开启滑动关闭activity的功能，供子类调用
+     */
+    public void setSlidr() {
+        SlidrConfig config = new SlidrConfig.Builder()
+                .sensitivity(0.2f)//默认的敏感度为1f容易误操作
+                .build();
+        Slidr.attach(this, config);
     }
 
     /**

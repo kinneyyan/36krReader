@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.ui.base.BaseActivity;
@@ -30,6 +31,7 @@ public class ImageTerminalActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_terminal);
+        setSlidr();
 
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();

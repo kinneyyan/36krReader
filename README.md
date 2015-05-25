@@ -13,10 +13,11 @@
 
 - 轻量级的缓存框架：[ASimpleCache](https://github.com/yangfuhai/ASimpleCache "")
 - 图片加载框架：[universal-image-loader](https://github.com/nostra13/Android-Universal-Image-Loader "")
-- orm：[ormlite](https://github.com/j256/ormlite-android "")
+- orm框架：[ormlite](https://github.com/j256/ormlite-android "")
 - [StickyListHeaders](https://github.com/emilsjolander/StickyListHeaders "")
 - [PhotoView](https://github.com/chrisbanes/PhotoView "")
-- [Android-ObservableScrollView](https://github.com/ksoichiro/Android-ObservableScrollView "")
+- 监听滚动事件的view：[Android-ObservableScrollView](https://github.com/ksoichiro/Android-ObservableScrollView "")
+- 访IOS滑动关闭页面：[Slidr](https://github.com/r0adkll/Slidr "")
 
 5、app截图：
 

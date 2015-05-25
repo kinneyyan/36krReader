@@ -3,6 +3,8 @@ package com.yanshi.my36kr.ui;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
@@ -36,6 +38,7 @@ public class LoginActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        setSlidr();
         loadingDialogFragment = new LoadingDialogFragment();
         loadingDialogFragment.setParams(getString(R.string.loading_dialog_title));
         findViews();

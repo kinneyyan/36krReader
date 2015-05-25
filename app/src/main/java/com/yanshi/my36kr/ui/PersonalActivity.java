@@ -19,6 +19,7 @@ import android.widget.TextView;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
@@ -62,6 +63,7 @@ public class PersonalActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal);
+        setSlidr();
         findViews();
         setListener();
 

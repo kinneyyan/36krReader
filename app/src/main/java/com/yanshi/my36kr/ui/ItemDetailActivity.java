@@ -22,6 +22,8 @@ import android.widget.ProgressBar;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
@@ -65,6 +67,7 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_detail);
+        setSlidr();
         if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 
         if (savedInstanceState == null) {

@@ -8,7 +8,8 @@
         <item name="colorAccent">@color/secondary_color</item>
 
         <!-- 窗口的背景颜色 -->
-        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme" parent="@style/AppBaseTheme">
