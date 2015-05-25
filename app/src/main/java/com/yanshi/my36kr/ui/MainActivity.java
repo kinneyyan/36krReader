@@ -26,14 +26,13 @@ public class MainActivity extends BaseActivity {
 
     Toolbar mToolbar;
     DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle mDrawerToggle;
+    ListView mDrawerList;
 
+    ActionBarDrawerToggle mDrawerToggle;
     Integer[] mDrawerIcons = {R.drawable.ic_index, R.drawable.ic_label, R.drawable.ic_next, R.drawable.ic_favorite, R.drawable.ic_settings};
     String[] mDrawerTitles = {"36氪", "分类浏览", "NEXT", "我的收藏", "设置"};
-
-    List<Fragment> fragmentList = new ArrayList<Fragment>();
-    Class[] clzs = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
-    ListView mDrawerList;
+    List<Fragment> fragmentList;
+    Class[] classes = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
     String mTitle;
 
     @Override
@@ -41,10 +40,13 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        findViews();
-        initFragmentList();
+        fragmentList = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            fragmentList.add(null);
+        }
 
-        selectItem(0);
+        findViews();
+        selectItem(0);//默认选中第一个
     }
 
     private void selectItem(int position) {
@@ -59,7 +61,7 @@ public class MainActivity extends BaseActivity {
         if (null == fragmentList.get(position)) {
             Bundle bundle = new Bundle();
             bundle.putString(Constant.TITLE, mDrawerTitles[position]);
-            fragment = Fragment.instantiate(this, clzs[position].getName(), bundle);
+            fragment = Fragment.instantiate(this, classes[position].getName(), bundle);
             fragmentList.set(position, fragment);
             // 如果Fragment为空，则创建一个并添加到界面上
             fragmentTransaction.add(R.id.main_content_fl, fragment);
@@ -76,12 +78,6 @@ public class MainActivity extends BaseActivity {
         mTitle = mDrawerTitles[position];
         setTitle(mDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-    private void initFragmentList() {
-        for (int i = 0; i < 6; i++) {
-            fragmentList.add(null);
-        }
     }
 
     private void findViews() {
@@ -103,11 +99,11 @@ public class MainActivity extends BaseActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
-        mDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
         //菜单的监听可以在toolbar里设置，也可以像ActionBar那样，通过Activity的onOptionsItemSelected回调方法来处理
-//        mToolbar.setOnMenuItemClickListener(OnMenuItemClickListener);
+        //mToolbar.setOnMenuItemClickListener(OnMenuItemClickListener);
 
         mDrawerList = (ListView) findViewById(R.id.main_left_drawer);
         mDrawerList.setAdapter(new DrawerListAdapter());

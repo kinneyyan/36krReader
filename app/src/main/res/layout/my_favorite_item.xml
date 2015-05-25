@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
-            android:id="@+id/my_collection_item_lv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:cacheColorHint="@android:color/transparent"
-            android:animateLayoutChanges="true"/>
+        android:id="@+id/my_collection_item_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:cacheColorHint="@android:color/transparent" />
 
     <TextView
-            android:id="@+id/my_collection_item_tip_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="18sp"
-            android:textColor="@color/tv_primary_color"
-            android:visibility="gone"/>
+        android:id="@+id/my_collection_item_tip_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
 </FrameLayout>

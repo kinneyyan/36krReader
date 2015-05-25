@@ -19,8 +19,7 @@ import java.util.List;
 
 /**
  * 热门标签
- * 作者：yanshi
- * 时间：2014-10-29 10:57
+ * Created by kingars on 2014/10/29.
  */
 public class TopicFragment extends Fragment {
 
@@ -53,9 +52,6 @@ public class TopicFragment extends Fragment {
         ViewPager mViewPager = (ViewPager) view.findViewById(R.id.topic_vp);
         TopicFragmentPagerAdapter mAdapter = new TopicFragmentPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
-
-//        TabPageIndicator indicator = (TabPageIndicator) view.findViewById(R.id.topic_indicator);
-//        indicator.setViewPager(viewPager);
 
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.topic_sliding_tabs);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, R.id.tab_indicator_tv);

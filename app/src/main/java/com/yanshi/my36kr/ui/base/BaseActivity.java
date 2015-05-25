@@ -11,8 +11,8 @@ import com.r0adkll.slidr.model.SlidrConfig;
 import com.yanshi.my36kr.MyApplication;
 
 /**
- * 作者：yanshi
- * 时间：2014-12-02 16:05
+ * Activity基类
+ * Created by kingars on 2014/12/02.
  */
 public class BaseActivity extends AppCompatActivity {
 

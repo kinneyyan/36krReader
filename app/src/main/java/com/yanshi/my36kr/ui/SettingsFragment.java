@@ -33,12 +33,13 @@ import java.text.DecimalFormat;
  */
 public class SettingsFragment extends Fragment {
 
-    Activity activity;
-    DialogHandler dialogHandler;
-    Button personalInfoBtn;//个人资料
-    Button offlineDownloadBtn;//离线下载
-    Button clearCacheBtn;//清除缓存
-    TextView cacheSizeTv;//缓存大小
+    private Activity activity;
+    private DialogHandler dialogHandler;
+
+    private Button personalInfoBtn;//个人资料
+    private Button offlineDownloadBtn;//离线下载
+    private Button clearCacheBtn;//清除缓存
+    private TextView cacheSizeTv;//缓存大小
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class SettingsFragment extends Fragment {
         if (totalCacheSize.startsWith(".")) totalCacheSize = "0" + totalCacheSize;
         //若总大小小于0.1MB，直接显示0.00MB
         if (Float.parseFloat(totalCacheSize) < 0.10f) totalCacheSize = "0.00";
-        String str = this.getString(R.string.settings_cache_size, totalCacheSize);
+        String str = getString(R.string.settings_cache_size, totalCacheSize);
 
         cacheSizeTv.setText(str);
         Log.d("yslog", "internalCacheSize--->" + internalCacheSize);
@@ -148,7 +149,9 @@ public class SettingsFragment extends Fragment {
                 dialogFragment.dismiss();
 
                 ToastFactory.getToast(activity, getResources().getString(R.string.settings_clear_cache_success)).show();
-                initCacheSize();
+//                initCacheSize();
+                String str = getString(R.string.settings_cache_size, "0.00");
+                cacheSizeTv.setText(str);
             }
         }
     }

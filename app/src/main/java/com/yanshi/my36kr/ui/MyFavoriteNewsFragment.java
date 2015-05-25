@@ -18,7 +18,6 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.CommonAdapter;
 import com.yanshi.my36kr.adapter.ViewHolder;
 import com.yanshi.my36kr.bean.Constant;
-import com.yanshi.my36kr.bean.FavoriteNewsIntf;
 import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.bmob.User;
@@ -35,11 +34,11 @@ import java.util.List;
  * 作者：yanshi
  * 时间：2014-11-04 12:08
  */
-public class MyFavoriteNewsFragment extends Fragment implements FragmentInterface, FavoriteNewsIntf {
+public class MyFavoriteNewsFragment extends Fragment implements FragmentInterface {
 
     private final int REQUEST_CODE = 0X100;
-
     private Activity activity;
+
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
     private TextView tipTv;//数据为空or未登录时 的提示TextView
@@ -155,7 +154,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
                     newsItemList.clear();
-                    for(int i = 0; i < list.size(); i++) {
+                    for (int i = 0; i < list.size(); i++) {
                         NewsItem newsItem = list.get(i);
                         newsItem.setBmobId(newsItem.getObjectId());
                         newsItemList.add(newsItem);
@@ -236,11 +235,6 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
         if (REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
             loadLocalData();
         }
-    }
-
-    @Override
-    public List<NewsItem> getNewsList() {
-        return newsItemList;
     }
 
 }

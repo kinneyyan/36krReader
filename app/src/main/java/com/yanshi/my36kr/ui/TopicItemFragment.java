@@ -47,14 +47,14 @@ import java.util.List;
  * Created by kingars on 2014/11/1.
  */
 public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+
+    private Activity activity;
+    private ACache mCache;
     private final String[] URL_TYPE = {"cn-startups", "us-startups", "cn-news", "breaking", "column", "archives"};
     private int typePosition = 0;
     private String url;
-
-    private final int LOAD_COMPLETE = 0X110;
-    private final int LOAD_MORE_COMPLETE = 0X111;
-    private Activity activity;
-    private ACache mCache;
+    private boolean needLoadMore = true;
+    private int currentPage = 1;
 
     private SwipeRefreshLayout mSwipeLayout;
     private ListView mListView;
@@ -63,12 +63,9 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
     private Button reloadBtn;
     private TextView loadingTv;
 
-    private List<NewsItem> newsItemList = new ArrayList<NewsItem>();
-    private List<NewsItem> loadingNewsItemList;//加载时候的list
+    private List<NewsItem> newsItemList = new ArrayList<>();
+    private List<NewsItem> loadingNewsItemList;//加载时的list
     private NewsItemBiz newsItemBiz = new NewsItemBiz();
-
-    private boolean needLoadMore = true;
-    private int currentPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,9 +74,9 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         if (null != bundle) {
             typePosition = bundle.getInt(Constant.POSITION);
         }
-        url = Constant.COLUMNS_URL + "/" + URL_TYPE[typePosition];
-        activity = this.getActivity();
+        activity = getActivity();
         mCache = ACache.get(activity);
+        url = Constant.COLUMNS_URL + "/" + URL_TYPE[typePosition];
     }
 
     @Override
@@ -163,12 +160,12 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
 
     /**
      * 从缓存加载数据
+     *
      * @return 是否有缓存
      */
     private void loadCache() {
         if (getJsonToDataList()) {
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
-            mListView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -176,21 +173,13 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
      * 从网络加载数据
      */
     private void loadData(int page) {
-        if (!NetUtils.isConnected(activity)) {
-            ToastFactory.getToast(activity, activity.getResources().getString(R.string.network_not_access)).show();
-
-            if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-            if (newsItemList.isEmpty()) reloadBtn.setVisibility(View.VISIBLE);
-            setLoadingTvOut();
-            return;
-        }
         HttpUtils.doGetAsyn(initUrl(page), new HttpUtils.CallBack() {
             @Override
             public void onRequestComplete(String result) {
                 if (null != result) {
                     loadingNewsItemList = newsItemBiz.getNewsItems(result);
 
-                    mCache.put(Constant.TOPIC_ITEM_CACHE + "_" + URL_TYPE[typePosition],
+                    mCache.put(getClass().getSimpleName() + "_" + URL_TYPE[typePosition],
                             saveToJSONObj(loadingNewsItemList), ACache.TIME_DAY);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
                 }
@@ -202,14 +191,6 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
      * 加载更多
      */
     private void loadMoreData() {
-        if (!NetUtils.isConnected(activity)) {
-            ToastFactory.getToast(activity, activity.getResources().getString(R.string.network_not_access)).show();
-
-            footerView.setLoadMoreState();
-            needLoadMore = true;
-            return;
-        }
-
         currentPage += 1;
         HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
             @Override
@@ -228,6 +209,9 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         return url + "?page=" + currentPage;
     }
 
+    private final int LOAD_COMPLETE = 0X110;
+    private final int LOAD_MORE_COMPLETE = 0X111;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -235,18 +219,13 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
             switch (msg.what) {
                 case LOAD_COMPLETE:
                     if (loadingNewsItemList != null && !loadingNewsItemList.isEmpty()) {
-
                         newsItemList.clear();
                         newsItemList.addAll(loadingNewsItemList);
                     }
-                    loadingNewsItemList = null;
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
 
-                    if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-                    setLoadingTvOut();
-                    mListView.setVisibility(View.VISIBLE);
-                    reloadBtn.setVisibility(View.GONE);
+                    setViewsVisible(true);
                     break;
                 case LOAD_MORE_COMPLETE:
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
@@ -267,7 +246,7 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
      * @return 返回是否有缓存
      */
     public boolean getJsonToDataList() {
-        JSONObject jsonObject = mCache.getAsJSONObject(Constant.TOPIC_ITEM_CACHE + "_" + URL_TYPE[typePosition]);
+        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName() + "_" + URL_TYPE[typePosition]);
         if (null != jsonObject) {
             try {
                 JSONArray newsAr = jsonObject.getJSONArray("topics");
@@ -306,6 +285,19 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         }
 
         return outerJsonObj;
+    }
+
+    //设置加载成功与否View的显示状态
+    private void setViewsVisible(boolean loadSuccess) {
+        setLoadingTvOut();
+        if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
+        if (loadSuccess) {
+            if (null != mListView) mListView.setVisibility(View.VISIBLE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.GONE);
+        } else {
+            if (null != mListView) mListView.setVisibility(View.GONE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     //设置加载Tv的进入动画

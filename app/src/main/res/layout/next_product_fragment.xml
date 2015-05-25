@@ -13,21 +13,20 @@
             android:id="@+id/next_product_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:visibility="gone" />
+            android:animateLayoutChanges="true"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/next_product_loading_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:gravity="center"
-        android:text="@string/app_loading_tv_text"
-        android:textSize="16sp"
-        android:textColor="@color/white"
         android:background="@color/half_transparent"
-        android:visibility="gone"/>
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="@string/app_loading_tv_text"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/next_product_reload_btn"

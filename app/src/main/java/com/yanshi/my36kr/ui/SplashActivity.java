@@ -16,9 +16,7 @@ import com.yanshi.my36kr.ui.base.BaseActivity;
  */
 public class SplashActivity extends BaseActivity {
 
-    private static final long DELAY_TIME = 1000L;
-
-    TextView textView;
+    private TextView textView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,13 +36,13 @@ public class SplashActivity extends BaseActivity {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    new Handler().postDelayed(new Runnable() {
+                    mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             jumpToActivity(SplashActivity.this, MainActivity.class, null);
                             SplashActivity.this.finish();
                         }
-                    }, DELAY_TIME);
+                    }, 1000L);
                 }
 
                 @Override
@@ -56,10 +54,19 @@ public class SplashActivity extends BaseActivity {
             am.start();
 
         }
-
     }
+
+    private Handler mHandler = new Handler();
 
     private void initView() {
         textView = (TextView) this.findViewById(R.id.splash_tv);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != mHandler) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
 }

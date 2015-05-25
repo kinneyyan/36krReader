@@ -15,32 +15,27 @@ import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
 
 /**
  * 登录页
- * 作者：yanshi
- * 时间：2014-12-04 17:25
+ * Created by kingars on 2014/12/04.
  */
 public class LoginActivity extends BaseActivity {
 
-    DeletableEditText usernameEt, passwordEt;
-    DeletableEditText emailEt;
-    Button loginBtn, registerBtn, forgetPassword;
-    String username, password;
-    String email;
+    private DeletableEditText usernameEt, passwordEt;
+    private DeletableEditText emailEt;
+    private Button loginBtn, registerBtn, forgetPassword;
+    private LoadingDialogFragment loadingDialogFragment;
+
+    private String username, password, email;
 
     private enum UserOperation{
         LOGIN, REGISTER, RESET_PASSWORD
     }
 
-    UserOperation userOperation = UserOperation.LOGIN;
-
-    LoadingDialogFragment loadingDialogFragment;
+    private UserOperation userOperation = UserOperation.LOGIN;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        setSlidr();
-        loadingDialogFragment = new LoadingDialogFragment();
-        loadingDialogFragment.setParams(getString(R.string.loading_dialog_title));
         findViews();
         setListener();
     }
@@ -161,6 +156,9 @@ public class LoginActivity extends BaseActivity {
         loginBtn = (Button) findViewById(R.id.login_login_btn);
         registerBtn = (Button) findViewById(R.id.login_register_btn);
         forgetPassword = (Button) findViewById(R.id.login_forget_password_btn);
+
+        loadingDialogFragment = new LoadingDialogFragment();
+        loadingDialogFragment.setParams(getString(R.string.loading_dialog_title));
     }
 
 }

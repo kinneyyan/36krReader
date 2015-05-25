@@ -55,8 +55,8 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
 
     private NewsItem newsItem;
     private NextItem nextItem;
-    private String title = "";
-    private String webUrl = "";
+    private String title;
+    private String webUrl;
 
     private NewsItemDao newsItemDao;
     private NextItemDao nextItemDao;
@@ -70,32 +70,29 @@ public class ItemDetailActivity extends BaseActivity implements ObservableScroll
         setSlidr();
         if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 
-        if (savedInstanceState == null) {
-            Bundle bundle = getIntent().getExtras();
-            if (null != bundle) {
-                newsItem = (NewsItem) bundle.getSerializable(Constant.NEWS_ITEM);
-                nextItem = (NextItem) bundle.getSerializable(Constant.NEXT_ITEM);
-                if (null != newsItem) { //新闻详情
-                    title = newsItem.getTitle();
-                    webUrl = newsItem.getUrl();
+        Bundle bundle = getIntent().getExtras();
+        if (null != bundle) {
+            newsItem = (NewsItem) bundle.getSerializable(Constant.NEWS_ITEM);
+            nextItem = (NextItem) bundle.getSerializable(Constant.NEXT_ITEM);
+            if (null != newsItem) { //新闻详情
+                title = newsItem.getTitle();
+                webUrl = newsItem.getUrl();
 
-                    newsItemDao = new NewsItemDao(this);
-                } else if (null != nextItem) {  //NEXT详情
-                    title = nextItem.getTitle();
-                    webUrl = nextItem.getUrl();
+                newsItemDao = new NewsItemDao(this);
+            } else if (null != nextItem) {  //NEXT详情
+                title = nextItem.getTitle();
+                webUrl = nextItem.getUrl();
 
-                    nextItemDao = new NextItemDao(this);
-                }
-
-                //重新调用一次onCreateOptionsMenu，更新收藏状态
-                this.invalidateOptionsMenu();
+                nextItemDao = new NextItemDao(this);
             }
-            findViews();
-            setListener();
-            initWebView();
-            doRequest();
-        }
 
+            //重新调用一次onCreateOptionsMenu，更新收藏状态
+            this.invalidateOptionsMenu();
+        }
+        findViews();
+        setListener();
+        initWebView();
+        doRequest();
     }
 
     private void setListener() {

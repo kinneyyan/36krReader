@@ -18,7 +18,6 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.adapter.CommonAdapter;
 import com.yanshi.my36kr.adapter.ViewHolder;
 import com.yanshi.my36kr.bean.Constant;
-import com.yanshi.my36kr.bean.FavoriteNextIntf;
 import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.bean.bmob.User;
@@ -35,11 +34,11 @@ import java.util.List;
  * 作者：yanshi
  * 时间：2014-11-04 12:55
  */
-public class MyFavoriteNextFragment extends Fragment implements FragmentInterface, FavoriteNextIntf {
+public class MyFavoriteNextFragment extends Fragment implements FragmentInterface {
 
     private final int REQUEST_CODE = 0X100;
-
     private Activity activity;
+
     private ListView mListView;
     private CommonAdapter<NextItem> mAdapter;
     private TextView tipTv;//数据为空or未登录时 的提示TextView
@@ -50,7 +49,7 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this.getActivity();
+        activity = getActivity();
         nextItemDao = new NextItemDao(activity);
     }
 
@@ -225,11 +224,6 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
         if (REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
             loadLocalData();
         }
-    }
-
-    @Override
-    public List<NextItem> getNextList() {
-        return nextItemList;
     }
 
 }

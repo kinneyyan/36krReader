@@ -1,14 +1,13 @@
 package com.yanshi.my36kr.ui;
 
+import android.app.Activity;
 import android.content.*;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +41,7 @@ import java.util.List;
  */
 public class NextProductFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private final int LOAD_COMPLETE = 0X110;
-    private MainActivity activity;
+    private Activity activity;
     private ACache mCache;
 
     private SwipeRefreshLayout mSwipeLayout;
@@ -52,31 +50,14 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     private Button reloadBtn;
     private TextView loadingTv;
 
-    private List<NextItem> nextItemList = new ArrayList<NextItem>();
+    private List<NextItem> nextItemList = new ArrayList<>();
     private List<NextItem> loadingNextItemList;//加载时的list
     private NextItemBiz nextItemBiz = new NextItemBiz();
-
-//    @Override
-//    public void onHiddenChanged(boolean hidden) {
-//        if (!hidden) {
-//            if (null != toolbar) {
-//                toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.next_product_title_color)));
-//            }
-//        } else {
-//            if (null != toolbar) {
-//                toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.primary_color)));
-//            }
-//        }
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (MainActivity) this.getActivity();
-//        ActionBar toolbar = activity.getSupportActionBar();
-//        if (null != toolbar) {
-//            toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.next_product_title_color)));
-//        }
+        activity = getActivity();
         mCache = ACache.get(activity);
     }
 
@@ -128,35 +109,29 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
         });
     }
 
+    //加载缓存
     private void loadCache() {
         if (getJsonToDataList()) {
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
-            mListView.setVisibility(View.VISIBLE);
         }
     }
 
+    //加载网络
     private void loadData() {
-        if (!NetUtils.isConnected(activity)) {
-            ToastFactory.getToast(activity, activity.getResources().getString(R.string.network_not_access)).show();
-
-            if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-            if (nextItemList.isEmpty()) reloadBtn.setVisibility(View.VISIBLE);
-            setLoadingTvOut();
-            return;
-        }
-
         HttpUtils.doGetAsyn(Constant.NEXT_URL, new HttpUtils.CallBack() {
             @Override
             public void onRequestComplete(String result) {
                 if (null != result) {
                     loadingNextItemList = nextItemBiz.getNextItems(result);
 
-                    mCache.put(Constant.NEXT_PRODUCT_CACHE, saveToJSONObj(loadingNextItemList), ACache.TIME_DAY*3);
+                    mCache.put(getClass().getSimpleName(), saveToJSONObj(loadingNextItemList), ACache.TIME_DAY*3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
                 }
             }
         });
     }
+
+    private final int LOAD_COMPLETE = 0X110;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -168,16 +143,10 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                         nextItemList.clear();
                         nextItemList.addAll(loadingNextItemList);
                     }
-                    loadingNextItemList = null;
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
 
-                    if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-                    setLoadingTvOut();
-                    mListView.setVisibility(View.VISIBLE);
-                    reloadBtn.setVisibility(View.GONE);
-                    break;
-                default:
+                    setViewsVisible(true);
                     break;
             }
         }
@@ -189,7 +158,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
      * @return 返回是否有缓存
      */
     public boolean getJsonToDataList() {
-        JSONObject jsonObject = mCache.getAsJSONObject(Constant.NEXT_PRODUCT_CACHE);
+        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
         if (null != jsonObject) {
             try {
                 JSONArray nextAr = jsonObject.getJSONArray("nextProducts");
@@ -230,9 +199,17 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
         return outerJsonObj;
     }
 
-    @Override
-    public void onRefresh() {
-        loadData();
+    //设置加载成功与否View的显示状态
+    private void setViewsVisible(boolean loadSuccess) {
+        setLoadingTvOut();
+        if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
+        if (loadSuccess) {
+            if (null != mListView) mListView.setVisibility(View.VISIBLE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.GONE);
+        } else {
+            if (null != mListView) mListView.setVisibility(View.GONE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     //设置加载Tv的进入动画
@@ -258,6 +235,11 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 }
             }, 1000);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 
     @Override

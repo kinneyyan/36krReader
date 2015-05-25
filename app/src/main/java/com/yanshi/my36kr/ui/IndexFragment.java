@@ -47,10 +47,10 @@ import java.util.List;
  */
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private final int LOAD_COMPLETE = 0X110;
-    private final int LOAD_MORE_COMPLETE = 0X111;
     private Activity activity;
     private ACache mCache;
+    private boolean needLoadMore = true;//是否需要加载更多
+    private int currentPage = 1;//当前页数
 
     private HeadlinesView headlinesView;
     private SwipeRefreshLayout mSwipeLayout;
@@ -60,19 +60,16 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private Button reloadBtn;
     private TextView loadingTv;
 
-    private List<NewsItem> headlinesList = new ArrayList<NewsItem>();
-    private List<NewsItem> timelinesList = new ArrayList<NewsItem>();
-    private List<NewsItem> loadingHeadlinesList;//加载时候的list
-    private List<NewsItem> loadingTimelinesList;//加载时候的list
+    private List<NewsItem> headlinesList = new ArrayList<>();
+    private List<NewsItem> timelinesList = new ArrayList<>();
+    private List<NewsItem> loadingHeadlinesList;//加载时的list
+    private List<NewsItem> loadingTimelinesList;//加载时的list
     private NewsItemBiz newsItemBiz = new NewsItemBiz();
-
-    private boolean needLoadMore = true;
-    private int currentPage = 1;//当前页数
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this.getActivity();
+        activity = getActivity();
         mCache = ACache.get(activity);
     }
 
@@ -86,34 +83,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         findViews(view);
         setListener();
 
-        loadCache();
+        loadCache();//加载缓存
         setLoadingTvIn();
-        loadData(currentPage);
-    }
-
-    //设置加载Tv的进入动画
-    private void setLoadingTvIn() {
-        if (loadingTv.getVisibility() == View.GONE) {
-            loadingTv.setVisibility(View.VISIBLE);
-            Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_in);
-            loadingTv.setAnimation(am);
-            am.start();
-        }
-    }
-
-    //设置加载Tv的退出动画
-    private void setLoadingTvOut() {
-        if (loadingTv.getVisibility() == View.VISIBLE) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadingTv.setVisibility(View.GONE);
-                    Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
-                    loadingTv.setAnimation(am);
-                    am.start();
-                }
-            }, 1000);
-        }
+        loadData(currentPage);//加载网络
     }
 
     private void findViews(View view) {
@@ -171,27 +143,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
             }
         });
-//        mListView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-//            @Override
-//            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-//            }
-//            @Override
-//            public void onDownMotionEvent() {
-//            }
-//            @Override
-//            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-//                if (scrollState == ScrollState.UP) {
-//                    if (null != actionBar && actionBar.isShowing()) {
-//                        actionBar.hide();
-//                    }
-//                } else if (scrollState == ScrollState.DOWN) {
-//                    if (null != actionBar && !actionBar.isShowing()) {
-//                        actionBar.show();
-//                    }
-//                }
-//            }
-//        });
-
 /*        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -215,7 +166,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (getJsonToDataList()) {
             headlinesView.initData(headlinesList);
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
-            mListView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -223,15 +173,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
      * 从网络加载数据
      */
     private void loadData(int page) {
-        if (!NetUtils.isConnected(activity)) {
-            ToastFactory.getToast(activity, activity.getResources().getString(R.string.network_not_access)).show();
-
-            if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-            if (timelinesList.isEmpty()) reloadBtn.setVisibility(View.VISIBLE);
-            setLoadingTvOut();
-            return;
-        }
-
         HttpUtils.doGetAsyn(initUrl(page), new HttpUtils.CallBack() {
             @Override
             public void onRequestComplete(String result) {
@@ -239,7 +180,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     loadingHeadlinesList = newsItemBiz.getHeadLines(result);
                     loadingTimelinesList = newsItemBiz.getNewsItems(result);
 
-                    mCache.put(Constant.INDEX_CACHE, saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY*3);
+                    mCache.put(getClass().getSimpleName(), saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY * 3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
                 }
             }
@@ -250,14 +191,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
      * 加载更多
      */
     private void loadMoreData() {
-        if (!NetUtils.isConnected(activity)) {
-            ToastFactory.getToast(activity, getResources().getString(R.string.network_not_access)).show();
-
-            footerView.setLoadMoreState();
-            needLoadMore = true;
-            return;
-        }
-
         currentPage += 1;
         HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
             @Override
@@ -271,6 +204,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         });
     }
 
+    private final int LOAD_COMPLETE = 0X110;
+    private final int LOAD_MORE_COMPLETE = 0X111;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -282,19 +218,13 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                         headlinesList.clear();
                         headlinesList.addAll(loadingHeadlinesList);
                         headlinesView.initData(headlinesList);
-
                         timelinesList.clear();
                         timelinesList.addAll(loadingTimelinesList);
                     }
-                    loadingHeadlinesList = null;
-                    loadingTimelinesList = null;
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
 
-                    if (mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-                    setLoadingTvOut();
-                    mListView.setVisibility(View.VISIBLE);
-                    reloadBtn.setVisibility(View.GONE);
+                    setViewsVisible(true);
                     break;
                 case LOAD_MORE_COMPLETE:
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
@@ -318,7 +248,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
      * @return 返回是否有缓存
      */
     public boolean getJsonToDataList() {
-        JSONObject jsonObject = mCache.getAsJSONObject(Constant.INDEX_CACHE);
+        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
         if (null != jsonObject) {
             try {
                 JSONArray headlinesAr = jsonObject.getJSONArray("headlines");
@@ -372,6 +302,44 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }
 
         return outerJsonObj;
+    }
+
+    //设置加载成功与否View的显示状态
+    private void setViewsVisible(boolean loadSuccess) {
+        setLoadingTvOut();
+        if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
+        if (loadSuccess) {
+            if (null != mListView) mListView.setVisibility(View.VISIBLE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.GONE);
+        } else {
+            if (null != mListView) mListView.setVisibility(View.GONE);
+            if (null != reloadBtn) reloadBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    //设置加载Tv的进入动画
+    private void setLoadingTvIn() {
+        if (loadingTv.getVisibility() == View.GONE) {
+            loadingTv.setVisibility(View.VISIBLE);
+            Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_in);
+            loadingTv.setAnimation(am);
+            am.start();
+        }
+    }
+
+    //设置加载Tv的退出动画
+    private void setLoadingTvOut() {
+        if (loadingTv.getVisibility() == View.VISIBLE) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadingTv.setVisibility(View.GONE);
+                    Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
+                    loadingTv.setAnimation(am);
+                    am.start();
+                }
+            }, 1000);
+        }
     }
 
     @Override

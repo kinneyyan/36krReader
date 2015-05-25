@@ -2,8 +2,7 @@ package com.yanshi.my36kr.bean;
 
 /**
  * App全局参数
- * 作者：yanshi
- * 时间：2014-10-24 15:26
+ * Created by kingars on 2014/10/24.
  */
 public class Constant {
 
@@ -31,12 +30,5 @@ public class Constant {
     public static final String URL = "url";
     public static final String NEWS_ITEM = "news_item";
     public static final String NEXT_ITEM = "next_item";
-
-    /**
-     * 缓存json文件名
-     */
-    public static final String INDEX_CACHE = "index_cache";
-    public static final String NEXT_PRODUCT_CACHE = "next_product_cache";
-    public static final String TOPIC_ITEM_CACHE = "topic_item_cache";
 
 }
