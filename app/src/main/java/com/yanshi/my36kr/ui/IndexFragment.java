@@ -84,7 +84,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         setListener();
 
         loadCache();//加载缓存
-        setLoadingTvIn();
         loadData(currentPage);//加载网络
     }
 
@@ -166,6 +165,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (getJsonToDataList()) {
             headlinesView.initData(headlinesList);
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
+            setViewsVisible(true, true, false);
+        } else {
+            setViewsVisible(true, false, false);
         }
     }
 
@@ -223,8 +225,8 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     }
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
-
-                    setViewsVisible(true);
+                    if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
+                    setViewsVisible(false, true, false);
                     break;
                 case LOAD_MORE_COMPLETE:
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
@@ -304,16 +306,22 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         return outerJsonObj;
     }
 
-    //设置加载成功与否View的显示状态
-    private void setViewsVisible(boolean loadSuccess) {
-        setLoadingTvOut();
-        if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
-        if (loadSuccess) {
-            if (null != mListView) mListView.setVisibility(View.VISIBLE);
-            if (null != reloadBtn) reloadBtn.setVisibility(View.GONE);
+    //设置各种View的显示状态
+    private void setViewsVisible(boolean loadingTv, boolean mListView, boolean reloadBtn) {
+        if (loadingTv) {
+            setLoadingTvIn();
         } else {
-            if (null != mListView) mListView.setVisibility(View.GONE);
-            if (null != reloadBtn) reloadBtn.setVisibility(View.VISIBLE);
+            setLoadingTvOut();
+        }
+        if (mListView) {
+            if (null != this.mListView) this.mListView.setVisibility(View.VISIBLE);
+        } else {
+            if (null != this.mListView) this.mListView.setVisibility(View.GONE);
+        }
+        if (reloadBtn) {
+            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.VISIBLE);
+        } else {
+            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.GONE);
         }
     }
 

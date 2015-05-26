@@ -100,6 +100,12 @@ public class SettingsFragment extends Fragment {
                 startActivity(new Intent(activity, PersonalActivity.class));
             }
         });
+        offlineDownloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastFactory.getToast(activity, "开发中~").show();
+            }
+        });
         clearCacheBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
