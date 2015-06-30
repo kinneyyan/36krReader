@@ -2,6 +2,7 @@ package com.yanshi.my36kr.biz;
 
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,168 +12,93 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 解析html字符串，获取头条内容、timeline内容的业务类
+ * 解析html字符串，获取头条、feed流的业务类
  * 作者：yanshi
- * 时间：2014-10-24 15:35
+ * 时间：2015-06-30 14:59
  */
 public class NewsItemBiz {
 
-    /**
-     * 获取头条内容
-     * @param html 要解析的html
-     * @return
-     */
-    public List<NewsItem> getHeadLines(String html) {
-        List<NewsItem> newsItems = new ArrayList<NewsItem>();
-        NewsItem newsItem;
+    //获取头条内容
+    public static List<NewsItem> getHeadLines(String html) {
+        Document doc = Jsoup.parse(html, Constant.INDEX_URL);
+        if (null == doc) return null;
+        List<NewsItem> headLineList = new ArrayList<NewsItem>();
 
-        if (null != html) {
-            Document doc = Jsoup.parse(html, Constant.INDEX_URL);
-            /**
-             * 头条内容
-             */
-            Elements headlines = doc.getElementsByClass("headline__news");
+        //jsoup使用样式class抓取数据时空格的处理：http://www.cnblogs.com/l_dragon/archive/2013/08/27/jsoup.html
+        Elements elements1 = doc.select(".scrollers");
+        handleHeadLinesElements(headLineList, elements1);
+        Elements elements2 = doc.select(".block").select(".article");
+        handleHeadLinesElements(headLineList, elements2);
 
-            for (int i = 0; i < headlines.size(); i++) {
-                newsItem = new NewsItem();
-
-                Element headlines_ele = headlines.get(i);
-                /**
-                 * 标题
-                 */
-                Elements h1_ele = headlines_ele.getElementsByTag("h1");
-                if (h1_ele.size() != 0) {
-                    String title = h1_ele.get(0).text();
-
-                    newsItem.setTitle(title);
-                }
-
-                /**
-                 * 链接
-                 */
-                Elements a_ele = headlines_ele.getElementsByTag("a");
-                if (a_ele.size() != 0) {
-                    String attr = a_ele.attr("href");
-                    if (!attr.startsWith("http://")) {
-                        attr = Constant.INDEX_URL + attr;
-                    }
-
-                    newsItem.setUrl(attr);
-                }
-
-                /**
-                 * 图片
-                 */
-                Elements imgs_ele = headlines_ele.getElementsByTag("img");
-                if (imgs_ele.size() != 0) {
-                    String imgUrl = imgs_ele.get(0).attr("data-src");
-
-                    newsItem.setImgUrl(imgUrl);
-                }
-
-                newsItems.add(newsItem);
-            }
-        }
-        return newsItems;
+        return headLineList;
     }
 
-    /**
-     * 获取timeline新闻内容
-     *
-     * @param html 要解析的html
-     * @return
-     */
-    public List<NewsItem> getNewsItems(String html) {
-        List<NewsItem> newsItems = new ArrayList<NewsItem>();
-        NewsItem newsItem;
+    //获取feed流内容
+    public static List<NewsItem> getFeed(String html) {
+        Document doc = Jsoup.parse(html, Constant.INDEX_URL);
+        if (null == doc) return null;
+        List<NewsItem> feedList = new ArrayList<NewsItem>();
 
-        if (null != html) {
-            Document doc = Jsoup.parse(html, Constant.INDEX_URL);
-            /**
-             * timeline内容
-             */
-            Elements items = doc.getElementsByClass("posts");
+        Elements elements = doc.getElementsByTag("article");
+        handleFeedElements(feedList, elements);
 
-            for (int i = 0; i < items.size(); i++) {
-                newsItem = new NewsItem();
+        return feedList;
+    }
 
-                Element items_ele = items.get(i);
-                /**
-                 * 类型
-                 */
-                Elements newsType_a_ele = items_ele.getElementsByTag("a");
-                if (newsType_a_ele.size() != 0) {
-                    newsItem.setNewsType(newsType_a_ele.get(0).text());
+    private static void handleHeadLinesElements(List<NewsItem> headLineList, Elements elements) {
+        if (null != headLineList && elements.size() > 0) {
+            for (int i = 0; i < elements.size(); i++) {
+                NewsItem item = new NewsItem();
+                Element element = elements.get(i);
+                //标题
+                Elements elementsSpan = element.getElementsByTag("span");
+                if (elementsSpan.size() > 0) {
+                    item.setTitle(elementsSpan.text());
+                }
+                //链接、图片
+                Elements elementsLink = element.getElementsByTag("a");
+                if (elementsLink.size() > 0) {
+                    item.setUrl(elementsLink.attr("href"));
+                    item.setImgUrl(elementsLink.attr("data-lazyload"));
                 }
 
-                /**
-                 * 日期、作者信息
-                 */
-                Elements postmeta_ele = items_ele.getElementsByClass("postmeta");
-//                Elements timeago_ele = items_ele.getElementsByClass("timeago");
-                if (postmeta_ele.size() != 0) {
-                    newsItem.setDate(postmeta_ele.text());
-                }
-
-                /**
-                 * 图片url
-                 */
-                Elements imgs_ele = items_ele.getElementsByTag("img");
-                if (imgs_ele.size() != 0) {
-                    String imgUrl = imgs_ele.get(0).attr("data-src");
-
-                    if (null != imgUrl && !"".equals(imgUrl.trim())) {
-                        newsItem.setImgUrl(imgUrl);
-                    } else {
-                        String nightImgUrl = imgs_ele.get(0).attr("src");
-                        newsItem.setImgUrl(nightImgUrl);
-                    }
-
-                }
-
-                /**
-                 * 标题
-                 */
-                Elements h1_ele = items_ele.getElementsByTag("h1");
-                if (h1_ele.size() != 0) {
-                    String title = h1_ele.get(0).text();
-
-                    newsItem.setTitle(title);
-
-                    Elements h1_ele_a = h1_ele.get(0).getElementsByTag("a");
-                    /**
-                     * 链接
-                     */
-                    if (null != h1_ele_a && h1_ele_a.size() != 0) {
-                        String attr = h1_ele_a.get(0).attr("href");
-                        if (!attr.startsWith("http://")) {
-                            attr = Constant.INDEX_URL + attr;
-                        }
-                        newsItem.setUrl(attr);
-                    } else {
-                        Element a_ele = items_ele.getElementsByTag("a").get(0);
-                        String attr = a_ele.attr("href");
-                        if (!attr.startsWith("http://")) {
-                            attr = Constant.INDEX_URL + attr;
-                        }
-                        newsItem.setUrl(attr);
-                    }
-                }
-
-                /**
-                 * 摘要
-                 */
-                Elements p_ele = items_ele.getElementsByTag("p");
-                if (p_ele.size() != 0) {
-                    String content = p_ele.text();
-
-                    newsItem.setContent(content);
-                }
-
-                newsItems.add(newsItem);
+                headLineList.add(item);
             }
         }
-        return newsItems;
+    }
+
+    private static void handleFeedElements(List<NewsItem> feedList, Elements elements) {
+        if (null != feedList && elements.size() > 0) {
+            for (int i = 0; i < elements.size(); i++) {
+                NewsItem item = new NewsItem();
+                Element element = elements.get(i);
+                //标题、链接 class="title info_flow_news_title"
+                Elements elementsTitle = element.select(".title").select(".info_flow_news_title");
+                if (elementsTitle.size() > 0) {
+                    item.setTitle(elementsTitle.text());
+                    item.setUrl(elementsTitle.attr("href"));
+                }
+                //图片 class="pic info_flow_news_image"
+                Elements elementsPic = element.select(".pic").select(".info_flow_news_image");
+                if (elementsPic.size() > 0) {
+                    item.setImgUrl(elementsPic.attr("data-lazyload"));
+                }
+                //时间 class="timeago"
+                Elements elementsTime = element.getElementsByClass("timeago");
+                if (elementsTime.size() > 0) {
+                    item.setDate(elementsTime.text());
+                }
+                //概要 class="brief"
+                Elements elementsBrief = element.getElementsByClass("brief");
+                if (elementsBrief.size() > 0) {
+                    item.setContent(elementsBrief.text());
+                }
+
+                if (null == item.getTitle() && null == item.getUrl() && null == item.getImgUrl() && null == item.getDate()
+                        && null == item.getContent()) continue;//过滤掉web端的广告
+                feedList.add(item);
+            }
+        }
     }
 
 }

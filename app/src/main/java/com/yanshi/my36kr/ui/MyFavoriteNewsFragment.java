@@ -84,17 +84,9 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
             public void convert(ViewHolder helper, NewsItem item) {
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
-                helper.setText(R.id.index_timeline_item_type_tv, item.getNewsType());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
                 ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptions());
 
-                TextView newsTypeTv = helper.getView(R.id.index_timeline_item_type_tv);
-                if (null != newsTypeTv) {
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                    newsTypeTv.setLayoutParams(layoutParams);
-                }
                 //隐藏时间TextView
                 TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
                 if (null != tv) tv.setVisibility(View.GONE);

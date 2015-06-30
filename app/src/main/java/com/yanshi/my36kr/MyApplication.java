@@ -8,6 +8,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 /**
  * Created by kingars on 2014/10/26.
@@ -68,8 +69,8 @@ public class MyApplication extends Application {
                 .build();
     }
 
-    //没有加载上去时fade效果的
-    public DisplayImageOptions getOptionsWithNoFade() {
+    //圆角图片
+    public DisplayImageOptions getOptionsWithRoundedCorner() {
         return new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_app_logo)
                 .showImageForEmptyUri(R.drawable.ic_app_logo)
@@ -78,6 +79,8 @@ public class MyApplication extends Application {
                 .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
                 .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .displayer(new FadeInBitmapDisplayer(300))
+                .displayer(new RoundedBitmapDisplayer(10))
                 .build();
     }
 

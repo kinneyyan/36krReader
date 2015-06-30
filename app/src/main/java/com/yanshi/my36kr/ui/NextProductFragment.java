@@ -11,8 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.*;
 
 import com.yanshi.my36kr.R;
@@ -21,8 +19,6 @@ import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.biz.NextItemBiz;
 import com.yanshi.my36kr.utils.ACache;
 import com.yanshi.my36kr.utils.HttpUtils;
-import com.yanshi.my36kr.utils.NetUtils;
-import com.yanshi.my36kr.utils.ToastFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,15 +40,13 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     private Activity activity;
     private ACache mCache;
 
-    private SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout mSrl;
     private StickyListHeadersListView mListView;
     private MyAdapter mAdapter;
     private Button reloadBtn;
-    private TextView loadingTv;
 
     private List<NextItem> nextItemList = new ArrayList<>();
     private List<NextItem> loadingNextItemList;//加载时的list
-    private NextItemBiz nextItemBiz = new NextItemBiz();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,15 +66,20 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
         setListener();
 
         loadCache();
-        loadData();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setViewsVisible(true, true, false);
+                loadData();//加载网络
+            }
+        }, 358);
     }
 
     private void findViews(View view) {
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.next_product_content_sl);
-        mSwipeLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
+        mSrl = (SwipeRefreshLayout) view.findViewById(R.id.next_product_content_sl);
+        mSrl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
         mListView = (StickyListHeadersListView) view.findViewById(R.id.next_product_lv);
         reloadBtn = (Button) view.findViewById(R.id.next_product_reload_btn);
-        loadingTv = (TextView) view.findViewById(R.id.next_product_loading_tv);
 
         mAdapter = new MyAdapter(activity, nextItemList);
         mListView.setAdapter(mAdapter);
@@ -93,7 +92,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
                 loadData();
             }
         });
-        mSwipeLayout.setOnRefreshListener(this);
+        mSrl.setOnRefreshListener(this);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,9 +111,6 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     private void loadCache() {
         if (getJsonToDataList()) {
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
-            setViewsVisible(true, true, false);
-        } else {
-            setViewsVisible(true, true, false);
         }
     }
 
@@ -124,7 +120,7 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
             @Override
             public void onRequestComplete(String result) {
                 if (null != result) {
-                    loadingNextItemList = nextItemBiz.getNextItems(result);
+                    loadingNextItemList = NextItemBiz.getFeed(result);
 
                     mCache.put(getClass().getSimpleName(), saveToJSONObj(loadingNextItemList), ACache.TIME_DAY*3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
@@ -148,7 +144,6 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
 
-                    if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
                     setViewsVisible(false, true, false);
                     break;
             }
@@ -203,11 +198,11 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     //设置各种View的显示状态
-    private void setViewsVisible(boolean loadingTv, boolean mListView, boolean reloadBtn) {
-        if (loadingTv) {
-            setLoadingTvIn();
+    private void setViewsVisible(boolean mSrl, boolean mListView, boolean reloadBtn) {
+        if (mSrl) {
+            if (null != this.mSrl) this.mSrl.setRefreshing(true);
         } else {
-            setLoadingTvOut();
+            if (null != this.mSrl) this.mSrl.setRefreshing(false);
         }
         if (mListView) {
             if (null != this.mListView) this.mListView.setVisibility(View.VISIBLE);
@@ -218,31 +213,6 @@ public class NextProductFragment extends Fragment implements SwipeRefreshLayout.
             if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.VISIBLE);
         } else {
             if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.GONE);
-        }
-    }
-
-    //设置加载Tv的进入动画
-    private void setLoadingTvIn() {
-        if (loadingTv.getVisibility() == View.GONE) {
-            loadingTv.setVisibility(View.VISIBLE);
-            Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_in);
-            loadingTv.setAnimation(am);
-            am.start();
-        }
-    }
-
-    //设置加载Tv的退出动画
-    private void setLoadingTvOut() {
-        if (loadingTv.getVisibility() == View.VISIBLE) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadingTv.setVisibility(View.GONE);
-                    Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
-                    loadingTv.setAnimation(am);
-                    am.start();
-                }
-            }, 1000);
         }
     }
 

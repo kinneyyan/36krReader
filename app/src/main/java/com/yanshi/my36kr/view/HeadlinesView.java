@@ -23,7 +23,7 @@ import com.yanshi.my36kr.utils.ScreenUtils;
 import java.util.List;
 
 /**
- * 5个头条内容的view
+ * 头条内容的view
  * Created by kingars on 2014/10/26.
  * 2015-03-29：去掉焦点图下方4个头条
  */
@@ -32,10 +32,6 @@ public class HeadlinesView extends LinearLayout {
     private FrameLayout headlineFl;
     private TextView headlineTv;
     private ImageView headlineIv;
-//    private TextView headline2Tv;
-//    private TextView headline3Tv;
-//    private TextView headline4Tv;
-//    private TextView headline5Tv;
 
     private List<NewsItem> headlinesList;
 
@@ -46,7 +42,8 @@ public class HeadlinesView extends LinearLayout {
      */
     public void initData(List<NewsItem> headlinesList) {
         this.headlinesList = headlinesList;
-        if (null != headlinesList && headlinesList.size() == 5) {
+        if (null != headlinesList && headlinesList.size() > 0) {
+            headlineTv.setVisibility(VISIBLE);
             headlineTv.setText(headlinesList.get(0).getTitle());
 
             String imgUrl = headlinesList.get(0).getImgUrl();
@@ -67,10 +64,6 @@ public class HeadlinesView extends LinearLayout {
                     headlineIv.setImageBitmap(loadedImage);
                 }
             });
-//            headline2Tv.setText(headlinesList.get(1).getTitle());
-//            headline3Tv.setText(headlinesList.get(2).getTitle());
-//            headline4Tv.setText(headlinesList.get(3).getTitle());
-//            headline5Tv.setText(headlinesList.get(4).getTitle());
         }
     }
 
@@ -83,24 +76,12 @@ public class HeadlinesView extends LinearLayout {
 
     private void setListener() {
         headlineFl.setOnClickListener(mOnClickListener);
-//        headline2Tv.setOnClickListener(mOnClickListener);
-//        headline3Tv.setOnClickListener(mOnClickListener);
-//        headline4Tv.setOnClickListener(mOnClickListener);
-//        headline5Tv.setOnClickListener(mOnClickListener);
     }
 
     private void findViews() {
         headlineFl = (FrameLayout) findViewById(R.id.headlines_one_fl);
         headlineTv = (TextView) findViewById(R.id.headlines_one);
         headlineIv = (ImageView) findViewById(R.id.headlines_one_iv);
-//        ViewGroup.LayoutParams layoutParams = headlineIv.getLayoutParams();
-//        layoutParams.height = (ScreenUtils.getScreenHeight(getContext())) / 3;
-//        headlineIv.setLayoutParams(layoutParams);//设置焦点大图高度为屏幕的1/3
-
-//        headline2Tv = (TextView) findViewById(R.id.headlines_two);
-//        headline3Tv = (TextView) findViewById(R.id.headlines_three);
-//        headline4Tv = (TextView) findViewById(R.id.headlines_four);
-//        headline5Tv = (TextView) findViewById(R.id.headlines_five);
     }
 
     private OnClickListener mOnClickListener = new OnClickListener() {
@@ -114,26 +95,6 @@ public class HeadlinesView extends LinearLayout {
                         intent.putExtra(Constant.NEWS_ITEM, item);
                     }
                     break;
-//                case R.id.headlines_two:
-//                    if ((item = headlinesList.get(1)) != null) {
-//                        intent.putExtra(Constant.NEWS_ITEM, item);
-//                    }
-//                    break;
-//                case R.id.headlines_three:
-//                    if ((item = headlinesList.get(2)) != null) {
-//                        intent.putExtra(Constant.NEWS_ITEM, item);
-//                    }
-//                    break;
-//                case R.id.headlines_four:
-//                    if ((item = headlinesList.get(3)) != null) {
-//                        intent.putExtra(Constant.NEWS_ITEM, item);
-//                    }
-//                    break;
-//                case R.id.headlines_five:
-//                    if ((item = headlinesList.get(4)) != null) {
-//                        intent.putExtra(Constant.NEWS_ITEM, item);
-//                    }
-//                    break;
             }
             getContext().startActivity(intent);
         }

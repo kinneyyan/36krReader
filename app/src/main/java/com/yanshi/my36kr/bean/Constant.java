@@ -16,10 +16,9 @@ public class Constant {
     /**
      * 网址
      */
-    public static final String INDEX_URL = "http://www.36kr.com";
-    public static final String COLUMNS_URL = "http://36kr.com/columns";
-    public static final String NEXT_URL = "http://next.36kr.com";
-    public static final String FORUM_URL = "http://www.36kr.com/topics?utm_source=36kr.com";
+    public static final String INDEX_URL = "http://36kr.com";// 首页
+    public static final String NEXT_URL = "http://next.36kr.com";// NEXT
+    public static final String COLUMNS_URL = "http://36kr.com/columns";//热门标签
 
     /**
      * bundle传参用的key

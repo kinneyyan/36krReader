@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -31,8 +29,6 @@ import com.yanshi.my36kr.biz.NewsItemBiz;
 import com.yanshi.my36kr.ui.base.BaseFragment;
 import com.yanshi.my36kr.utils.ACache;
 import com.yanshi.my36kr.utils.HttpUtils;
-import com.yanshi.my36kr.utils.NetUtils;
-import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.FooterView;
 
 import org.json.JSONArray;
@@ -43,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 36氪网站改版，分页加载的代码已注释
+ * Updated by Kinney on 2015/06/30
  * 热门标签中的每个栏目
  * Created by kingars on 2014/11/1.
  */
@@ -54,18 +52,17 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
     private int typePosition = 0;
     private String url;
     private boolean needLoadMore = true;
-    private int currentPage = 1;
+//    private int currentPage = 1;
 
     private SwipeRefreshLayout mSwipeLayout;
     private ListView mListView;
-    private FooterView footerView;
+//    private FooterView footerView;
     private CommonAdapter<NewsItem> mAdapter;
     private Button reloadBtn;
     private TextView loadingTv;
 
     private List<NewsItem> newsItemList = new ArrayList<>();
     private List<NewsItem> loadingNewsItemList;//加载时的list
-    private NewsItemBiz newsItemBiz = new NewsItemBiz();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +82,7 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         findViews(rootView);
         setListener();
         loadCache();
-        loadData(currentPage);
+        loadData();
         return rootView;
     }
 
@@ -96,14 +93,13 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         mListView = (ListView) view.findViewById(R.id.topic_item_lv);
         reloadBtn = (Button) view.findViewById(R.id.topic_item_reload_btn);
         loadingTv = (TextView) view.findViewById(R.id.topic_item_loading_tv);
-        footerView = new FooterView(activity);
-        mListView.addFooterView(footerView);
+//        footerView = new FooterView(activity);
+//        mListView.addFooterView(footerView);
         mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, newsItemList, R.layout.index_timeline_item) {
             @Override
             public void convert(ViewHolder helper, NewsItem item) {
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
-                helper.setText(R.id.index_timeline_item_type_tv, item.getNewsType());
                 helper.setText(R.id.index_timeline_item_info_tv, item.getDate());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
                 ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptions());
@@ -115,19 +111,19 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadData(currentPage);
+                loadData();
             }
         });
-        footerView.setListener(new FooterView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (needLoadMore) {
-                    needLoadMore = false;
-
-                    loadMoreData();
-                }
-            }
-        });
+//        footerView.setListener(new FooterView.OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore() {
+//                if (needLoadMore) {
+//                    needLoadMore = false;
+//
+//                    loadMoreData();
+//                }
+//            }
+//        });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -141,20 +137,6 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
                 }
             }
         });
-/*        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                            footerView.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            }
-        });*/
     }
 
     /**
@@ -174,12 +156,12 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
     /**
      * 从网络加载数据
      */
-    private void loadData(int page) {
-        HttpUtils.doGetAsyn(initUrl(page), new HttpUtils.CallBack() {
+    private void loadData() {
+        HttpUtils.doGetAsyn(url, new HttpUtils.CallBack() {
             @Override
             public void onRequestComplete(String result) {
                 if (null != result) {
-                    loadingNewsItemList = newsItemBiz.getNewsItems(result);
+                    loadingNewsItemList = NewsItemBiz.getFeed(result);
 
                     mCache.put(getClass().getSimpleName() + "_" + URL_TYPE[typePosition],
                             saveToJSONObj(loadingNewsItemList), ACache.TIME_DAY);
@@ -192,27 +174,27 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
     /**
      * 加载更多
      */
-    private void loadMoreData() {
-        currentPage += 1;
-        HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
-            @Override
-            public void onRequestComplete(String result) {
-                if (null != result) {
-                    newsItemList.addAll(newsItemBiz.getNewsItems(result));
+//    private void loadMoreData() {
+//        currentPage += 1;
+//        HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
+//            @Override
+//            public void onRequestComplete(String result) {
+//                if (null != result) {
+//                    newsItemList.addAll(NewsItemBiz.getFeed(result));
+//
+//                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
+//                }
+//            }
+//        });
+//    }
 
-                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
-                }
-            }
-        });
-    }
-
-    private String initUrl(int currentPage) {
-        currentPage = currentPage > 0 ? currentPage : 1;
-        return url + "?page=" + currentPage;
-    }
+//    private String initUrl(int currentPage) {
+//        currentPage = currentPage > 0 ? currentPage : 1;
+//        return url + "?page=" + currentPage;
+//    }
 
     private final int LOAD_COMPLETE = 0X110;
-    private final int LOAD_MORE_COMPLETE = 0X111;
+//    private final int LOAD_MORE_COMPLETE = 0X111;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -230,15 +212,13 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
                     if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
                     setViewsVisible(false, true, false);
                     break;
-                case LOAD_MORE_COMPLETE:
-                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
-
-                    footerView.setLoadMoreState();
-
-                    needLoadMore = true;
-                    break;
-                default:
-                    break;
+//                case LOAD_MORE_COMPLETE:
+//                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
+//
+//                    footerView.setLoadMoreState();
+//
+//                    needLoadMore = true;
+//                    break;
             }
         }
     };
@@ -336,8 +316,8 @@ public class TopicItemFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        currentPage = 1;
-        loadData(currentPage);
+//        currentPage = 1;
+        loadData();
     }
 
     @Override

@@ -9,7 +9,6 @@
         android:id="@+id/index_timeline_item_iv"
         android:layout_width="144dp"
         android:layout_height="96dp"
-        android:layout_centerVertical="true"
         android:scaleType="centerInside"
         tools:src="@drawable/ic_app_logo"/>
 
@@ -17,7 +16,6 @@
         android:id="@+id/index_timeline_item_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/index_timeline_item_iv"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/index_timeline_item_iv"
         android:ellipsize="end"
@@ -31,9 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/index_timeline_item_title_tv"
-        android:layout_marginLeft="8dp"
+        android:layout_alignLeft="@id/index_timeline_item_title_tv"
         android:layout_marginTop="4dp"
-        android:layout_toRightOf="@id/index_timeline_item_iv"
         android:ellipsize="end"
         android:maxLines="5"
         android:textColor="@android:color/darker_gray"
@@ -44,24 +41,13 @@
         android:id="@+id/index_timeline_item_info_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/index_timeline_item_content_tv"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:textColor="@android:color/darker_gray"
         android:textSize="12sp"
-        tools:text="作者/时间"/>
+        tools:text="时间"/>
 
-    <TextView
-        android:id="@+id/index_timeline_item_type_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/index_timeline_item_content_tv"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="6dp"
-        android:layout_toLeftOf="@id/index_timeline_item_info_tv"
-        android:textColor="@color/primary_color"
-        android:textSize="12sp"
-        tools:text="类型"/>
 </RelativeLayout>

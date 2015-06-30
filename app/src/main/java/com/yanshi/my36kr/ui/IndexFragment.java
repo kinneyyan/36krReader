@@ -8,18 +8,13 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -31,7 +26,6 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.biz.NewsItemBiz;
 import com.yanshi.my36kr.utils.*;
-import com.yanshi.my36kr.view.FooterView;
 import com.yanshi.my36kr.view.HeadlinesView;
 
 import org.json.JSONArray;
@@ -42,29 +36,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 36氪网站改版，分页加载的代码已注释
+ * Updated by Kinney on 2015/06/30
  * 首页
  * Created by kingars on 2014/10/25.
  */
-public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class IndexFragment extends Fragment {
 
     private Activity activity;
     private ACache mCache;
-    private boolean needLoadMore = true;//是否需要加载更多
-    private int currentPage = 1;//当前页数
+//    private boolean needLoadMore = true;//是否需要加载更多
+//    private int currentPage = 1;//当前页数
 
     private HeadlinesView headlinesView;
-    private SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout mSrl;
     private ObservableListView mListView;
-    private FooterView footerView;
+    //    private FooterView footerView;
     private CommonAdapter<NewsItem> mAdapter;
     private Button reloadBtn;
-    private TextView loadingTv;
 
     private List<NewsItem> headlinesList = new ArrayList<>();
     private List<NewsItem> timelinesList = new ArrayList<>();
     private List<NewsItem> loadingHeadlinesList;//加载时的list
     private List<NewsItem> loadingTimelinesList;//加载时的list
-    private NewsItemBiz newsItemBiz = new NewsItemBiz();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,18 +78,23 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         setListener();
 
         loadCache();//加载缓存
-        loadData(currentPage);//加载网络
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setViewsVisible(true, true, false);
+                loadData();//加载网络
+            }
+        }, 358);
+
     }
 
     private void findViews(View view) {
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
-        mSwipeLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mSwipeLayout.setOnRefreshListener(this);
+        mSrl = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
+        mSrl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
         mListView = (ObservableListView) view.findViewById(R.id.index_timeline_lv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
-        loadingTv = (TextView) view.findViewById(R.id.index_loading_tv);
-        footerView = new FooterView(activity);
-        mListView.addFooterView(footerView);
+//        footerView = new FooterView(activity);
+//        mListView.addFooterView(footerView);
         headlinesView = new HeadlinesView(activity);
         mListView.addHeaderView(headlinesView);
         mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, timelinesList, R.layout.index_timeline_item) {
@@ -103,32 +102,38 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             public void convert(ViewHolder helper, NewsItem item) {
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
-                helper.setText(R.id.index_timeline_item_type_tv, item.getNewsType());
                 helper.setText(R.id.index_timeline_item_info_tv, item.getDate());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
-                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithNoFade());
+                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithRoundedCorner());
             }
         });
 
     }
 
     private void setListener() {
+        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+//                currentPage = 1;
+                loadData();
+            }
+        });
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadData(currentPage);
+                loadData();
             }
         });
-        footerView.setListener(new FooterView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (needLoadMore) {
-                    needLoadMore = false;
-
-                    loadMoreData();
-                }
-            }
-        });
+//        footerView.setListener(new FooterView.OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore() {
+//                if (needLoadMore) {
+//                    needLoadMore = false;
+//
+//                    loadMoreData();
+//                }
+//            }
+//        });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -142,20 +147,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 }
             }
         });
-/*        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                            footerView.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            }
-        });*/
     }
 
     /**
@@ -165,22 +156,19 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         if (getJsonToDataList()) {
             headlinesView.initData(headlinesList);
             if (null != mAdapter) mAdapter.notifyDataSetChanged();
-            setViewsVisible(true, true, false);
-        } else {
-            setViewsVisible(true, false, false);
         }
     }
 
     /**
      * 从网络加载数据
      */
-    private void loadData(int page) {
-        HttpUtils.doGetAsyn(initUrl(page), new HttpUtils.CallBack() {
+    private void loadData() {
+        HttpUtils.doGetAsyn(Constant.INDEX_URL, new HttpUtils.CallBack() {
             @Override
             public void onRequestComplete(String result) {
                 if (null != result) {
-                    loadingHeadlinesList = newsItemBiz.getHeadLines(result);
-                    loadingTimelinesList = newsItemBiz.getNewsItems(result);
+                    loadingHeadlinesList = NewsItemBiz.getHeadLines(result);
+                    loadingTimelinesList = NewsItemBiz.getFeed(result);
 
                     mCache.put(getClass().getSimpleName(), saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY * 3);
                     mHandler.sendEmptyMessage(LOAD_COMPLETE);
@@ -192,22 +180,22 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     /**
      * 加载更多
      */
-    private void loadMoreData() {
-        currentPage += 1;
-        HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
-            @Override
-            public void onRequestComplete(String result) {
-                if (null != result) {
-                    timelinesList.addAll(newsItemBiz.getNewsItems(result));
-
-                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
-                }
-            }
-        });
-    }
+//    private void loadMoreData() {
+//        currentPage += 1;
+//        HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
+//            @Override
+//            public void onRequestComplete(String result) {
+//                if (null != result) {
+//                    timelinesList.addAll(NewsItemBiz.getFeed(result));
+//
+//                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
+//                }
+//            }
+//        });
+//    }
 
     private final int LOAD_COMPLETE = 0X110;
-    private final int LOAD_MORE_COMPLETE = 0X111;
+//    private final int LOAD_MORE_COMPLETE = 0X111;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -225,24 +213,23 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     }
 
                     if (null != mAdapter) mAdapter.notifyDataSetChanged();
-                    if (null != mSwipeLayout && mSwipeLayout.isRefreshing()) mSwipeLayout.setRefreshing(false);
                     setViewsVisible(false, true, false);
                     break;
-                case LOAD_MORE_COMPLETE:
-                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
-
-                    footerView.setLoadMoreState();
-
-                    needLoadMore = true;
-                    break;
+//                case LOAD_MORE_COMPLETE:
+//                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
+//
+//                    footerView.setLoadMoreState();
+//
+//                    needLoadMore = true;
+//                    break;
             }
         }
     };
 
-    private String initUrl(int currentPage) {
-        currentPage = currentPage > 0 ? currentPage : 1;
-        return Constant.INDEX_URL + "/?page=" + currentPage + "#lastest";
-    }
+//    private String initUrl(int currentPage) {
+//        currentPage = currentPage > 0 ? currentPage : 1;
+//        return Constant.INDEX_URL + "/?page=" + currentPage + "#lastest";
+//    }
 
     /**
      * 读取缓存文件转换成json，放置于list中
@@ -307,11 +294,11 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     //设置各种View的显示状态
-    private void setViewsVisible(boolean loadingTv, boolean mListView, boolean reloadBtn) {
-        if (loadingTv) {
-            setLoadingTvIn();
+    private void setViewsVisible(boolean mSrl, boolean mListView, boolean reloadBtn) {
+        if (mSrl) {
+            if (null != this.mSrl) this.mSrl.setRefreshing(true);
         } else {
-            setLoadingTvOut();
+            if (null != this.mSrl) this.mSrl.setRefreshing(false);
         }
         if (mListView) {
             if (null != this.mListView) this.mListView.setVisibility(View.VISIBLE);
@@ -325,37 +312,6 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         }
     }
 
-    //设置加载Tv的进入动画
-    private void setLoadingTvIn() {
-        if (loadingTv.getVisibility() == View.GONE) {
-            loadingTv.setVisibility(View.VISIBLE);
-            Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_in);
-            loadingTv.setAnimation(am);
-            am.start();
-        }
-    }
-
-    //设置加载Tv的退出动画
-    private void setLoadingTvOut() {
-        if (loadingTv.getVisibility() == View.VISIBLE) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadingTv.setVisibility(View.GONE);
-                    Animation am = AnimationUtils.loadAnimation(activity, R.anim.translate_top_out);
-                    loadingTv.setAnimation(am);
-                    am.start();
-                }
-            }, 1000);
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        currentPage = 1;
-        loadData(currentPage);
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -363,4 +319,5 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             mHandler.removeCallbacksAndMessages(null);
         }
     }
+
 }

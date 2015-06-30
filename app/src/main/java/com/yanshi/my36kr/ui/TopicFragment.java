@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 36氪网站改版了。。
+ * Updated by Kinney on 2015/06/30
  * 热门标签
  * Created by kingars on 2014/10/29.
  */

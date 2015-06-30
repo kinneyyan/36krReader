@@ -30,9 +30,9 @@ public class MainActivity extends BaseActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
     Integer[] mDrawerIcons = {R.drawable.ic_index, R.drawable.ic_label, R.drawable.ic_next, R.drawable.ic_favorite, R.drawable.ic_settings};
-    String[] mDrawerTitles = {"36氪", "分类浏览", "NEXT", "我的收藏", "设置"};
+    String[] mDrawerTitles = {"36氪", "NEXT", "我的收藏", "设置"};
     List<Fragment> fragmentList;
-    Class[] classes = {IndexFragment.class, TopicFragment.class, NextProductFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
+    Class[] classes = {IndexFragment.class, NextProductFragment.class, MyFavoriteFragment.class, SettingsFragment.class};
     String mTitle;
 
     @Override
@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main);
 
         fragmentList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 4; i++) {
             fragmentList.add(null);
         }
 
