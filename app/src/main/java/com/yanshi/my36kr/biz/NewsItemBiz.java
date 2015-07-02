@@ -1,5 +1,8 @@
 package com.yanshi.my36kr.biz;
 
+import android.os.Handler;
+import android.os.Message;
+
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 
@@ -18,31 +21,55 @@ import java.util.List;
  */
 public class NewsItemBiz {
 
-    //获取头条内容
-    public static List<NewsItem> getHeadLines(String html) {
-        Document doc = Jsoup.parse(html, Constant.INDEX_URL);
-        if (null == doc) return null;
-        List<NewsItem> headLineList = new ArrayList<NewsItem>();
+    private static List<NewsItem> list;
 
-        //jsoup使用样式class抓取数据时空格的处理：http://www.cnblogs.com/l_dragon/archive/2013/08/27/jsoup.html
-        Elements elements1 = doc.select(".scrollers");
-        handleHeadLinesElements(headLineList, elements1);
-        Elements elements2 = doc.select(".block").select(".article");
-        handleHeadLinesElements(headLineList, elements2);
+    private static OnParseListener<NewsItem> onParseListener;
 
-        return headLineList;
+    public static final int MSG_SUCC = 1;
+    public static final int MSG_FAIL = 0;
+
+    private static DispatchStatusHandler mHandler = new DispatchStatusHandler();
+
+    private static class DispatchStatusHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SUCC:
+                    if (null != onParseListener) onParseListener.onParseSuccess(list);
+                    break;
+                case MSG_FAIL:
+                    if (null != onParseListener) onParseListener.onParseFailed();
+                    break;
+            }
+        }
     }
 
-    //获取feed流内容
-    public static List<NewsItem> getFeed(String html) {
-        Document doc = Jsoup.parse(html, Constant.INDEX_URL);
-        if (null == doc) return null;
-        List<NewsItem> feedList = new ArrayList<NewsItem>();
+    public static void getFeed(final String html, OnParseListener<NewsItem> onParseListener) {
+        NewsItemBiz.onParseListener = onParseListener;
+        new Thread() {
+            @Override
+            public void run() {
+                Document doc = Jsoup.parse(html, Constant.INDEX_URL);
+                if (null == doc) {
+                    mHandler.sendEmptyMessage(MSG_FAIL);
+                    return;
+                }
+                list = new ArrayList<NewsItem>();
 
-        Elements elements = doc.getElementsByTag("article");
-        handleFeedElements(feedList, elements);
+                //1-获取头条内容
+                //jsoup使用样式class抓取数据时空格的处理：http://www.cnblogs.com/l_dragon/archive/2013/08/27/jsoup.html
+                Elements elements1 = doc.select(".scrollers");
+                handleHeadLinesElements(list, elements1);
+                Elements elements2 = doc.select(".block").select(".article");
+                handleHeadLinesElements(list, elements2);
 
-        return feedList;
+                //2-获取feed流内容
+                Elements elements = doc.getElementsByTag("article");
+                handleFeedElements(list, elements);
+
+                mHandler.sendEmptyMessage(MSG_SUCC);
+            }
+        }.start();
     }
 
     private static void handleHeadLinesElements(List<NewsItem> headLineList, Elements elements) {

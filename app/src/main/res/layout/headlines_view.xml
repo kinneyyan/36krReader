@@ -1,25 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/headlines_one_fl"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="180dp">
 
-    <ImageView
-        android:id="@+id/headlines_one_iv"
+    <com.antonyt.infiniteviewpager.InfiniteViewPager
+        android:id="@+id/headlines_view_vp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/headlines_one"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/half_transparent"
-        android:ellipsize="end"
-        android:gravity="center_horizontal"
-        android:maxLines="2"
-        android:padding="5dp"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:visibility="gone"/>
+        android:padding="6dp">
+
+        <TextView
+            android:id="@+id/headlines_view_title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="text"/>
+
+        <TextView
+            android:id="@+id/headlines_view_number_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="- / -"
+            android:textColor="@color/white"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
 </FrameLayout>

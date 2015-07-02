@@ -9,15 +9,9 @@
     <color name="tv_primary_color">#FF555555</color>
     <color name="half_transparent">#55000000</color>
 
+    <color name="list_item_pressed_color">#DDDDDD</color>
+
     <color name="next_product_title_color">#30D0DF</color>
     <color name="next_product_count_bg">#948CF1</color>
 
-    <color name="headline_red_item_bg">#D83958</color>
-    <color name="headline_red_item_bg_pressed">#C44366</color>
-    <color name="headline_purple_item_bg">#9847D1</color>
-    <color name="headline_purple_item_bg_pressed">#8744BD</color>
-    <color name="headline_green_item_bg">#50C5B5</color>
-    <color name="headline_green_item_bg_pressed">#4CB1A1</color>
-    <color name="headline_blue_item_bg">#22A0D4</color>
-    <color name="headline_blue_item_bg_pressed">#218EC0</color>
 </resources>

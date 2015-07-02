@@ -4,36 +4,36 @@ import android.app.Activity;
 import android.content.*;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
-import com.yanshi.my36kr.adapter.CommonAdapter;
-import com.yanshi.my36kr.adapter.ViewHolder;
+import com.yanshi.my36kr.adapter.index.RvAdapter;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.biz.NewsItemBiz;
-import com.yanshi.my36kr.utils.*;
+import com.yanshi.my36kr.biz.OnParseListener;
+import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.HeadlinesView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kale.recycler.ExRecyclerView;
+import kale.recycler.OnRecyclerViewScrollListener;
 
 /**
  * 36氪网站改版，分页加载的代码已注释
@@ -44,27 +44,25 @@ import java.util.List;
 public class IndexFragment extends Fragment {
 
     private Activity activity;
-    private ACache mCache;
+    private Handler mHandler;
 //    private boolean needLoadMore = true;//是否需要加载更多
 //    private int currentPage = 1;//当前页数
 
     private HeadlinesView headlinesView;
     private SwipeRefreshLayout mSrl;
-    private ObservableListView mListView;
-    //    private FooterView footerView;
-    private CommonAdapter<NewsItem> mAdapter;
+    private ExRecyclerView mRecyclerView;
+    private RvAdapter mRvAdapter;
+//    private FooterView footerView;
     private Button reloadBtn;
 
     private List<NewsItem> headlinesList = new ArrayList<>();
-    private List<NewsItem> timelinesList = new ArrayList<>();
-    private List<NewsItem> loadingHeadlinesList;//加载时的list
-    private List<NewsItem> loadingTimelinesList;//加载时的list
+    private List<NewsItem> feedList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        mCache = ACache.get(activity);
+        mHandler = new Handler();
     }
 
     @Override
@@ -73,41 +71,41 @@ public class IndexFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         findViews(view);
         setListener();
 
-        loadCache();//加载缓存
+//        loadCache();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 setViewsVisible(true, true, false);
-                loadData();//加载网络
+                loadData();
             }
-        }, 358);
+        }, 300);//此处是为了自动显示Srl
 
     }
 
     private void findViews(View view) {
         mSrl = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
         mSrl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mListView = (ObservableListView) view.findViewById(R.id.index_timeline_lv);
+        mRecyclerView = (ExRecyclerView) view.findViewById(R.id.index_feed_rv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
-//        footerView = new FooterView(activity);
-//        mListView.addFooterView(footerView);
+
         headlinesView = new HeadlinesView(activity);
-        mListView.addHeaderView(headlinesView);
-        mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, timelinesList, R.layout.index_timeline_item) {
+        mRecyclerView.addHeaderView(headlinesView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(activity));// 线性布局
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置item动画
+        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void convert(ViewHolder helper, NewsItem item) {
-                helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
-                helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
-                helper.setText(R.id.index_timeline_item_info_tv, item.getDate());
-                ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
-                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithRoundedCorner());
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                NewsItem item = feedList.get(position & feedList.size());
+                Intent intent = new Intent(activity, FeedDetailActivity.class);
+                intent.putExtra(Constant.NEWS_ITEM, item);
+                startActivity(intent);
             }
         });
-
+        mRecyclerView.setAdapter(mRvAdapter = new RvAdapter(feedList));
     }
 
     private void setListener() {
@@ -121,60 +119,65 @@ public class IndexFragment extends Fragment {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setViewsVisible(true, true, false);
                 loadData();
             }
         });
-//        footerView.setListener(new FooterView.OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore() {
-//                if (needLoadMore) {
-//                    needLoadMore = false;
-//
-//                    loadMoreData();
-//                }
-//            }
-//        });
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int size = timelinesList.size();
-                int realPosition = position - mListView.getHeaderViewsCount();
-                NewsItem item;
-                if (size > 0 && (item = timelinesList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(activity, ItemDetailActivity.class);
-                    intent.putExtra(Constant.NEWS_ITEM, item);
-                    startActivity(intent);
-                }
-            }
-        });
     }
 
-    /**
-     * 从缓存加载数据
-     */
-    private void loadCache() {
-        if (getJsonToDataList()) {
-            headlinesView.initData(headlinesList);
-            if (null != mAdapter) mAdapter.notifyDataSetChanged();
-        }
-    }
+    //从缓存加载数据
+//    private void loadCache() {
+//        if (getJsonToDataList()) {
+//            headlinesView.initData(headlinesList);
+//            if (null != mAdapter) mAdapter.notifyDataSetChanged();
+//        }
+//    }
 
-    /**
-     * 从网络加载数据
-     */
+    //从网络加载数据
     private void loadData() {
-        HttpUtils.doGetAsyn(Constant.INDEX_URL, new HttpUtils.CallBack() {
+        StringRequest stringRequest = new StringRequest(Constant.INDEX_URL, new Response.Listener<String>() {
             @Override
-            public void onRequestComplete(String result) {
-                if (null != result) {
-                    loadingHeadlinesList = NewsItemBiz.getHeadLines(result);
-                    loadingTimelinesList = NewsItemBiz.getFeed(result);
+            public void onResponse(String response) {
+                if (!TextUtils.isEmpty(response)) {
+                    NewsItemBiz.getFeed(response, new OnParseListener<NewsItem>() {
+                        @Override
+                        public void onParseSuccess(List<NewsItem> list) {
+                            if (null != list && list.size() > 4) {
+                                headlinesList.clear();
+                                headlinesList.addAll(list.subList(0, 4));//从网页解析到的头条一共有4条
+                                headlinesView.initData(headlinesList);
+                                headlinesView.startAutoScroll();
 
-                    mCache.put(getClass().getSimpleName(), saveToJSONObj(loadingHeadlinesList, loadingTimelinesList), ACache.TIME_DAY * 3);
-                    mHandler.sendEmptyMessage(LOAD_COMPLETE);
+                                list.removeAll(headlinesList);
+                                feedList.clear();
+                                feedList.addAll(list);
+
+                                if (null != mRvAdapter) mRvAdapter.updateData(feedList);
+                                setViewsVisible(false, true, false);
+                            } else {
+                                setViewsVisible(false, false, true);
+                                ToastFactory.getToast(activity, "parse html failed").show();
+                            }
+                        }
+                        @Override
+                        public void onParseFailed() {
+                            setViewsVisible(false, false, true);
+                            ToastFactory.getToast(activity, "parse html failed").show();
+                        }
+                    });
+                } else {
+                    setViewsVisible(false, false, true);
                 }
             }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (null != feedList && !feedList.isEmpty()) setViewsVisible(false, false, true);
+                ToastFactory.getToast(activity, error.getMessage()).show();
+            }
         });
+        stringRequest.setTag(getClass().getSimpleName());
+        MyApplication.getRequestQueue().add(stringRequest);
     }
 
     /**
@@ -186,45 +189,13 @@ public class IndexFragment extends Fragment {
 //            @Override
 //            public void onRequestComplete(String result) {
 //                if (null != result) {
-//                    timelinesList.addAll(NewsItemBiz.getFeed(result));
+//                    feedList.addAll(NewsItemBiz.getFeed(result));
 //
 //                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
 //                }
 //            }
 //        });
 //    }
-
-    private final int LOAD_COMPLETE = 0X110;
-//    private final int LOAD_MORE_COMPLETE = 0X111;
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case LOAD_COMPLETE:
-                    if (loadingHeadlinesList != null && !loadingHeadlinesList.isEmpty()
-                            && loadingTimelinesList != null && !loadingTimelinesList.isEmpty()) {
-                        headlinesList.clear();
-                        headlinesList.addAll(loadingHeadlinesList);
-                        headlinesView.initData(headlinesList);
-                        timelinesList.clear();
-                        timelinesList.addAll(loadingTimelinesList);
-                    }
-
-                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
-                    setViewsVisible(false, true, false);
-                    break;
-//                case LOAD_MORE_COMPLETE:
-//                    if (null != mAdapter) mAdapter.notifyDataSetChanged();
-//
-//                    footerView.setLoadMoreState();
-//
-//                    needLoadMore = true;
-//                    break;
-            }
-        }
-    };
 
 //    private String initUrl(int currentPage) {
 //        currentPage = currentPage > 0 ? currentPage : 1;
@@ -236,74 +207,68 @@ public class IndexFragment extends Fragment {
      *
      * @return 返回是否有缓存
      */
-    public boolean getJsonToDataList() {
-        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
-        if (null != jsonObject) {
-            try {
-                JSONArray headlinesAr = jsonObject.getJSONArray("headlines");
-                headlinesList.clear();
-                for (int i = 0; i < headlinesAr.length(); i++) {
-                    JSONObject headline = headlinesAr.getJSONObject(i);
-                    NewsItem item = NewsItem.parse(headline);
+//    public boolean getJsonToDataList() {
+//        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
+//        if (null != jsonObject) {
+//            try {
+//                JSONArray headlinesAr = jsonObject.getJSONArray("headlines");
+//                headlinesList.clear();
+//                for (int i = 0; i < headlinesAr.length(); i++) {
+//                    JSONObject headline = headlinesAr.getJSONObject(i);
+//                    NewsItem item = NewsItem.parse(headline);
+//
+//                    headlinesList.add(item);
+//                }
+//                JSONArray timelinesAr = jsonObject.getJSONArray("timelines");
+//                feedList.clear();
+//                for (int i = 0; i < timelinesAr.length(); i++) {
+//                    JSONObject timeline = timelinesAr.getJSONObject(i);
+//                    NewsItem item = NewsItem.parse(timeline);
+//
+//                    feedList.add(item);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
 
-                    headlinesList.add(item);
-                }
-                JSONArray timelinesAr = jsonObject.getJSONArray("timelines");
-                timelinesList.clear();
-                for (int i = 0; i < timelinesAr.length(); i++) {
-                    JSONObject timeline = timelinesAr.getJSONObject(i);
-                    NewsItem item = NewsItem.parse(timeline);
-
-                    timelinesList.add(item);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 转换list中的数据为json
-     *
-     * @param headlinesList
-     * @param timelinesList
-     * @return
-     */
-    private JSONObject saveToJSONObj(List<NewsItem> headlinesList, List<NewsItem> timelinesList) {
-        JSONObject outerJsonObj = new JSONObject();
-        JSONArray headlineJsonAr = new JSONArray();
-        for (NewsItem headlinesItem : headlinesList) {
-            JSONObject jsonObject = headlinesItem.toJSONObj();
-            headlineJsonAr.put(jsonObject);
-        }
-        JSONArray timelineJsonAr = new JSONArray();
-        for (NewsItem timelinesItem : timelinesList) {
-            JSONObject jsonObject = timelinesItem.toJSONObj();
-            timelineJsonAr.put(jsonObject);
-        }
-        try {
-            outerJsonObj.put("headlines", headlineJsonAr);
-            outerJsonObj.put("timelines", timelineJsonAr);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return outerJsonObj;
-    }
+    //转换list中的数据为json
+//    private JSONObject saveToJSONObj(List<NewsItem> headlinesList, List<NewsItem> feedList) {
+//        JSONObject outerJsonObj = new JSONObject();
+//        JSONArray headlineJsonAr = new JSONArray();
+//        for (NewsItem headlinesItem : headlinesList) {
+//            JSONObject jsonObject = headlinesItem.toJSONObj();
+//            headlineJsonAr.put(jsonObject);
+//        }
+//        JSONArray feedJsonAr = new JSONArray();
+//        for (NewsItem timelinesItem : feedList) {
+//            JSONObject jsonObject = timelinesItem.toJSONObj();
+//            feedJsonAr.put(jsonObject);
+//        }
+//        try {
+//            outerJsonObj.put("headlines", headlineJsonAr);
+//            outerJsonObj.put("feed", feedJsonAr);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return outerJsonObj;
+//    }
 
     //设置各种View的显示状态
-    private void setViewsVisible(boolean mSrl, boolean mListView, boolean reloadBtn) {
+    private void setViewsVisible(boolean mSrl, boolean mRecyclerView, boolean reloadBtn) {
         if (mSrl) {
             if (null != this.mSrl) this.mSrl.setRefreshing(true);
         } else {
             if (null != this.mSrl) this.mSrl.setRefreshing(false);
         }
-        if (mListView) {
-            if (null != this.mListView) this.mListView.setVisibility(View.VISIBLE);
+        if (mRecyclerView) {
+            if (null != this.mRecyclerView) this.mRecyclerView.setVisibility(View.VISIBLE);
         } else {
-            if (null != this.mListView) this.mListView.setVisibility(View.GONE);
+            if (null != this.mRecyclerView) this.mRecyclerView.setVisibility(View.GONE);
         }
         if (reloadBtn) {
             if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.VISIBLE);
@@ -315,9 +280,13 @@ public class IndexFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (null != mHandler) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
+        if (null != mHandler) mHandler.removeCallbacksAndMessages(null);
+        MyApplication.getRequestQueue().cancelAll(getClass().getSimpleName());
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        headlinesView.stopAutoScroll();
+    }
 }

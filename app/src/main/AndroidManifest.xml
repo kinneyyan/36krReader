@@ -35,7 +35,7 @@
             android:screenOrientation="portrait" />
         <!--新闻详情页-->
         <activity
-            android:name=".ui.ItemDetailActivity"
+            android:name=".ui.FeedDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait">
@@ -48,11 +48,11 @@
         <activity
             android:name=".ui.ImageTerminalActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".ui.ItemDetailActivity"
+            android:parentActivityName=".ui.FeedDetailActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.ItemDetailActivity" />
+                android:value=".ui.FeedDetailActivity" />
         </activity>
         <!--个人资料页-->
         <activity

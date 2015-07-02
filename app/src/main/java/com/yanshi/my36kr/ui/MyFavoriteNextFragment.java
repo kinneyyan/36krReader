@@ -101,7 +101,7 @@ public class MyFavoriteNextFragment extends Fragment implements FragmentInterfac
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(activity, ItemDetailActivity.class);
+                    Intent intent = new Intent(activity, FeedDetailActivity.class);
                     intent.putExtra(Constant.NEXT_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }

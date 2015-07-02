@@ -18,5 +18,8 @@ allprojects {
         maven {
             url 'https://raw.github.com/chrisbanes/PhotoView/maven/'
         }
+        maven {
+            url "https://jitpack.io"
+        }
     }
 }

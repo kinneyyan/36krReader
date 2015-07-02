@@ -85,7 +85,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
-                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptions());
+                ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithRoundedCorner());
 
                 //隐藏时间TextView
                 TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
@@ -103,7 +103,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
                 int realPosition = position - mListView.getHeaderViewsCount();
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(activity, ItemDetailActivity.class);
+                    Intent intent = new Intent(activity, FeedDetailActivity.class);
                     intent.putExtra(Constant.NEWS_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }

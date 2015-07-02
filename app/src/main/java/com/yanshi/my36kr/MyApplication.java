@@ -2,6 +2,9 @@ package com.yanshi.my36kr;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -15,19 +18,23 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
  */
 public class MyApplication extends Application {
 
-    public static String TAG;
-    private static MyApplication myApplication = null;
+    private static MyApplication myApplication;
+    private static RequestQueue requestQueue;
 
     public static MyApplication getInstance() {
         return myApplication;
     }
 
+    public static RequestQueue getRequestQueue() {
+        return requestQueue;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        TAG = this.getClass().getSimpleName();
         //由于Application类本身已经单例，所以直接按以下处理即可。
         myApplication = this;
+        requestQueue = Volley.newRequestQueue(this);
         initImageLoader();
     }
 
@@ -50,7 +57,7 @@ public class MyApplication extends Application {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
-                .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .bitmapConfig(Bitmap.Config.RGB_565) // default
                 .displayer(new FadeInBitmapDisplayer(300))
                 .build();
     }
@@ -64,7 +71,7 @@ public class MyApplication extends Application {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
-                .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .bitmapConfig(Bitmap.Config.RGB_565) // default
                 .displayer(new FadeInBitmapDisplayer(300))
                 .build();
     }
@@ -78,7 +85,7 @@ public class MyApplication extends Application {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
-                .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .bitmapConfig(Bitmap.Config.RGB_565) // default
                 .displayer(new FadeInBitmapDisplayer(300))
                 .displayer(new RoundedBitmapDisplayer(10))
                 .build();

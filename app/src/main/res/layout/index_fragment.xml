@@ -9,12 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.github.ksoichiro.android.observablescrollview.ObservableListView
-            android:id="@+id/index_timeline_lv"
+        <kale.recycler.ExRecyclerView
+            android:id="@+id/index_feed_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:cacheColorHint="@android:color/transparent"/>
+            android:layout_height="match_parent"/>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <Button

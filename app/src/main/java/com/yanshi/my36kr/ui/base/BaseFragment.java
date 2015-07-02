@@ -1,14 +1,13 @@
 package com.yanshi.my36kr.ui.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 可保存View状态的Fragment，主要用于ViewPager中
+ * 可保存View状态的Fragment
  * Created by kingars on 2015/3/28.
  */
 public abstract class BaseFragment extends Fragment {
@@ -16,7 +15,7 @@ public abstract class BaseFragment extends Fragment {
     protected View rootView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (null == rootView) {
             return onViewInit(inflater, container, savedInstanceState);
         }
@@ -36,6 +35,6 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    public abstract View onViewInit(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
+    public abstract View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
 }
