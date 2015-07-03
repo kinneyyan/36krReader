@@ -1,11 +1,11 @@
 36krReader
 ======
 
-个人制作的36氪安卓客户端，希望遵循Material Design。
+个人开发的36氪Android阅读客户端，数据通过Jsoup解析web端网页获取，由于最近网站改版，暂时不支持加载分页数据T T。
 
-1、个人的业余项目，包含了android工程中一些常用的工具类、知识点。
+1、个人业余时间的项目，包含了android中一些常用的工具类、代码段。
 
-2、数据通过jsoup解析网页的html获取。
+2、设计风格希望能遵循Material Design，尽量使用google提供的原生控件，包括android design support library
 
 3、使用了国内的baas服务Bmob，给app加入了用户系统，实现了收藏云同步。
 
