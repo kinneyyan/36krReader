@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,10 +100,30 @@ public class IndexFragment extends Fragment {
         mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                NewsItem item = feedList.get(position & feedList.size());
                 Intent intent = new Intent(activity, FeedDetailActivity.class);
-                intent.putExtra(Constant.NEWS_ITEM, item);
+                intent.putExtra(Constant.NEWS_ITEM, feedList.get(position));
                 startActivity(intent);
+            }
+        });
+        mRecyclerView.addOnScrollListener(new OnRecyclerViewScrollListener() {
+            @Override
+            public void onScrollUp() {
+
+            }
+
+            @Override
+            public void onScrollDown() {
+
+            }
+
+            @Override
+            public void onBottom() {
+                ToastFactory.getToast(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~").show();
+            }
+
+            @Override
+            public void onMoved(int i, int i1) {
+
             }
         });
         mRecyclerView.setAdapter(mRvAdapter = new RvAdapter(feedList));
@@ -172,7 +193,7 @@ public class IndexFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (null != feedList && !feedList.isEmpty()) setViewsVisible(false, false, true);
+                if (null != feedList && feedList.isEmpty()) setViewsVisible(false, false, true);
                 ToastFactory.getToast(activity, error.getMessage()).show();
             }
         });
@@ -282,6 +303,12 @@ public class IndexFragment extends Fragment {
         super.onDestroyView();
         if (null != mHandler) mHandler.removeCallbacksAndMessages(null);
         MyApplication.getRequestQueue().cancelAll(getClass().getSimpleName());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        headlinesView.startAutoScroll();
     }
 
     @Override

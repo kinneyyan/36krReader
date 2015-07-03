@@ -18,7 +18,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -45,7 +48,8 @@ import cn.bmob.v3.BmobObject;
  */
 public class FeedDetailActivity extends BaseActivity implements ObservableScrollViewCallbacks {
 
-    private Toolbar toolbar;
+    private LinearLayout toolBarWithPb;
+    private Toolbar toolBar;
     private ProgressBar progressBar;
     private MyWebView webView;
     private Button reloadBtn;
@@ -193,9 +197,10 @@ public class FeedDetailActivity extends BaseActivity implements ObservableScroll
     }
 
     private void findViews() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolBarWithPb = (LinearLayout) findViewById(R.id.news_detail_tool_bar_with_progress_bar);
         progressBar = (ProgressBar) this.findViewById(R.id.news_detail_pb);
         webView = (MyWebView) this.findViewById(R.id.news_detail_wb);
         reloadBtn = (Button) this.findViewById(R.id.news_detail_reload_btn);
@@ -415,11 +420,12 @@ public class FeedDetailActivity extends BaseActivity implements ObservableScroll
     }
 
     private void hideViews() {
-        toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        int pbHeight = progressBar.getVisibility() == View.VISIBLE ? progressBar.getHeight() : 0;
+        toolBarWithPb.animate().translationY(-toolBarWithPb.getHeight() + pbHeight).setInterpolator(new AccelerateInterpolator(2));
     }
 
     private void showViews() {
-        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        toolBarWithPb.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     // js通信接口

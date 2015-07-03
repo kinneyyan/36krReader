@@ -28,6 +28,7 @@ public class HeadlinesView extends FrameLayout {
     private Handler mHandler;
     private int autoScrollDelay = 3000;//自动滑动的间隔时间
     private boolean isAutoScroll = true;//是否自动滑动
+    private boolean isScrolling = false;//是否正在自动滑动
 
     private InfiniteViewPager mViewPager;
     private TextView titleTv;
@@ -70,12 +71,18 @@ public class HeadlinesView extends FrameLayout {
 
     // 启动自动滑动 used after initData()
     public void startAutoScroll() {
-        if (null != mHandler) mHandler.postDelayed(autoScrollTask, autoScrollDelay);
+        if (null != mHandler && !isScrolling) {
+            isScrolling = true;
+            mHandler.postDelayed(autoScrollTask, autoScrollDelay);
+        }
     }
 
     // 关闭自动滑动 used in onPause()
     public void stopAutoScroll() {
-        if (null != mHandler) mHandler.removeCallbacks(autoScrollTask);
+        if (null != mHandler) {
+            isScrolling = false;
+            mHandler.removeCallbacks(autoScrollTask);
+        }
     }
 
     // 设置是否自动滑动
@@ -120,11 +127,14 @@ public class HeadlinesView extends FrameLayout {
     private Runnable autoScrollTask = new Runnable() {
         @Override
         public void run() {
-            if(isAutoScroll && null != mViewPager){
+            if(isAutoScroll && null != mViewPager) {
                 int currentItem = mViewPager.getSuperCurrentItem();
                 currentItem++;
                 if (Integer.MAX_VALUE == currentItem) currentItem = 0;
                 mViewPager.setSuperCurrentItem(currentItem);
+
+                isScrolling = false;
+
                 startAutoScroll();
             }
         }

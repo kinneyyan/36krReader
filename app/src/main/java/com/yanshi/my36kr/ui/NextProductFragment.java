@@ -151,7 +151,7 @@ public class NextProductFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (null != nextItemList && !nextItemList.isEmpty()) setViewsVisible(false, false, true);
+                if (null != nextItemList && nextItemList.isEmpty()) setViewsVisible(false, false, true);
                 ToastFactory.getToast(activity, error.getMessage()).show();
             }
         });

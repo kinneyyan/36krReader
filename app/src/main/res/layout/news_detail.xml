@@ -11,16 +11,21 @@
         android:clipToPadding="false"
         android:paddingTop="?attr/actionBarSize" />
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <ProgressBar
-        android:id="@+id/news_detail_pb"
-        style="@style/Custom.Widget.Holo.ProgressBar.Horizontal"
+    <LinearLayout
+        android:id="@+id/news_detail_tool_bar_with_progress_bar"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_below="@id/toolbar"/>
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <ProgressBar
+            android:id="@+id/news_detail_pb"
+            style="@style/Custom.Widget.Holo.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/news_detail_reload_btn"
