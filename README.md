@@ -24,6 +24,6 @@
 
 5、app截图：
 
-![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-02-17-43-45.png "")
+![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-06-17-49-50.png "")
 
 ![screenshot2](https://github.com/kinneyyan/36krReader/raw/master/Screenshots/Screenshot_2015-03-29-21-07-15.png "")

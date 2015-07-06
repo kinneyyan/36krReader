@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+        <!-- Status Bar -->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+        <!-- Navigation Bar -->
+        <item name="android:windowTranslucentNavigation">true</item>
+        <!--和ToolBar配合使用造成的问题见：-->
+        <!--http://stackoverflow.com/questions/27291219/issue-with-windowtranslucentnavigation-->
+    </style>
+
+</resources>

@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.ScreenUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 
 import java.util.ArrayList;
@@ -82,6 +84,7 @@ public class MainActivity extends BaseActivity {
 
     private void findViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        ((LinearLayout.LayoutParams) mToolbar.getLayoutParams()).setMargins(0, ScreenUtils.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

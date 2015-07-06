@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -13,6 +14,7 @@ import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.ScreenUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 
 import uk.co.senab.photoview.PhotoView;
@@ -71,6 +73,7 @@ public class ImageTerminalActivity extends BaseActivity {
 
     private void findViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ((LinearLayout.LayoutParams) toolbar.getLayoutParams()).setMargins(0, ScreenUtils.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar = (ProgressBar) this.findViewById(R.id.image_terminal_pb);

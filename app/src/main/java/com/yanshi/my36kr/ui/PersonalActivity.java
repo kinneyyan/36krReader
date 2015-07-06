@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -26,6 +27,7 @@ import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
 import com.yanshi.my36kr.utils.SDCardUtils;
+import com.yanshi.my36kr.utils.ScreenUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.dialog.ConfirmDialogFragment;
@@ -192,6 +194,7 @@ public class PersonalActivity extends BaseActivity {
 
     private void findViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ((LinearLayout.LayoutParams) toolbar.getLayoutParams()).setMargins(0, ScreenUtils.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         usernameTv = (TextView) findViewById(R.id.personal_username_tv);

@@ -35,6 +35,7 @@ import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.ui.base.BaseActivity;
+import com.yanshi.my36kr.utils.ScreenUtils;
 import com.yanshi.my36kr.utils.StringUtils;
 import com.yanshi.my36kr.utils.ToastFactory;
 import com.yanshi.my36kr.view.MyWebView;
@@ -198,6 +199,7 @@ public class FeedDetailActivity extends BaseActivity implements ObservableScroll
 
     private void findViews() {
         toolBar = (Toolbar) findViewById(R.id.toolbar);
+        ((LinearLayout.LayoutParams) toolBar.getLayoutParams()).setMargins(0, ScreenUtils.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolBarWithPb = (LinearLayout) findViewById(R.id.news_detail_tool_bar_with_progress_bar);
