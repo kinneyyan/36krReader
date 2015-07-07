@@ -2,7 +2,6 @@ package com.yanshi.my36kr.ui;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,7 +35,6 @@ public class SettingsFragment extends Fragment {
     private Activity activity;
     private DialogHandler dialogHandler;
 
-    private Button personalInfoBtn;//个人资料
     private Button offlineDownloadBtn;//离线下载
     private Button clearCacheBtn;//清除缓存
     private TextView cacheSizeTv;//缓存大小
@@ -49,7 +47,7 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.settings, container, false);
+        return inflater.inflate(R.layout.activity_settings, container, false);
     }
 
     @Override
@@ -87,19 +85,12 @@ public class SettingsFragment extends Fragment {
     }
 
     private void findViews(View view) {
-        personalInfoBtn = (Button) view.findViewById(R.id.settings_personal_info_btn);
         offlineDownloadBtn = (Button) view.findViewById(R.id.settings_offline_download_btn);
         clearCacheBtn = (Button) view.findViewById(R.id.settings_clear_cache_btn);
         cacheSizeTv = (TextView) view.findViewById(R.id.settings_cache_size_tv);
     }
 
     private void setListener() {
-        personalInfoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(activity, PersonalActivity.class));
-            }
-        });
         offlineDownloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

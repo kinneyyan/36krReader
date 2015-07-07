@@ -3,7 +3,6 @@ package com.yanshi.my36kr.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.*;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cn.bmob.v3.Bmob;
 import com.yanshi.my36kr.R;
@@ -21,7 +20,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash);
+        setContentView(R.layout.activity_splash);
         Bmob.initialize(this, Constant.BMOB_APPLICATION_ID);
         if (savedInstanceState == null) {
             initView();

@@ -79,6 +79,7 @@ public class MyFavoriteNewsFragment extends Fragment implements FragmentInterfac
 
     private void findViews(View view) {
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
+        mListView.setDivider(null);
         mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, newsItemList, R.layout.index_timeline_item) {
             @Override
             public void convert(ViewHolder helper, NewsItem item) {

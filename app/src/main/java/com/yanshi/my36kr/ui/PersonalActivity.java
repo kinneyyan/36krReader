@@ -20,7 +20,6 @@ import android.widget.TextView;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
@@ -64,7 +63,7 @@ public class PersonalActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.personal);
+        setContentView(R.layout.activity_personal);
         setSlidr();
         findViews();
         setListener();
@@ -94,6 +93,7 @@ public class PersonalActivity extends BaseActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             UserProxy.logout(getApplicationContext());
                             PersonalActivity.this.finish();
+                            Constant.USER_INFO_CHANGED = true;
                         }
                     }, null);
                     confirmDialogFragment.show(PersonalActivity.this.getFragmentManager(), "personal_confirm_dialog");
@@ -113,6 +113,7 @@ public class PersonalActivity extends BaseActivity {
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
                                     ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                                    Constant.USER_INFO_CHANGED = true;
                                     userNicknameTv.setText(user.getNickname());
                                 }
 
@@ -404,6 +405,7 @@ public class PersonalActivity extends BaseActivity {
                     public void onSuccess() {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
                         ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                        Constant.USER_INFO_CHANGED = true;
 
                         if (null != imageUri) {
                             ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));

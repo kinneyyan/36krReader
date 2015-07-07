@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_index"
+            android:icon="@drawable/ic_menu_index"
+            android:checked="true"
+            android:title="36氪" />
+        <item
+            android:id="@+id/nav_next"
+            android:icon="@drawable/ic_menu_next"
+            android:title="NEXT" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="设置" />
+    </group>
+
+    <item android:title="我的">
+        <menu>
+            <item
+                android:id="@+id/nav_personal"
+                android:icon="@drawable/ic_menu_user"
+                android:title="个人信息" />
+            <item
+                android:id="@+id/nav_favorite"
+                android:icon="@drawable/ic_menu_favorite"
+                android:title="我的收藏" />
+        </menu>
+    </item>
+
+</menu>

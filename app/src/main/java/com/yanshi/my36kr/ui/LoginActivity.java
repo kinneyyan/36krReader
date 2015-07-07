@@ -1,10 +1,11 @@
 package com.yanshi.my36kr.ui;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
-import com.r0adkll.slidr.Slidr;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
@@ -35,7 +36,10 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);// 取消透明导航栏
+        }
+        setContentView(R.layout.activity_login);
         findViews();
         setListener();
     }

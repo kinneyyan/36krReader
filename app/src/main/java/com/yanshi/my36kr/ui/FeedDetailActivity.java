@@ -18,10 +18,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -68,7 +66,7 @@ public class FeedDetailActivity extends BaseActivity implements ObservableScroll
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.news_detail);
+        setContentView(R.layout.activity_news_detail);
         setSlidr();
         if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 

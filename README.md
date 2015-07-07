@@ -26,4 +26,6 @@
 
 ![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-06-17-49-50.png "")
 
-![screenshot2](https://github.com/kinneyyan/36krReader/raw/master/Screenshots/Screenshot_2015-03-29-21-07-15.png "")
+![screenshot2](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-07-17-17-31.png "")
+
+![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-07-17-17-56.png "")

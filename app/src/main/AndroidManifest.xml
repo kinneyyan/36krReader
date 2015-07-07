@@ -54,9 +54,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.FeedDetailActivity" />
         </activity>
-        <!--个人资料页-->
+        <!--个人信息页-->
         <activity
             android:name=".ui.PersonalActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/personal_info"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait">
+            <!-- 父activity的meta-data，用来支持4.0以下版本 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
+        </activity>
+        <!--我的收藏页-->
+        <activity
+            android:name=".ui.MyFavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/personal_info"
             android:parentActivityName=".ui.MainActivity"

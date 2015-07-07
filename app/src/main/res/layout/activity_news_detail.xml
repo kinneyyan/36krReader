@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--WebView设置padding无效。。-->
+    <com.yanshi.my36kr.view.MyWebView
+        android:id="@+id/news_detail_wb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="?attr/actionBarSize" />
+
+    <LinearLayout
+        android:id="@+id/news_detail_tool_bar_with_progress_bar"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <ProgressBar
+            android:id="@+id/news_detail_pb"
+            style="@style/Custom.Widget.Holo.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/news_detail_reload_btn"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/network_time_out"
+        android:textColor="@color/tv_primary_color"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</RelativeLayout>
