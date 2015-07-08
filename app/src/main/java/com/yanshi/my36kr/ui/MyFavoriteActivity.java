@@ -37,6 +37,7 @@ public class MyFavoriteActivity extends BaseActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);// 取消透明导航栏
         }
         setContentView(R.layout.activity_my_favorite);
+        setSlidr();
         findViews();
 
         fragmentList = new ArrayList<>();

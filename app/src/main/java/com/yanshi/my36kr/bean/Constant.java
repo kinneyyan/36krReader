@@ -30,6 +30,6 @@ public class Constant {
     public static final String NEWS_ITEM = "news_item";
     public static final String NEXT_ITEM = "next_item";
 
-    // 个人信息是否修改过了or是否注销了
+    // 个人信息是否修改过了or是否登录or是否注销
     public static boolean USER_INFO_CHANGED = false;
 }

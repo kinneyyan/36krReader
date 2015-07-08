@@ -28,4 +28,4 @@
 
 ![screenshot2](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-07-17-17-31.png "")
 
-![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-07-17-17-56.png "")
+![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-08-10-11-58.png "")

@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
 
     int[] userAvatars = {R.drawable.ic_avatar_bear, R.drawable.ic_avatar_cat, R.drawable.ic_avatar_monkey,
     R.drawable.ic_avatar_panda, R.drawable.ic_avatar_pig, R.drawable.ic_avatar_raccoon, R.drawable.ic_avatar_rhino};
-    String[] mDrawerTitles = {"36氪", "NEXT", "设置"};
+    String[] drawerTitles = {"36氪", "NEXT", "设置"};
     List<Fragment> fragmentList;
     Class[] classes = {IndexFragment.class, NextProductFragment.class, SettingsFragment.class};
 
@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity {
         Fragment fragment;
         if (null == fragmentList.get(position)) {
             Bundle bundle = new Bundle();
-            bundle.putString(Constant.TITLE, mDrawerTitles[position]);
+            bundle.putString(Constant.TITLE, drawerTitles[position]);
             fragment = Fragment.instantiate(this, classes[position].getName(), bundle);
             fragmentList.set(position, fragment);
             // 如果Fragment为空，则创建一个并添加到界面上
@@ -86,6 +86,7 @@ public class MainActivity extends BaseActivity {
 
         // 高亮被选择的item字体颜色, 更新标题, 并关闭drawer
 //        mDrawerList.setItemChecked(position, true);
+        getSupportActionBar().setTitle(drawerTitles[position]);
     }
 
     private void findViews() {
@@ -177,17 +178,17 @@ public class MainActivity extends BaseActivity {
 //    private class DrawerListAdapter extends BaseAdapter {
 //        @Override
 //        public int getCount() {
-//            return mDrawerTitles.length;
+//            return drawerTitles.length;
 //        }
 //
 //        @Override
 //        public String getItem(int position) {
-//            return mDrawerTitles[position];
+//            return drawerTitles[position];
 //        }
 //
 //        @Override
 //        public long getItemId(int position) {
-//            return mDrawerTitles[position].hashCode();
+//            return drawerTitles[position].hashCode();
 //        }
 //
 //        @Override

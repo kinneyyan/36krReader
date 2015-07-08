@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.ui.base.BaseActivity;
 import com.yanshi.my36kr.utils.StringUtils;
@@ -90,6 +91,7 @@ public class LoginActivity extends BaseActivity {
                                 ToastFactory.getToast(mContext, getString(R.string.login_success)).show();
                                 setResult(RESULT_OK);
                                 LoginActivity.this.finish();
+                                Constant.USER_INFO_CHANGED = true;
                             }
 
                             @Override
