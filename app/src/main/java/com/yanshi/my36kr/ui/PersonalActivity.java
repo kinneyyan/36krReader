@@ -17,8 +17,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
@@ -45,7 +47,6 @@ import java.util.Date;
  */
 public class PersonalActivity extends BaseActivity {
 
-    private final int REQUEST_CODE_LOGIN = 0x1000;
     private final int REQUEST_CODE_ALBUM = 0x1001;
     private final int REQUEST_CODE_CAMERA = 0x1002;
     private final int REQUEST_CODE_CROP_IMG = 0x1003;
@@ -68,16 +69,8 @@ public class PersonalActivity extends BaseActivity {
         findViews();
         setListener();
 
-        if (!UserProxy.isLogin(this)) {
-            ToastFactory.getToast(this, getString(R.string.personal_login_first)).show();
-            jumpToActivityForResult(this, LoginActivity.class, REQUEST_CODE_LOGIN, null);
-        } else {
-            user = UserProxy.getCurrentUser(this);
-            if (null != user) {
-                setUserInfo(user);
-            }
-        }
-
+        user = UserProxy.getCurrentUser(this);
+        if (null != user) setUserInfo(user);
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -219,10 +212,6 @@ public class PersonalActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {
             switch (requestCode) {
-                case REQUEST_CODE_LOGIN://登录成功
-                    user = UserProxy.getCurrentUser(this);
-                    if (null != user) setUserInfo(user);
-                    break;
                 case REQUEST_CODE_ALBUM://相册照片选好了
                     if (null != data && null != imageUri) {
 //                        Bitmap bitmap = decodeUriAsBitmap(imageUri);//decode bitmap
@@ -244,8 +233,6 @@ public class PersonalActivity extends BaseActivity {
                     }
                     break;
             }
-        } else {
-            if (!UserProxy.isLogin(this)) this.finish();
         }
     }
 
@@ -261,17 +248,17 @@ public class PersonalActivity extends BaseActivity {
             ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));
         }
         //昵称
-        if(!TextUtils.isEmpty(user.getNickname())) {
+        if (!TextUtils.isEmpty(user.getNickname())) {
             userNicknameTv.setText(user.getNickname());
         } else {
             userNicknameTv.setText(user.getUsername());
         }
         //性别
-        if(!TextUtils.isEmpty(user.getSex())) {
+        if (!TextUtils.isEmpty(user.getSex())) {
             userSexTv.setText(user.getSex());
         }
         //个性签名
-        if(!TextUtils.isEmpty(user.getSignature())) {
+        if (!TextUtils.isEmpty(user.getSignature())) {
             userSignatureTv.setText(user.getSignature());
         }
     }
@@ -359,6 +346,7 @@ public class PersonalActivity extends BaseActivity {
 
     /**
      * 返回存储图片的file
+     *
      * @return
      */
     public File getAvatarFile() {

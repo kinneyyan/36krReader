@@ -22,9 +22,6 @@ public class MyWebView extends ObservableWebView {
             webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
         webSettings.setJavaScriptEnabled(true);
-//        webSettings.setUseWideViewPort(true);
-//        webSettings.setLoadWithOverviewMode(true);
-
     }
 
     public MyWebView(Context context) {

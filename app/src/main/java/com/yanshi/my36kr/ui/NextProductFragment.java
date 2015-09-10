@@ -276,7 +276,7 @@ public class NextProductFragment extends Fragment {
                 if (null != nextItem) {
                     holder.title.setText(nextItem.getTitle());
                     holder.content.setText(nextItem.getContent());
-                    holder.voteCount.setText("票数\n" + nextItem.getVoteCount());
+                    holder.voteCount.setText("vote\n" + nextItem.getVoteCount());
                     holder.commentCount.setText(nextItem.getCommentCount() + "");
                 }
             }

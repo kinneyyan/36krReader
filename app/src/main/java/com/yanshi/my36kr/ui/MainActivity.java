@@ -32,19 +32,19 @@ import java.util.Random;
 
 public class MainActivity extends BaseActivity {
 
-    Toolbar mToolbar;
-    DrawerLayout mDrawerLayout;
-    NavigationView mNavigationView;
-    ImageView userAvatarIv;
-    TextView userNameTv;
+    private Toolbar mToolbar;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+    private ImageView userAvatarIv;
+    private TextView userNameTv;
 
-    int[] userAvatars = {R.drawable.ic_avatar_bear, R.drawable.ic_avatar_cat, R.drawable.ic_avatar_monkey,
-    R.drawable.ic_avatar_panda, R.drawable.ic_avatar_pig, R.drawable.ic_avatar_raccoon, R.drawable.ic_avatar_rhino};
-    String[] drawerTitles = {"36氪", "NEXT", "设置"};
-    List<Fragment> fragmentList;
-    Class[] classes = {IndexFragment.class, NextProductFragment.class, SettingsFragment.class};
+    private int[] userAvatars = {R.drawable.ic_avatar_bear, R.drawable.ic_avatar_cat, R.drawable.ic_avatar_monkey,
+            R.drawable.ic_avatar_panda, R.drawable.ic_avatar_pig, R.drawable.ic_avatar_raccoon, R.drawable.ic_avatar_rhino};
+    private String[] drawerTitles = {"36氪", "NEXT", "设置"};
+    private List<Fragment> fragmentList;
+    private Class[] classes = {IndexFragment.class, NextProductFragment.class, SettingsFragment.class};
 
-    User user;
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,8 +84,6 @@ public class MainActivity extends BaseActivity {
         }
         fragmentTransaction.commit();
 
-        // 高亮被选择的item字体颜色, 更新标题, 并关闭drawer
-//        mDrawerList.setItemChecked(position, true);
         getSupportActionBar().setTitle(drawerTitles[position]);
     }
 
@@ -103,18 +101,6 @@ public class MainActivity extends BaseActivity {
         mNavigationView = (NavigationView) findViewById(R.id._main_navigation_view);
 
         setupDrawerContent(mNavigationView);
-
-        //菜单的监听可以在toolbar里设置，也可以像ActionBar那样，通过Activity的onOptionsItemSelected回调方法来处理
-        //mToolbar.setOnMenuItemClickListener(OnMenuItemClickListener);
-
-//        mDrawerList = (ListView) findViewById(R.id.main_left_drawer);
-//        mDrawerList.setAdapter(new DrawerListAdapter());
-//        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                selectItem(position);
-//            }
-//        });
     }
 
     private void setupDrawerContent(NavigationView mNavigationView) {
@@ -138,10 +124,18 @@ public class MainActivity extends BaseActivity {
                         selectItem(2);
                         break;
                     case R.id.nav_personal://个人信息
-                        startActivity(new Intent(MainActivity.this, PersonalActivity.class));
+                        if (!UserProxy.isLogin(MainActivity.this)) {
+                            jumpToActivity(MainActivity.this, LoginActivity.class, null);
+                        } else {
+                            jumpToActivity(MainActivity.this, PersonalActivity.class, null);
+                        }
                         break;
                     case R.id.nav_favorite://我的收藏
-                        startActivity(new Intent(MainActivity.this, MyFavoriteActivity.class));
+                        if (!UserProxy.isLogin(MainActivity.this)) {
+                            jumpToActivity(MainActivity.this, LoginActivity.class, null);
+                        } else {
+                            jumpToActivity(MainActivity.this, MyFavoriteActivity.class, null);
+                        }
                         break;
                 }
 
@@ -159,7 +153,7 @@ public class MainActivity extends BaseActivity {
         } else {
             user = UserProxy.getCurrentUser(this);
             if (null != user) {
-                if(!TextUtils.isEmpty(user.getNickname())) {
+                if (!TextUtils.isEmpty(user.getNickname())) {
                     userNameTv.setText(user.getNickname());
                 } else {
                     userNameTv.setText(user.getUsername());
@@ -174,34 +168,6 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
-//    private class DrawerListAdapter extends BaseAdapter {
-//        @Override
-//        public int getCount() {
-//            return drawerTitles.length;
-//        }
-//
-//        @Override
-//        public String getItem(int position) {
-//            return drawerTitles[position];
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return drawerTitles[position].hashCode();
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            if (convertView == null) {
-//                convertView = getLayoutInflater().inflate(R.layout.main_drawer_list_item, parent, false);
-//            }
-//            ((ImageView) convertView.findViewById(R.id.main_drawer_list_item_iv)).setImageResource(mDrawerIcons[position]);
-//            ((TextView) convertView.findViewById(R.id.main_drawer_list_item_tv)).setText(getItem(position));
-//            return convertView;
-//        }
-//    }
-
 
     @Override
     protected void onResume() {

@@ -2,24 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     android:divider="?android:dividerHorizontal"
     android:orientation="vertical"
     android:padding="16dp"
-    android:showDividers="middle"
-    android:background="@color/background_color">
+    android:showDividers="middle">
 
+    <!--离线下载-->
     <Button
         android:id="@+id/settings_offline_download_btn"
-        style="?android:borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:drawableLeft="@drawable/ic_download"
         android:drawablePadding="8dp"
         android:gravity="start|center_vertical"
         android:text="@string/settings_offline_download"
         android:textColor="@color/tv_primary_color"
         android:textSize="20sp" />
-
+    <!--清除缓存-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -28,16 +29,16 @@
             android:id="@+id/settings_cache_size_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:textColor="@color/tv_primary_color"
             android:textSize="18sp" />
 
         <Button
             android:id="@+id/settings_clear_cache_btn"
-            style="?android:buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
             android:drawableLeft="@drawable/ic_clear"
             android:drawablePadding="8dp"
             android:gravity="start|center_vertical"

@@ -44,14 +44,11 @@ public class IndexFragment extends Fragment {
 
     private Activity activity;
     private Handler mHandler;
-//    private boolean needLoadMore = true;//是否需要加载更多
-//    private int currentPage = 1;//当前页数
 
     private HeadlinesView headlinesView;
     private SwipeRefreshLayout mSrl;
     private ExRecyclerView mRecyclerView;
     private RvAdapter mRvAdapter;
-//    private FooterView footerView;
     private Button reloadBtn;
 
     private List<NewsItem> headlinesList = new ArrayList<>();
@@ -131,7 +128,6 @@ public class IndexFragment extends Fragment {
         mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                currentPage = 1;
                 loadData();
             }
         });
@@ -198,28 +194,6 @@ public class IndexFragment extends Fragment {
         stringRequest.setTag(getClass().getSimpleName());
         MyApplication.getRequestQueue().add(stringRequest);
     }
-
-    /**
-     * 加载更多
-     */
-//    private void loadMoreData() {
-//        currentPage += 1;
-//        HttpUtils.doGetAsyn(initUrl(currentPage), new HttpUtils.CallBack() {
-//            @Override
-//            public void onRequestComplete(String result) {
-//                if (null != result) {
-//                    feedList.addAll(NewsItemBiz.getFeed(result));
-//
-//                    mHandler.sendEmptyMessage(LOAD_MORE_COMPLETE);
-//                }
-//            }
-//        });
-//    }
-
-//    private String initUrl(int currentPage) {
-//        currentPage = currentPage > 0 ? currentPage : 1;
-//        return Constant.INDEX_URL + "/?page=" + currentPage + "#lastest";
-//    }
 
     /**
      * 读取缓存文件转换成json，放置于list中

@@ -103,7 +103,12 @@ public class NewsItemBiz {
                 Elements elementsTitle = element.select(".title").select(".info_flow_news_title");
                 if (elementsTitle.size() > 0) {
                     item.setTitle(elementsTitle.text());
-                    item.setUrl(elementsTitle.attr("href"));
+
+                    String url = elementsTitle.attr("href");
+                    if (url != null && !url.startsWith("http")) {// 针对相对链接时加上host
+                        url = Constant.INDEX_URL + elementsTitle.attr("href");
+                    }
+                    item.setUrl(url);
                 }
                 //图片 class="pic info_flow_news_image"
                 Elements elementsPic = element.select(".pic").select(".info_flow_news_image");

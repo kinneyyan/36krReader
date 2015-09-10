@@ -13,7 +13,7 @@
         android:background="@drawable/next_product_item_vote_count_bg"
         android:gravity="center"
         android:padding="5dp"
-        android:text="25\n投票"
+        android:text="25\nvote"
         android:textColor="@color/white"
         android:textSize="12sp" />
 
