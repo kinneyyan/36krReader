@@ -18,19 +18,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.UploadFileListener;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
-import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.common.utils.SDCardUtils;
 import com.yanshi.my36kr.common.utils.ScreenUtils;
 import com.yanshi.my36kr.common.utils.StringUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.dialog.ConfirmDialogFragment;
 import com.yanshi.my36kr.common.view.dialog.EditTextDialogFragment;
 import com.yanshi.my36kr.common.view.dialog.ListDialogFragment;
@@ -39,6 +36,9 @@ import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Date;
+
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.UploadFileListener;
 
 /**
  * 个人资料页面
@@ -105,7 +105,7 @@ public class PersonalActivity extends BaseActivity {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_success));
                                     Constant.USER_INFO_CHANGED = true;
                                     userNicknameTv.setText(user.getNickname());
                                 }
@@ -113,7 +113,7 @@ public class PersonalActivity extends BaseActivity {
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_failed) + msg);
                                 }
                             });
                         }
@@ -131,14 +131,14 @@ public class PersonalActivity extends BaseActivity {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_success));
                                     userSexTv.setText(user.getSex());
                                 }
 
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_failed) + msg);
                                 }
                             });
                         }
@@ -152,7 +152,7 @@ public class PersonalActivity extends BaseActivity {
                         public void onClick(String str) {
                             if (StringUtils.isBlank(str)) return;
                             if (!TextUtils.isEmpty(str) && str.length() > 140) {
-                                ToastFactory.getToast(mContext, getString(R.string.user_signature_exceed_140_words)).show();
+                                ToastUtils.show(mContext, getString(R.string.user_signature_exceed_140_words));
                                 return;
                             }
                             loadingDialogFragment.show(getFragmentManager(), "set_signature_loading_dialog");
@@ -160,14 +160,14 @@ public class PersonalActivity extends BaseActivity {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_success));
                                     userSignatureTv.setText(user.getSignature());
                                 }
 
                                 @Override
                                 public void onFailure(String msg) {
                                     loadingDialogFragment.dismiss();
-                                    ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
+                                    ToastUtils.show(mContext, getString(R.string.personal_update_failed) + msg);
                                 }
                             });
                         }
@@ -387,12 +387,12 @@ public class PersonalActivity extends BaseActivity {
         bmobFile.upload(mContext, new UploadFileListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(mContext, getString(R.string.personal_upload_avatar_success)).show();
+                ToastUtils.show(mContext, getString(R.string.personal_upload_avatar_success));
                 UserProxy.updateUserAvatar(mContext, user, bmobFile, new UserProxy.UserUpdateListener() {
                     @Override
                     public void onSuccess() {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                        ToastFactory.getToast(mContext, getString(R.string.personal_update_success)).show();
+                        ToastUtils.show(mContext, getString(R.string.personal_update_success));
                         Constant.USER_INFO_CHANGED = true;
 
                         if (null != imageUri) {
@@ -403,7 +403,7 @@ public class PersonalActivity extends BaseActivity {
                     @Override
                     public void onFailure(String msg) {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                        ToastFactory.getToast(mContext, getString(R.string.personal_update_failed) + msg).show();
+                        ToastUtils.show(mContext, getString(R.string.personal_update_failed) + msg);
                     }
                 });
             }
@@ -415,7 +415,7 @@ public class PersonalActivity extends BaseActivity {
             @Override
             public void onFailure(int code, String msg) {
                 if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
-                ToastFactory.getToast(mContext, getString(R.string.personal_upload_avatar_failed) + msg).show();
+                ToastUtils.show(mContext, getString(R.string.personal_upload_avatar_failed) + msg);
             }
         });
     }

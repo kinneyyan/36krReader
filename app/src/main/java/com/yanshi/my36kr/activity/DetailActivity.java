@@ -35,7 +35,7 @@ import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.common.utils.ScreenUtils;
 import com.yanshi.my36kr.common.utils.StringUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.MyWebView;
 
 import cn.bmob.v3.BmobObject;
@@ -175,7 +175,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
             }
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                ToastFactory.getToast(DetailActivity.this, "Oh no! " + description).show();
+                ToastUtils.show(DetailActivity.this, "Oh no! " + description);
             }
         });
         webView.setWebChromeClient(new WebChromeClient() {
@@ -262,7 +262,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                 break;
             case R.id.action_collect:
                 if (!UserProxy.isLogin(this) || null == user) {
-                    ToastFactory.getToast(this, getString(R.string.personal_login_first)).show();
+                    ToastUtils.show(this, getString(R.string.personal_login_first));
                     return true;
                 }
                 //新闻详情
@@ -335,7 +335,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                 if (webUrl != null) {
                     ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboardManager.setPrimaryClip(ClipData.newPlainText(null, webUrl));
-                    ToastFactory.getToast(this, getResources().getString(R.string.has_copied_tip)).show();
+                    ToastUtils.show(this, getResources().getString(R.string.has_copied_tip));
                 }
                 break;
             case R.id.action_open_by_browser:

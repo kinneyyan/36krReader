@@ -18,7 +18,7 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.common.utils.ACache;
 import com.yanshi.my36kr.common.utils.DataCleanManager;
 import com.yanshi.my36kr.common.utils.SDCardUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.MyWebView;
 import com.yanshi.my36kr.common.view.dialog.ConfirmDialogFragment;
 import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
@@ -94,7 +94,7 @@ public class SettingsFragment extends Fragment {
         offlineDownloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastFactory.getToast(activity, "开发中~").show();
+                ToastUtils.show(activity, "开发中~");
             }
         });
         clearCacheBtn.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +145,7 @@ public class SettingsFragment extends Fragment {
             if (null != dialogFragment && dialogFragment.getDialog().isShowing()) {
                 dialogFragment.dismiss();
 
-                ToastFactory.getToast(activity, getResources().getString(R.string.settings_clear_cache_success)).show();
+                ToastUtils.show(activity, getResources().getString(R.string.settings_clear_cache_success));
 //                initCacheSize();
                 String str = getString(R.string.settings_cache_size, "0.00");
                 cacheSizeTv.setText(str);

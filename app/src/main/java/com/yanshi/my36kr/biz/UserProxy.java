@@ -2,21 +2,22 @@ package com.yanshi.my36kr.biz;
 
 import android.content.Context;
 
+import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.bean.NewsItem;
+import com.yanshi.my36kr.bean.NextItem;
+import com.yanshi.my36kr.bean.bmob.User;
+import com.yanshi.my36kr.common.utils.ToastUtils;
+import com.yanshi.my36kr.dao.NewsItemDao;
+import com.yanshi.my36kr.dao.NextItemDao;
+
+import java.util.List;
+
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import com.yanshi.my36kr.R;
-import com.yanshi.my36kr.bean.NewsItem;
-import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.bean.bmob.User;
-import com.yanshi.my36kr.dao.NewsItemDao;
-import com.yanshi.my36kr.dao.NextItemDao;
-import com.yanshi.my36kr.common.utils.ToastFactory;
-
-import java.util.List;
 
 /**
  * 用户操作代理类
@@ -118,7 +119,7 @@ public class UserProxy {
 
             @Override
             public void onError(int i, String s) {
-                ToastFactory.getToast(context, "新闻" + context.getString(R.string.sync_failed) + s).show();
+                ToastUtils.show(context, "新闻" + context.getString(R.string.sync_failed) + s);
             }
         });
         nextBmobQuery.findObjects(context, new FindListener<NextItem>() {
@@ -134,7 +135,7 @@ public class UserProxy {
 
             @Override
             public void onError(int i, String s) {
-                ToastFactory.getToast(context, "NEXT" + context.getString(R.string.sync_failed) + s).show();
+                ToastUtils.show(context, "NEXT" + context.getString(R.string.sync_failed) + s);
             }
         });
     }

@@ -26,7 +26,7 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.biz.NextItemBiz;
 import com.yanshi.my36kr.biz.OnParseListener;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,13 +140,13 @@ public class NextFragment extends Fragment {
                                 setViewsVisible(false, true, false);
                             } else {
                                 setViewsVisible(false, false, true);
-                                ToastFactory.getToast(activity, "parse html failed").show();
+                                ToastUtils.show(activity, "parse html failed");
                             }
                         }
                         @Override
                         public void onParseFailed() {
                             setViewsVisible(false, false, true);
-                            ToastFactory.getToast(activity, "parse html failed").show();
+                            ToastUtils.show(activity, "parse html failed");
                         }
                     });
                 } else {
@@ -157,7 +157,7 @@ public class NextFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (null != nextItemList && nextItemList.isEmpty()) setViewsVisible(false, false, true);
-                ToastFactory.getToast(activity, error.getMessage()).show();
+                ToastUtils.show(activity, error.getMessage());
             }
         });
         stringRequest.setTag(getClass().getSimpleName());

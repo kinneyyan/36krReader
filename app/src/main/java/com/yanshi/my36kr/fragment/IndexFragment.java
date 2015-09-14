@@ -26,7 +26,7 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.biz.NewsItemBiz;
 import com.yanshi.my36kr.biz.OnParseListener;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.HeadlinesView;
 
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class IndexFragment extends Fragment {
 
             @Override
             public void onBottom() {
-                ToastFactory.getToast(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~").show();
+                ToastUtils.show(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
             }
 
             @Override
@@ -172,13 +172,13 @@ public class IndexFragment extends Fragment {
                                 setViewsVisible(false, true, false);
                             } else {
                                 setViewsVisible(false, false, true);
-                                ToastFactory.getToast(activity, "parse html failed").show();
+                                ToastUtils.show(activity, "parse html failed");
                             }
                         }
                         @Override
                         public void onParseFailed() {
                             setViewsVisible(false, false, true);
-                            ToastFactory.getToast(activity, "parse html failed").show();
+                            ToastUtils.show(activity, "parse html failed");
                         }
                     });
                 } else {
@@ -189,7 +189,7 @@ public class IndexFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (null != feedList && feedList.isEmpty()) setViewsVisible(false, false, true);
-                ToastFactory.getToast(activity, error.getMessage()).show();
+                ToastUtils.show(activity, error.getMessage());
             }
         });
         stringRequest.setTag(getClass().getSimpleName());

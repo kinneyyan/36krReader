@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 可保存View状态的Fragment
+ * 可保存View状态的Fragment(适用于 FragmentPagerAdapter)
  * Created by kingars on 2015/3/28.
  */
 public abstract class BaseFragment extends Fragment {

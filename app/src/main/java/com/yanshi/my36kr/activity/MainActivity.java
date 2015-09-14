@@ -26,7 +26,7 @@ import com.yanshi.my36kr.fragment.IndexFragment;
 import com.yanshi.my36kr.fragment.NextFragment;
 import com.yanshi.my36kr.fragment.SettingsFragment;
 import com.yanshi.my36kr.common.utils.ScreenUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if ((System.currentTimeMillis() - lastMillis) > 2000) {
-            ToastFactory.getToast(this, getResources().getString(R.string.quit_tip)).show();
+            ToastUtils.show(this, getResources().getString(R.string.quit_tip));
             lastMillis = System.currentTimeMillis();
         } else {
             finish();

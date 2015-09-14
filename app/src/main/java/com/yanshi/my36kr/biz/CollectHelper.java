@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.listener.DeleteListener;
-import cn.bmob.v3.listener.SaveListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
+
+import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.listener.DeleteListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * 收藏至Bmob的工具类
@@ -40,7 +41,7 @@ public class CollectHelper {
         newsItem.save(activity, new SaveListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(activity, activity.getString(R.string.collect_success)).show();
+                ToastUtils.show(activity, activity.getString(R.string.collect_success));
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
                 if (null != listener) listener.onSuccess(newsItem);
@@ -48,7 +49,7 @@ public class CollectHelper {
 
             @Override
             public void onFailure(int i, String s) {
-                ToastFactory.getToast(activity, activity.getString(R.string.collect_failed) + s).show();
+                ToastUtils.show(activity, activity.getString(R.string.collect_failed) + s);
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
                 if (null != listener) listener.onFailed();
@@ -74,7 +75,7 @@ public class CollectHelper {
         newsItem.delete(activity, new DeleteListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_success)).show();
+                ToastUtils.show(activity, activity.getString(R.string.un_collect_success));
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
                 if (null != listener) listener.onSuccess(newsItem);
@@ -82,7 +83,7 @@ public class CollectHelper {
 
             @Override
             public void onFailure(int i, String s) {
-                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_failed) + s).show();
+                ToastUtils.show(activity, activity.getString(R.string.un_collect_failed) + s);
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
                 if (null != listener) listener.onFailed();
@@ -107,7 +108,7 @@ public class CollectHelper {
         nextItem.save(activity, new SaveListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(activity, activity.getString(R.string.collect_success)).show();
+                ToastUtils.show(activity, activity.getString(R.string.collect_success));
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
                 if (null != listener) listener.onSuccess(nextItem);
@@ -115,7 +116,7 @@ public class CollectHelper {
 
             @Override
             public void onFailure(int i, String s) {
-                ToastFactory.getToast(activity, activity.getString(R.string.collect_failed) + s).show();
+                ToastUtils.show(activity, activity.getString(R.string.collect_failed) + s);
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
                 if (null != listener) listener.onFailed();
@@ -141,7 +142,7 @@ public class CollectHelper {
         nextItem.delete(activity, new DeleteListener() {
             @Override
             public void onSuccess() {
-                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_success)).show();
+                ToastUtils.show(activity, activity.getString(R.string.un_collect_success));
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_not_favorite);
                 if (null != listener) listener.onSuccess(nextItem);
@@ -149,7 +150,7 @@ public class CollectHelper {
 
             @Override
             public void onFailure(int i, String s) {
-                ToastFactory.getToast(activity, activity.getString(R.string.un_collect_failed)+s).show();
+                ToastUtils.show(activity, activity.getString(R.string.un_collect_failed) + s);
                 dialog.dismiss();
                 menuItem.setIcon(R.drawable.ic_action_favorite);
                 if (null != listener) listener.onFailed();

@@ -11,7 +11,7 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.common.utils.StringUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.DeletableEditText;
 import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
 
@@ -56,19 +56,19 @@ public class LoginActivity extends BaseActivity {
 
         //登录情况下
         if (StringUtils.isBlank(username)) {
-            ToastFactory.getToast(mContext, getString(R.string.login_empty_username)).show();
+            ToastUtils.show(mContext, getString(R.string.login_empty_username));
             usernameEt.setShakeAnimation();
             return false;
         }
         if (StringUtils.isBlank(password)) {
-            ToastFactory.getToast(mContext, getString(R.string.login_empty_password)).show();
+            ToastUtils.show(mContext, getString(R.string.login_empty_password));
             passwordEt.setShakeAnimation();
             return false;
         }
         //注册情况下
         if(userOperation == UserOperation.REGISTER) {
             if (StringUtils.isBlank(email)) {
-                ToastFactory.getToast(mContext, getString(R.string.login_register_empty_email)).show();
+                ToastUtils.show(mContext, getString(R.string.login_register_empty_email));
                 emailEt.setShakeAnimation();
                 return false;
             }
@@ -88,7 +88,7 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onSuccess() {
                                 loadingDialogFragment.dismiss();
-                                ToastFactory.getToast(mContext, getString(R.string.login_success)).show();
+                                ToastUtils.show(mContext, getString(R.string.login_success));
                                 setResult(RESULT_OK);
                                 LoginActivity.this.finish();
                                 Constant.USER_INFO_CHANGED = true;
@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onFailure(String msg) {
                                 loadingDialogFragment.dismiss();
-                                ToastFactory.getToast(mContext, getString(R.string.login_failed) + msg).show();
+                                ToastUtils.show(mContext, getString(R.string.login_failed) + msg);
                             }
                         });
                     }
@@ -108,7 +108,7 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onSuccess() {
                                 loadingDialogFragment.dismiss();
-                                ToastFactory.getToast(mContext, getString(R.string.login_register_success)).show();
+                                ToastUtils.show(mContext, getString(R.string.login_register_success));
                                 setResult(RESULT_OK);
                                 LoginActivity.this.finish();
                             }
@@ -116,7 +116,7 @@ public class LoginActivity extends BaseActivity {
                             @Override
                             public void onFailure(String msg) {
                                 loadingDialogFragment.dismiss();
-                                ToastFactory.getToast(mContext, getString(R.string.login_register_failed) + msg).show();
+                                ToastUtils.show(mContext, getString(R.string.login_register_failed) + msg);
                             }
                         });
                     }

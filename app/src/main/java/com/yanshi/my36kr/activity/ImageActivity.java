@@ -14,7 +14,7 @@ import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.common.utils.ScreenUtils;
-import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -53,7 +53,7 @@ public class ImageActivity extends BaseActivity {
                     public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                         super.onLoadingFailed(imageUri, view, failReason);
                         progressBar.setVisibility(View.GONE);
-                        ToastFactory.getToast(ImageActivity.this, getString(R.string.image_terminal_img_failed)).show();
+                        ToastUtils.show(ImageActivity.this, getString(R.string.image_terminal_img_failed));
                     }
 
                     @Override
@@ -64,7 +64,7 @@ public class ImageActivity extends BaseActivity {
                 });
             } else {
                 progressBar.setVisibility(View.GONE);
-                ToastFactory.getToast(this, getString(R.string.image_terminal_img_failed)).show();
+                ToastUtils.show(this, getString(R.string.image_terminal_img_failed));
             }
         }
 
