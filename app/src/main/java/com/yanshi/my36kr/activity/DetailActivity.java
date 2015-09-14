@@ -64,7 +64,6 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-        setSlidr();
         if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 
         Bundle bundle = getIntent().getExtras();

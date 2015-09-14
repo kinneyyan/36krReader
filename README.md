@@ -17,7 +17,6 @@
 - [StickyListHeaders](https://github.com/emilsjolander/StickyListHeaders "")
 - [PhotoView](https://github.com/chrisbanes/PhotoView "")
 - 监听可滚动View的滑动状态：[Android-ObservableScrollView](https://github.com/ksoichiro/Android-ObservableScrollView "")
-- 访IOS滑动关闭页面：[Slidr](https://github.com/r0adkll/Slidr "")
 - an unofficial mirror for android volley library：[android-volley](https://github.com/mcxiaoke/android-volley "")
 - 扩展的RecyclerView，拥有添加头、底等多种操作：[ExRecyclerView](https://github.com/tianzhijiexian/ExRecyclerView "")
 - 可无限循环滑动的ViewPager（为了配合首页自动滑动稍做改动）：[InfiniteViewPager](https://github.com/antonyt/InfiniteViewPager "")

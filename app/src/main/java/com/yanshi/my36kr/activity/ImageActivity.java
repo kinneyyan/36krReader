@@ -32,7 +32,6 @@ public class ImageActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_terminal);
-        setSlidr();
 
         if (savedInstanceState == null) {
             Bundle bundle = getIntent().getExtras();
