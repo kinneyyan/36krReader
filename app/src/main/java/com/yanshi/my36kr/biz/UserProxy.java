@@ -14,7 +14,7 @@ import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
-import com.yanshi.my36kr.utils.ToastFactory;
+import com.yanshi.my36kr.common.utils.ToastFactory;
 
 import java.util.List;
 

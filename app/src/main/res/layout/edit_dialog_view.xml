@@ -5,7 +5,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
-    <com.yanshi.my36kr.view.DeletableEditText
+    <com.yanshi.my36kr.common.view.DeletableEditText
             android:id="@+id/edit_dialog_view_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

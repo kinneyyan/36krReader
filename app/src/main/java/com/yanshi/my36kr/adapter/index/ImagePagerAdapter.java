@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
-import com.yanshi.my36kr.ui.FeedDetailActivity;
+import com.yanshi.my36kr.activity.DetailActivity;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class ImagePagerAdapter extends RecyclingPagerAdapter {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, FeedDetailActivity.class);
+                    Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra(Constant.NEWS_ITEM, item);
                     context.startActivity(intent);
                 }

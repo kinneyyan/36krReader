@@ -14,7 +14,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <com.yanshi.my36kr.view.DeletableEditText
+        <com.yanshi.my36kr.common.view.DeletableEditText
             android:id="@+id/login_username_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:textColorHint="@color/tv_primary_color"
             android:textSize="18sp" />
 
-        <com.yanshi.my36kr.view.DeletableEditText
+        <com.yanshi.my36kr.common.view.DeletableEditText
             android:id="@+id/login_password_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             android:textColorHint="@color/tv_primary_color"
             android:textSize="18sp" />
 
-        <com.yanshi.my36kr.view.DeletableEditText
+        <com.yanshi.my36kr.common.view.DeletableEditText
             android:id="@+id/login_register_email_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

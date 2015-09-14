@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
         <!--启动页-->
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -28,54 +28,54 @@
         </activity>
         <!--主页-->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!--详情页-->
         <activity
-            android:name=".ui.FeedDetailActivity"
+            android:name=".activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
         </activity>
         <!--图片终端页-->
         <activity
-            android:name=".ui.ImageTerminalActivity"
+            android:name=".activity.ImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".ui.FeedDetailActivity"
+            android:parentActivityName=".activity.DetailActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.FeedDetailActivity" />
+                android:value=".activity.DetailActivity" />
         </activity>
         <!--个人信息页-->
         <activity
-            android:name=".ui.PersonalActivity"
+            android:name=".activity.PersonalActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/personal_info"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <!-- 父activity的meta-data，用来支持4.0以下版本 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <!--我的收藏页-->
         <activity
-            android:name=".ui.MyFavoriteActivity"
+            android:name=".activity.FavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/personal_info"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:screenOrientation="portrait">
             <!-- 父activity的meta-data，用来支持4.0以下版本 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <!--登录页-->
         <activity
-            android:name=".ui.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
     </application>

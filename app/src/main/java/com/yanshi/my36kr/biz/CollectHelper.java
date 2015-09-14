@@ -10,8 +10,8 @@ import cn.bmob.v3.listener.SaveListener;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.utils.ToastFactory;
-import com.yanshi.my36kr.view.dialog.LoadingDialogFragment;
+import com.yanshi.my36kr.common.utils.ToastFactory;
+import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
 
 /**
  * 收藏至Bmob的工具类

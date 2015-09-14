@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <!--WebView设置padding无效。。-->
-    <com.yanshi.my36kr.view.MyWebView
+    <com.yanshi.my36kr.common.view.MyWebView
         android:id="@+id/news_detail_wb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

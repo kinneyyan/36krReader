@@ -2,10 +2,8 @@ package com.yanshi.my36kr.dao;
 
 import android.content.Context;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.table.TableUtils;
-import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
-import com.yanshi.my36kr.utils.DatabaseHelper;
+import com.yanshi.my36kr.common.utils.DatabaseHelper;
 
 import java.sql.SQLException;
 import java.util.List;
