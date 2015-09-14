@@ -62,12 +62,12 @@ public class UserProxy {
         user.signUp(context, new SaveListener() {
             @Override
             public void onSuccess() {
-                if(null != registerListener) registerListener.onSuccess();
+                if (null != registerListener) registerListener.onSuccess();
             }
 
             @Override
             public void onFailure(int code, String msg) {
-                if(null != registerListener) registerListener.onFailure(msg);
+                if (null != registerListener) registerListener.onFailure(msg);
             }
         });
     }
@@ -110,9 +110,8 @@ public class UserProxy {
             @Override
             public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
-                    NewsItemDao newsItemDao = new NewsItemDao(context);
                     for (NewsItem item : list) {
-                        newsItemDao.add(item);
+                        NewsItemDao.add(item);
                     }
                 }
             }
@@ -126,9 +125,8 @@ public class UserProxy {
             @Override
             public void onSuccess(List<NextItem> list) {
                 if (null != list && !list.isEmpty()) {
-                    NextItemDao nextItemDao = new NextItemDao(context);
                     for (NextItem item : list) {
-                        nextItemDao.add(item);
+                        NextItemDao.add(item);
                     }
                 }
             }
@@ -226,24 +224,14 @@ public class UserProxy {
      */
     public static void logout(Context context) {
         BmobUser.logOut(context);
-        clearDataBase(context);
+        clearDataBase();
     }
 
     /**
      * 清空数据库
-     * @param context
      */
-    private static void clearDataBase(Context context) {
-        NewsItemDao newsItemDao = new NewsItemDao(context);
-        NextItemDao nextItemDao = new NextItemDao(context);
-        List<NewsItem> news = newsItemDao.getAll();
-        List<NextItem> next = nextItemDao.getAll();
-
-        if (null != news && !news.isEmpty()) {
-            newsItemDao.deleteBatch(news);
-        }
-        if (null != next && !next.isEmpty()) {
-            nextItemDao.deleteBatch(next);
-        }
+    private static void clearDataBase() {
+        NewsItemDao.clear();
+        NextItemDao.clear();
     }
 }

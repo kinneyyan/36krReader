@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +21,9 @@ import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
-import com.yanshi.my36kr.dao.NextItemDao;
 import com.yanshi.my36kr.common.utils.NetUtils;
+import com.yanshi.my36kr.dao.NextItemDao;
+import com.yanshi.my36kr.fragment.base.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,28 +37,19 @@ import cn.bmob.v3.listener.FindListener;
  * 作者：yanshi
  * 时间：2014-11-04 12:55
  */
-public class FavoriteNextFragment extends Fragment implements FragmentInterface {
+public class FavoriteNextFragment extends BaseFragment implements FragmentInterface {
 
-    private final int REQUEST_CODE = 0X100;
-    private Activity activity;
+    private static final int REQUEST_CODE = 0X100;
 
     private ListView mListView;
     private CommonAdapter<NextItem> mAdapter;
     private TextView tipTv;//数据为空or未登录时 的提示TextView
 
     private List<NextItem> nextItemList = new ArrayList<>();
-    private NextItemDao nextItemDao;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = getActivity();
-        nextItemDao = new NextItemDao(activity);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.my_favorite_item, container, false);
+    public View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_my_favorite, container, false);
     }
 
     @Override
@@ -66,11 +57,11 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(activity)) {
+        if (!UserProxy.isLogin(mActivity)) {
             setTipTvNotLogin();
             return;
         }
-        if (NetUtils.isConnected(activity)) {
+        if (NetUtils.isConnected(mActivity)) {
             setTipTvloading();
             loadDataByNet();
         }
@@ -82,7 +73,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
 
     private void findViews(View view) {
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
-        mListView.setAdapter(mAdapter = new CommonAdapter<NextItem>(activity, nextItemList, R.layout.next_product_item) {
+        mListView.setAdapter(mAdapter = new CommonAdapter<NextItem>(mActivity, nextItemList, R.layout.view_next_product_item) {
             @Override
             public void convert(ViewHolder helper, NextItem item) {
                 helper.setText(R.id.next_product_item_title_tv, item.getTitle());
@@ -104,7 +95,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(activity, DetailActivity.class);
+                    Intent intent = new Intent(mActivity, DetailActivity.class);
                     intent.putExtra(Constant.NEXT_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
@@ -117,7 +108,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
      */
     private void loadLocalData() {
         nextItemList.clear();
-        nextItemList.addAll(nextItemDao.getAll());
+        nextItemList.addAll(NextItemDao.getAll());
         Collections.reverse(nextItemList);
         if (!nextItemList.isEmpty()) {
             if (null != mAdapter) {
@@ -134,7 +125,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
      * 读取网络数据
      */
     private void loadDataByNet() {
-        User user = UserProxy.getCurrentUser(activity);
+        User user = UserProxy.getCurrentUser(mActivity);
         if (null == user) {
             setTipTvNotLogin();
             return;
@@ -142,7 +133,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
         BmobQuery<NextItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(activity, new FindListener<NextItem>() {
+        query.findObjects(mActivity, new FindListener<NextItem>() {
             @Override
             public void onSuccess(List<NextItem> list) {
                 if (null != list && !list.isEmpty()) {
@@ -175,9 +166,9 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
 
     //更新本地数据库中的数据
     private void updateDataBase(List<NextItem> list) {
-        nextItemDao.clearAll();
+        NextItemDao.clear();
         for (int i = 0; i < list.size(); i++) {
-            nextItemDao.add(list.get(i));
+            NextItemDao.add(list.get(i));
         }
     }
 
@@ -207,7 +198,7 @@ public class FavoriteNextFragment extends Fragment implements FragmentInterface 
 
     @Override
     public void callBack() {
-        if (UserProxy.isLogin(activity)) {
+        if (UserProxy.isLogin(mActivity)) {
             if (nextItemList.isEmpty()) {
                 setTipTvloading();
                 loadDataByNet();

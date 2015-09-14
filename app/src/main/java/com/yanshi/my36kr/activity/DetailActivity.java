@@ -58,9 +58,6 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
     private String title;
     private String webUrl;
 
-    private NewsItemDao newsItemDao;
-    private NextItemDao nextItemDao;
-
     private User user;
 
     @Override
@@ -74,16 +71,12 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
         if (null != bundle) {
             newsItem = (NewsItem) bundle.getSerializable(Constant.NEWS_ITEM);
             nextItem = (NextItem) bundle.getSerializable(Constant.NEXT_ITEM);
-            if (null != newsItem) { //新闻详情
+            if (null != newsItem) { //新闻
                 title = newsItem.getTitle();
                 webUrl = newsItem.getUrl();
-
-                newsItemDao = new NewsItemDao(this);
-            } else if (null != nextItem) {  //NEXT详情
+            } else if (null != nextItem) {  //NEXT
                 title = nextItem.getTitle();
                 webUrl = nextItem.getUrl();
-
-                nextItemDao = new NextItemDao(this);
             }
 
             //重新调用一次onCreateOptionsMenu，更新收藏状态
@@ -214,15 +207,15 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
         if (UserProxy.isLogin(this)) {
             //收藏按钮
             MenuItem collectItem = menu.findItem(R.id.action_collect);
-            if (null != newsItemDao && null != newsItem) {
-                NewsItem localItem = newsItemDao.findItemByTitle(newsItem.getTitle());
+            if (null != newsItem) {
+                NewsItem localItem = NewsItemDao.findItemByTitle(newsItem.getTitle());
                 if (null != localItem) {
                     newsItem = localItem;
                     collectItem.setIcon(R.drawable.ic_action_favorite);
                     setCollected(true);
                 }
-            } else if (null != nextItemDao && null != nextItem) {
-                NextItem localItem = nextItemDao.findItemByTitle(nextItem.getTitle());
+            } else if (null != nextItem) {
+                NextItem localItem = NextItemDao.findItemByTitle(nextItem.getTitle());
                 if (null != localItem) {
                     collectItem.setIcon(R.drawable.ic_action_favorite);
                     nextItem = localItem;
@@ -266,13 +259,13 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                     return true;
                 }
                 //新闻详情
-                if (newsItem != null && newsItemDao != null) {
+                if (newsItem != null) {
                     if (!isCollected) { //未收藏时
                         CollectHelper.collectNews(this, newsItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
                             @Override
                             public void onSuccess(BmobObject bmobObject) {
                                 newsItem.setBmobId(bmobObject.getObjectId());
-                                newsItemDao.add(newsItem);
+                                NewsItemDao.add(newsItem);
                                 setCollected(true);
                                 setResult(RESULT_OK);
                             }
@@ -286,7 +279,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                         CollectHelper.unCollectNews(this, newsItem.getBmobId(), item, new CollectHelper.CollectListener() {
                             @Override
                             public void onSuccess(BmobObject bmobObject) {
-                                newsItemDao.deleteByItem(newsItem);
+                                NewsItemDao.deleteByItem(newsItem);
                                 setCollected(false);
                                 setResult(RESULT_OK);
                             }
@@ -298,13 +291,13 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                         });
                     }
                     //NEXT详情
-                } else if (nextItem != null && nextItemDao != null) {
+                } else if (nextItem != null) {
                     if (!isCollected) { //未收藏时
                         CollectHelper.collectNext(this, nextItem, user.getObjectId(), item, new CollectHelper.CollectListener() {
                             @Override
                             public void onSuccess(BmobObject bmobObject) {
                                 nextItem.setBmobId(bmobObject.getObjectId());
-                                nextItemDao.add(nextItem);
+                                NextItemDao.add(nextItem);
                                 setCollected(true);
                                 setResult(RESULT_OK);
                             }
@@ -318,7 +311,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                         CollectHelper.unCollectNext(this, nextItem.getBmobId(), item, new CollectHelper.CollectListener() {
                             @Override
                             public void onSuccess(BmobObject bmobObject) {
-                                nextItemDao.deleteByItem(nextItem);
+                                NextItemDao.deleteByItem(nextItem);
                                 setCollected(false);
                                 setResult(RESULT_OK);
                             }

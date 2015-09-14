@@ -1,7 +1,8 @@
 package com.yanshi.my36kr.dao;
 
-import android.content.Context;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.common.utils.DatabaseHelper;
 
@@ -15,20 +16,12 @@ import java.util.List;
  */
 public class NextItemDao {
 
-    private Dao<NextItem, Integer> nextItemDao;
+    private static Dao<NextItem, Integer> mDao = DatabaseHelper.getHelper(MyApplication.getInstance()).getDao(NextItem.class);
 
-    public NextItemDao(Context context) {
+    public static boolean add(NextItem nextItem) {
+        if (null == mDao) return false;
         try {
-            DatabaseHelper helper = DatabaseHelper.getHelper(context);
-            nextItemDao = helper.getDao(NextItem.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean add(NextItem nextItem) {
-        try {
-            nextItemDao.createOrUpdate(nextItem);
+            mDao.createOrUpdate(nextItem);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,10 +29,10 @@ public class NextItemDao {
         return false;
     }
 
-    public boolean deleteById(int id) {
-
+    public static boolean deleteById(int id) {
+        if (null == mDao) return false;
         try {
-            nextItemDao.deleteById(id);
+            mDao.deleteById(id);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,9 +40,10 @@ public class NextItemDao {
         return false;
     }
 
-    public boolean deleteByItem(NextItem nextItem) {
+    public static boolean deleteByItem(NextItem nextItem) {
+        if (null == mDao) return false;
         try {
-            nextItemDao.delete(nextItem);
+            mDao.delete(nextItem);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,9 +51,10 @@ public class NextItemDao {
         return false;
     }
 
-    public boolean deleteBatch(List<NextItem> list) {
+    public static boolean deleteBatch(List<NextItem> list) {
+        if (null == mDao) return false;
         try {
-            nextItemDao.delete(list);
+            mDao.delete(list);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,20 +62,19 @@ public class NextItemDao {
         return false;
     }
 
-    public void update(NextItem nextItem) {
-
+    public static void update(NextItem nextItem) {
+        if (null == mDao) return;
         try {
-            nextItemDao.update(nextItem);
+            mDao.update(nextItem);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
-    public List<NextItem> getAll() {
-
+    public static List<NextItem> getAll() {
+        if (null == mDao) return null;
         try {
-            return nextItemDao.queryForAll();
+            return mDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,20 +82,11 @@ public class NextItemDao {
         return null;
     }
 
-    //根据主键查询
-    public boolean findItemById(int id) {
-        try {
-            return null != (nextItemDao.queryForId(id));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     //条件查询
-    public NextItem findItemByTitle(String title) {
+    public static NextItem findItemByTitle(String title) {
+        if (null == mDao) return null;
         try {
-            List<NextItem> list = nextItemDao.queryBuilder().where().eq("title", title).query();
+            List<NextItem> list = mDao.queryBuilder().where().eq("title", title).query();
             if (null != list && !list.isEmpty()) {
                 return list.get(0);
             } else {
@@ -113,10 +98,25 @@ public class NextItemDao {
         }
     }
 
-    //清空表
-    public boolean clearAll() {
-        List<NextItem> next = getAll();
-        return deleteBatch(next);
+    public static boolean isEmpty() {
+        try {
+            List<NextItem> list = mDao.queryForAll();
+            if (null != list && !list.isEmpty()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
+    //清空表
+    public static void clear() {
+        try {
+            DeleteBuilder<NextItem, Integer> deleteBuilder = mDao.deleteBuilder();
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

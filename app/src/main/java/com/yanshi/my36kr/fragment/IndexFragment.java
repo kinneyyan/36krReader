@@ -1,10 +1,7 @@
 package com.yanshi.my36kr.fragment;
 
-import android.app.Activity;
-import android.content.*;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,8 +23,14 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.biz.NewsItemBiz;
 import com.yanshi.my36kr.biz.OnParseListener;
+import com.yanshi.my36kr.common.utils.ACache;
 import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.HeadlinesView;
+import com.yanshi.my36kr.fragment.base.BaseFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +39,15 @@ import kale.recycler.ExRecyclerView;
 import kale.recycler.OnRecyclerViewScrollListener;
 
 /**
- * 36氪网站改版，分页加载的代码已注释
- * Updated by Kinney on 2015/06/30
  * 首页
- * Created by kingars on 2014/10/25.
+ * 36氪网站改版，移除了分页加载
+ * Created by Kinney on 2014/10/25.
+ * Updated by Kinney on 2015/06/30.
  */
-public class IndexFragment extends Fragment {
+public class IndexFragment extends BaseFragment {
 
-    private Activity activity;
-    private Handler mHandler;
+    private static final String TAG = "IndexFragment";
+    private ACache mACache;
 
     private HeadlinesView headlinesView;
     private SwipeRefreshLayout mSrl;
@@ -58,12 +61,11 @@ public class IndexFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = getActivity();
-        mHandler = new Handler();
+        mACache = ACache.get(getActivity());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_index, container, false);
     }
 
@@ -72,7 +74,7 @@ public class IndexFragment extends Fragment {
         findViews(view);
         setListener();
 
-//        loadCache();
+        loadCache();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -89,14 +91,14 @@ public class IndexFragment extends Fragment {
         mRecyclerView = (ExRecyclerView) view.findViewById(R.id.index_feed_rv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
 
-        headlinesView = new HeadlinesView(activity);
+        headlinesView = new HeadlinesView(mActivity);
         mRecyclerView.addHeaderView(headlinesView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(activity));// 线性布局
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));// 线性布局
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置item动画
         mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(activity, DetailActivity.class);
+                Intent intent = new Intent(mActivity, DetailActivity.class);
                 intent.putExtra(Constant.NEWS_ITEM, feedList.get(position));
                 startActivity(intent);
             }
@@ -114,7 +116,7 @@ public class IndexFragment extends Fragment {
 
             @Override
             public void onBottom() {
-                ToastUtils.show(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
+                ToastUtils.show(mActivity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
             }
 
             @Override
@@ -142,12 +144,12 @@ public class IndexFragment extends Fragment {
     }
 
     //从缓存加载数据
-//    private void loadCache() {
-//        if (getJsonToDataList()) {
-//            headlinesView.initData(headlinesList);
-//            if (null != mAdapter) mAdapter.notifyDataSetChanged();
-//        }
-//    }
+    private void loadCache() {
+        if (convertToList()) {
+            headlinesView.initData(headlinesList);
+            if (null != mRvAdapter) mRvAdapter.notifyDataSetChanged();
+        }
+    }
 
     //从网络加载数据
     private void loadData() {
@@ -170,15 +172,18 @@ public class IndexFragment extends Fragment {
 
                                 if (null != mRvAdapter) mRvAdapter.updateData(feedList);
                                 setViewsVisible(false, true, false);
+
+                                mACache.put(TAG, convertToJson(headlinesList, feedList));
                             } else {
                                 setViewsVisible(false, false, true);
-                                ToastUtils.show(activity, "parse html failed");
+                                ToastUtils.show(mActivity, "parse html failed");
                             }
                         }
+
                         @Override
                         public void onParseFailed() {
                             setViewsVisible(false, false, true);
-                            ToastUtils.show(activity, "parse html failed");
+                            ToastUtils.show(mActivity, "parse html failed");
                         }
                     });
                 } else {
@@ -188,69 +193,69 @@ public class IndexFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (null != feedList && feedList.isEmpty()) setViewsVisible(false, false, true);
-                ToastUtils.show(activity, error.getMessage());
+                if (feedList.isEmpty()) {
+                    setViewsVisible(false, false, true);
+                } else {
+                    setViewsVisible(false, true, false);
+                }
+                ToastUtils.show(mActivity, error.getMessage());
             }
         });
-        stringRequest.setTag(getClass().getSimpleName());
+        stringRequest.setTag(TAG);
         MyApplication.getRequestQueue().add(stringRequest);
     }
 
-    /**
-     * 读取缓存文件转换成json，放置于list中
-     *
-     * @return 返回是否有缓存
-     */
-//    public boolean getJsonToDataList() {
-//        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
-//        if (null != jsonObject) {
-//            try {
-//                JSONArray headlinesAr = jsonObject.getJSONArray("headlines");
-//                headlinesList.clear();
-//                for (int i = 0; i < headlinesAr.length(); i++) {
-//                    JSONObject headline = headlinesAr.getJSONObject(i);
-//                    NewsItem item = NewsItem.parse(headline);
-//
-//                    headlinesList.add(item);
-//                }
-//                JSONArray timelinesAr = jsonObject.getJSONArray("timelines");
-//                feedList.clear();
-//                for (int i = 0; i < timelinesAr.length(); i++) {
-//                    JSONObject timeline = timelinesAr.getJSONObject(i);
-//                    NewsItem item = NewsItem.parse(timeline);
-//
-//                    feedList.add(item);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
+    //读取缓存，赋给list
+    public boolean convertToList() {
+        JSONObject jsonObject = mACache.getAsJSONObject(TAG);
+        if (null != jsonObject) {
+            try {
+                JSONArray headlinesAr = jsonObject.getJSONArray("index_headlines");
+                headlinesList.clear();
+                for (int i = 0; i < headlinesAr.length(); i++) {
+                    JSONObject headline = headlinesAr.getJSONObject(i);
+                    NewsItem item = NewsItem.parse(headline);
 
-    //转换list中的数据为json
-//    private JSONObject saveToJSONObj(List<NewsItem> headlinesList, List<NewsItem> feedList) {
-//        JSONObject outerJsonObj = new JSONObject();
-//        JSONArray headlineJsonAr = new JSONArray();
-//        for (NewsItem headlinesItem : headlinesList) {
-//            JSONObject jsonObject = headlinesItem.toJSONObj();
-//            headlineJsonAr.put(jsonObject);
-//        }
-//        JSONArray feedJsonAr = new JSONArray();
-//        for (NewsItem timelinesItem : feedList) {
-//            JSONObject jsonObject = timelinesItem.toJSONObj();
-//            feedJsonAr.put(jsonObject);
-//        }
-//        try {
-//            outerJsonObj.put("headlines", headlineJsonAr);
-//            outerJsonObj.put("feed", feedJsonAr);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return outerJsonObj;
-//    }
+                    headlinesList.add(item);
+                }
+                JSONArray listJsonArray = jsonObject.getJSONArray("index_list");
+                feedList.clear();
+                for (int i = 0; i < listJsonArray.length(); i++) {
+                    JSONObject timeline = listJsonArray.getJSONObject(i);
+                    NewsItem item = NewsItem.parse(timeline);
+
+                    feedList.add(item);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    //转换数据为json
+    private JSONObject convertToJson(List<NewsItem> headlinesList, List<NewsItem> feedList) {
+        JSONObject outerJsonObj = new JSONObject();
+        JSONArray headlineJsonAr = new JSONArray();
+        for (NewsItem headlinesItem : headlinesList) {
+            JSONObject jsonObject = headlinesItem.toJSONObj();
+            headlineJsonAr.put(jsonObject);
+        }
+        JSONArray feedJsonAr = new JSONArray();
+        for (NewsItem timelinesItem : feedList) {
+            JSONObject jsonObject = timelinesItem.toJSONObj();
+            feedJsonAr.put(jsonObject);
+        }
+        try {
+            outerJsonObj.put("index_headlines", headlineJsonAr);
+            outerJsonObj.put("index_list", feedJsonAr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return outerJsonObj;
+    }
 
     //设置各种View的显示状态
     private void setViewsVisible(boolean mSrl, boolean mRecyclerView, boolean reloadBtn) {
@@ -274,8 +279,7 @@ public class IndexFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (null != mHandler) mHandler.removeCallbacksAndMessages(null);
-        MyApplication.getRequestQueue().cancelAll(getClass().getSimpleName());
+        MyApplication.getRequestQueue().cancelAll(TAG);
     }
 
     @Override

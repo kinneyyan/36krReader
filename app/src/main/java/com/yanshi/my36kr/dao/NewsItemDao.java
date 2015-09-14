@@ -1,7 +1,8 @@
 package com.yanshi.my36kr.dao;
 
-import android.content.Context;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.common.utils.DatabaseHelper;
 
@@ -15,20 +16,12 @@ import java.util.List;
  */
 public class NewsItemDao {
 
-    private Dao<NewsItem, Integer> newsItemDao;
+    private static Dao<NewsItem, Integer> mDao = DatabaseHelper.getHelper(MyApplication.getInstance()).getDao(NewsItem.class);
 
-    public NewsItemDao(Context context) {
+    public static boolean add(NewsItem newsItem) {
+        if (null == mDao) return false;
         try {
-            DatabaseHelper helper = DatabaseHelper.getHelper(context);
-            newsItemDao = helper.getDao(NewsItem.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean add(NewsItem newsItem) {
-        try {
-            newsItemDao.createOrUpdate(newsItem);
+            mDao.createOrUpdate(newsItem);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,10 +29,10 @@ public class NewsItemDao {
         return false;
     }
 
-    public boolean deleteById(int id) {
-
+    public static boolean deleteById(int id) {
+        if (null == mDao) return false;
         try {
-            newsItemDao.deleteById(id);
+            mDao.deleteById(id);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,9 +40,10 @@ public class NewsItemDao {
         return false;
     }
 
-    public boolean deleteByItem(NewsItem newsItem) {
+    public static boolean deleteByItem(NewsItem newsItem) {
+        if (null == mDao) return false;
         try {
-            newsItemDao.delete(newsItem);
+            mDao.delete(newsItem);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,9 +51,10 @@ public class NewsItemDao {
         return false;
     }
 
-    public boolean deleteBatch(List<NewsItem> list) {
+    public static boolean deleteBatch(List<NewsItem> list) {
+        if (null == mDao) return false;
         try {
-            newsItemDao.delete(list);
+            mDao.delete(list);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,20 +62,20 @@ public class NewsItemDao {
         return false;
     }
 
-    public void update(NewsItem newsItem) {
-
+    public static void update(NewsItem newsItem) {
+        if (null == mDao) return;
         try {
-            newsItemDao.update(newsItem);
+            mDao.update(newsItem);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
-    public List<NewsItem> getAll() {
-
+    public static List<NewsItem> getAll() {
+        if (null == mDao) return null;
         try {
-            return newsItemDao.queryForAll();
+            return mDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,20 +83,11 @@ public class NewsItemDao {
         return null;
     }
 
-    //根据主键查询
-    public boolean findItemById(int id) {
-        try {
-            return null != (newsItemDao.queryForId(id));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     //条件查询
-    public NewsItem findItemByTitle(String title) {
+    public static NewsItem findItemByTitle(String title) {
+        if (null == mDao) return null;
         try {
-            List<NewsItem> list = newsItemDao.queryBuilder().where().eq("title", title).query();
+            List<NewsItem> list = mDao.queryBuilder().where().eq("title", title).query();
             if (null != list && !list.isEmpty()) {
                 return list.get(0);
             } else {
@@ -109,13 +95,29 @@ public class NewsItemDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
+    }
+
+    public static boolean isEmpty() {
+        try {
+            List<NewsItem> list = mDao.queryForAll();
+            if (null != list && !list.isEmpty()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     //清空表
-    public boolean clearAll() {
-        List<NewsItem> news = getAll();
-        return deleteBatch(news);
+    public static void clear() {
+        try {
+            DeleteBuilder<NewsItem, Integer> deleteBuilder = mDao.deleteBuilder();
+            deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

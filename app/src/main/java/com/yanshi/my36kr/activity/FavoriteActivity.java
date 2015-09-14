@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * desc: 我的收藏页
- * author: shiyan
+ * author: Kinney
  * date: 2015/7/7
  */
 public class FavoriteActivity extends BaseActivity {
@@ -38,7 +38,7 @@ public class FavoriteActivity extends BaseActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);// 取消透明导航栏
         }
         setContentView(R.layout.activity_my_favorite);
-        setSlidr();
+//        setSlidr();
         findViews();
 
         fragmentList = new ArrayList<>();
@@ -60,7 +60,7 @@ public class FavoriteActivity extends BaseActivity {
 
         //ViewPager导航器
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.my_collection_sliding_tabs);
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, R.id.tab_indicator_tv);
+        mSlidingTabLayout.setCustomTabView(R.layout.view_tab_indicator, R.id.tab_indicator_tv);
         mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {

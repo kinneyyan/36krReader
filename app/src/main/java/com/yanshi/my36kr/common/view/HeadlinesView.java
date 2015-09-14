@@ -97,7 +97,7 @@ public class HeadlinesView extends FrameLayout {
 
     private void init(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(R.layout.headlines_view, this);
+        inflater.inflate(R.layout.view_headlines, this);
         findViews();
         this.setVisibility(GONE);
     }

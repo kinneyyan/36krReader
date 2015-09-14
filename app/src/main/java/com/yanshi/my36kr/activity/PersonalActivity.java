@@ -270,7 +270,7 @@ public class PersonalActivity extends BaseActivity {
         final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
-        alertDialog.setContentView(R.layout.personal_avatar_dialog_view);
+        alertDialog.setContentView(R.layout.view_personal_avatar_dialog);
 
         Button cameraBtn = (Button) alertDialog.findViewById(R.id.personal_avatar_dialog_view_camera_btn);
         Button albumBtn = (Button) alertDialog.findViewById(R.id.personal_avatar_dialog_view_album_btn);

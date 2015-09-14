@@ -9,7 +9,7 @@ import kale.recycler.ExCommonRcvAdapter;
 
 /**
  * desc: 首页RecyclerView的adapter
- * author: kinneyYan
+ * author: Kinney
  * date: 2015/7/2
  */
 public class RvAdapter extends ExCommonRcvAdapter<NewsItem> {

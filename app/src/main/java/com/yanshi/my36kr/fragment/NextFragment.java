@@ -1,11 +1,8 @@
 package com.yanshi.my36kr.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,7 +23,13 @@ import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.biz.NextItemBiz;
 import com.yanshi.my36kr.biz.OnParseListener;
+import com.yanshi.my36kr.common.utils.ACache;
 import com.yanshi.my36kr.common.utils.ToastUtils;
+import com.yanshi.my36kr.fragment.base.BaseFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +42,10 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
  * 作者：yanshi
  * 时间：2014-10-30 14:48
  */
-public class NextFragment extends Fragment {
+public class NextFragment extends BaseFragment {
 
-    private Activity activity;
-    private Handler mHandler;
+    private static final String TAG = "NextFragment";
+    private ACache mACache;
 
     private SwipeRefreshLayout mSrl;
     private StickyListHeadersListView mListView;
@@ -54,12 +57,11 @@ public class NextFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = getActivity();
-        mHandler = new Handler();
+        mACache = ACache.get(getActivity());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_next_product, container, false);
     }
 
@@ -68,7 +70,7 @@ public class NextFragment extends Fragment {
         findViews(view);
         setListener();
 
-//        loadCache();
+        loadCache();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -84,7 +86,7 @@ public class NextFragment extends Fragment {
         mListView = (StickyListHeadersListView) view.findViewById(R.id.next_product_lv);
         reloadBtn = (Button) view.findViewById(R.id.next_product_reload_btn);
 
-        mAdapter = new MyAdapter(activity, nextItemList);
+        mAdapter = new MyAdapter(mActivity, nextItemList);
         mListView.setAdapter(mAdapter);
     }
 
@@ -108,7 +110,7 @@ public class NextFragment extends Fragment {
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(activity, DetailActivity.class);
+                    Intent intent = new Intent(mActivity, DetailActivity.class);
                     intent.putExtra(Constant.NEXT_ITEM, item);
                     startActivity(intent);
                 }
@@ -117,11 +119,11 @@ public class NextFragment extends Fragment {
     }
 
     //加载缓存
-//    private void loadCache() {
-//        if (getJsonToDataList()) {
-//            if (null != mAdapter) mAdapter.notifyDataSetChanged();
-//        }
-//    }
+    private void loadCache() {
+        if (convertToList()) {
+            if (null != mAdapter) mAdapter.notifyDataSetChanged();
+        }
+    }
 
     //加载网络
     private void loadData() {
@@ -138,15 +140,18 @@ public class NextFragment extends Fragment {
 
                                 if (null != mAdapter) mAdapter.notifyDataSetChanged();
                                 setViewsVisible(false, true, false);
+
+                                mACache.put(TAG, convertToJson(nextItemList));
                             } else {
                                 setViewsVisible(false, false, true);
-                                ToastUtils.show(activity, "parse html failed");
+                                ToastUtils.show(mActivity, "parse html failed");
                             }
                         }
+
                         @Override
                         public void onParseFailed() {
                             setViewsVisible(false, false, true);
-                            ToastUtils.show(activity, "parse html failed");
+                            ToastUtils.show(mActivity, "parse html failed");
                         }
                     });
                 } else {
@@ -156,55 +161,55 @@ public class NextFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (null != nextItemList && nextItemList.isEmpty()) setViewsVisible(false, false, true);
-                ToastUtils.show(activity, error.getMessage());
+                if (null != nextItemList && nextItemList.isEmpty()) {
+                    setViewsVisible(false, false, true);
+                } else {
+                    setViewsVisible(false, true, false);
+                }
+                ToastUtils.show(mActivity, error.getMessage());
             }
         });
-        stringRequest.setTag(getClass().getSimpleName());
+        stringRequest.setTag(TAG);
         MyApplication.getRequestQueue().add(stringRequest);
     }
 
-    /**
-     * 读取缓存文件转换成json，放置于list中
-     *
-     * @return 返回是否有缓存
-     */
-//    public boolean getJsonToDataList() {
-//        JSONObject jsonObject = mCache.getAsJSONObject(getClass().getSimpleName());
-//        if (null != jsonObject) {
-//            try {
-//                JSONArray nextAr = jsonObject.getJSONArray("nextProducts");
-//                nextItemList.clear();
-//                for (int i = 0; i < nextAr.length(); i++) {
-//                    JSONObject headline = nextAr.getJSONObject(i);
-//                    NextItem item = NextItem.parse(headline);
-//
-//                    nextItemList.add(item);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
+    //读取缓存，赋给list
+    public boolean convertToList() {
+        JSONObject jsonObject = mACache.getAsJSONObject(TAG);
+        if (null != jsonObject) {
+            try {
+                JSONArray nextAr = jsonObject.getJSONArray("next_list");
+                nextItemList.clear();
+                for (int i = 0; i < nextAr.length(); i++) {
+                    JSONObject headline = nextAr.getJSONObject(i);
+                    NextItem item = NextItem.parse(headline);
 
-    //转换list中的数据为json
-//    private JSONObject saveToJSONObj(List<NextItem> nextItemList) {
-//        JSONObject outerJsonObj = new JSONObject();
-//        JSONArray nextAr = new JSONArray();
-//        for (NextItem nextItem : nextItemList) {
-//            JSONObject jsonObject = nextItem.toJSONObj();
-//            nextAr.put(jsonObject);
-//        }
-//        try {
-//            outerJsonObj.put("nextProducts", nextAr);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return outerJsonObj;
-//    }
+                    nextItemList.add(item);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    //转换数据为json
+    private JSONObject convertToJson(List<NextItem> nextItemList) {
+        JSONObject outerJsonObj = new JSONObject();
+        JSONArray nextAr = new JSONArray();
+        for (NextItem nextItem : nextItemList) {
+            JSONObject jsonObject = nextItem.toJSONObj();
+            nextAr.put(jsonObject);
+        }
+        try {
+            outerJsonObj.put("next_list", nextAr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return outerJsonObj;
+    }
 
     //设置各种View的显示状态
     private void setViewsVisible(boolean mSrl, boolean mListView, boolean reloadBtn) {
@@ -228,8 +233,7 @@ public class NextFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (null != mHandler) mHandler.removeCallbacksAndMessages(null);
-        MyApplication.getRequestQueue().cancelAll(getClass().getSimpleName());
+        MyApplication.getRequestQueue().cancelAll(TAG);
     }
 
     public class MyAdapter extends BaseAdapter implements StickyListHeadersAdapter {
@@ -266,7 +270,7 @@ public class NextFragment extends Fragment {
 
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = inflater.inflate(R.layout.next_product_item, parent, false);
+                convertView = inflater.inflate(R.layout.view_next_product_item, parent, false);
                 holder.title = (TextView) convertView.findViewById(R.id.next_product_item_title_tv);
                 holder.content = (TextView) convertView.findViewById(R.id.next_product_item_content_tv);
                 holder.voteCount = (TextView) convertView.findViewById(R.id.next_product_item_vote_count_tv);
@@ -295,7 +299,7 @@ public class NextFragment extends Fragment {
             HeaderViewHolder holder;
             if (convertView == null) {
                 holder = new HeaderViewHolder();
-                convertView = inflater.inflate(R.layout.next_product_item_header, parent, false);
+                convertView = inflater.inflate(R.layout.view_next_product_item_header, parent, false);
                 holder.text = (TextView) convertView.findViewById(R.id.next_product_itemt_header_tv);
                 convertView.setTag(holder);
             } else {

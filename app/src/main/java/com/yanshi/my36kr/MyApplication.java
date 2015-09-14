@@ -87,7 +87,7 @@ public class MyApplication extends Application {
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
                 .bitmapConfig(Bitmap.Config.RGB_565) // default
                 .displayer(new FadeInBitmapDisplayer(300))
-                .displayer(new RoundedBitmapDisplayer(10))
+                .displayer(new RoundedBitmapDisplayer(8))
                 .build();
     }
 

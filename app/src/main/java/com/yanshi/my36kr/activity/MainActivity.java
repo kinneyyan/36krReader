@@ -1,5 +1,6 @@
 package com.yanshi.my36kr.activity;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -106,8 +107,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setupDrawerContent(NavigationView mNavigationView) {
-        View headerView = LayoutInflater.from(this).inflate(R.layout.navigation_header_view, null);
+        View headerView = LayoutInflater.from(this).inflate(R.layout.view_navigation_header, null);
         userAvatarIv = (ImageView) headerView.findViewById(R.id.navigation_header_view_avatar_iv);
+        userAvatarIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
         userNameTv = (TextView) headerView.findViewById(R.id.navigation_header_view_name_tv);
         setUserInfo();
 
@@ -163,7 +170,7 @@ public class MainActivity extends BaseActivity {
 
                 String imgUrl;
                 if (null != user.getAvatar() && null != (imgUrl = user.getAvatar().getFileUrl())) {
-                    ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions());
+                    ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(0));
                 } else {
                     userAvatarIv.setImageResource(userAvatars[new Random().nextInt(6)]);
                 }

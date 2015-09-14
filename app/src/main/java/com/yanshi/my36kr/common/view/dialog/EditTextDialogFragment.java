@@ -40,7 +40,7 @@ public class EditTextDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 //        if (null != title) builder.setTitle(title);
-        View view = getActivity().getLayoutInflater().inflate(R.layout.edit_dialog_view, null);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.view_edit_dialog, null);
         editText = (EditText) view.findViewById(R.id.edit_dialog_view_et);
         editText.setText(editStr);
         editText.setSingleLine(singleLine);

@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +23,9 @@ import com.yanshi.my36kr.bean.FragmentInterface;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
-import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.common.utils.NetUtils;
+import com.yanshi.my36kr.dao.NewsItemDao;
+import com.yanshi.my36kr.fragment.base.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,31 +36,22 @@ import cn.bmob.v3.listener.FindListener;
 
 /**
  * 我的收藏-新闻
- * 作者：yanshi
+ * 作者：Kinney
  * 时间：2014-11-04 12:08
  */
-public class FavoriteNewsFragment extends Fragment implements FragmentInterface {
+public class FavoriteNewsFragment extends BaseFragment implements FragmentInterface {
 
-    private final int REQUEST_CODE = 0X100;
-    private Activity activity;
+    private static final int REQUEST_CODE = 0X100;
 
     private ListView mListView;
     private CommonAdapter<NewsItem> mAdapter;
     private TextView tipTv;//数据为空or未登录时 的提示TextView
 
     private List<NewsItem> newsItemList = new ArrayList<>();
-    private NewsItemDao newsItemDao;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = getActivity();
-        newsItemDao = new NewsItemDao(activity);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.my_favorite_item, container, false);
+    public View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_my_favorite, container, false);
     }
 
     @Override
@@ -69,11 +59,11 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(activity)) {
+        if (!UserProxy.isLogin(mActivity)) {
             setTipTvNotLogin();
             return;
         }
-        if (NetUtils.isConnected(activity)) {
+        if (NetUtils.isConnected(mActivity)) {
             setTipTvloading();
             loadDataByNet();
         }
@@ -85,18 +75,13 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
 
     private void findViews(View view) {
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
-        mListView.setDivider(null);
-        mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, newsItemList, R.layout.index_timeline_item) {
+        mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(mActivity, newsItemList, R.layout.view_favourite_news_item) {
             @Override
             public void convert(ViewHolder helper, NewsItem item) {
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
                 helper.setText(R.id.index_timeline_item_content_tv, item.getContent());
                 ImageView imageView = helper.getView(R.id.index_timeline_item_iv);
                 ImageLoader.getInstance().displayImage(item.getImgUrl(), imageView, MyApplication.getInstance().getOptionsWithRoundedCorner());
-
-                //隐藏时间TextView
-                TextView tv = helper.getView(R.id.index_timeline_item_info_tv);
-                if (null != tv) tv.setVisibility(View.GONE);
             }
         });
         tipTv = (TextView) view.findViewById(R.id.my_collection_item_tip_tv);
@@ -110,7 +95,7 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
                 int realPosition = position - mListView.getHeaderViewsCount();
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(activity, DetailActivity.class);
+                    Intent intent = new Intent(mActivity, DetailActivity.class);
                     intent.putExtra(Constant.NEWS_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
@@ -123,7 +108,7 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
      */
     private void loadLocalData() {
         newsItemList.clear();
-        newsItemList.addAll(newsItemDao.getAll());
+        newsItemList.addAll(NewsItemDao.getAll());
         Collections.reverse(newsItemList);
         if (!newsItemList.isEmpty()) {
             if (null != mAdapter) {
@@ -140,7 +125,7 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
      * 读取网络数据
      */
     private void loadDataByNet() {
-        User user = UserProxy.getCurrentUser(activity);
+        User user = UserProxy.getCurrentUser(mActivity);
         if (null == user) {
             setTipTvNotLogin();
             return;
@@ -148,7 +133,7 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
         BmobQuery<NewsItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(activity, new FindListener<NewsItem>() {
+        query.findObjects(mActivity, new FindListener<NewsItem>() {
             @Override
             public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
@@ -173,7 +158,6 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
 
             @Override
             public void onError(int i, String s) {
-                Log.e("yslog", s);
                 loadLocalData();
             }
         });
@@ -182,9 +166,9 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
 
     //更新本地数据库中的数据
     private void updateDataBase(List<NewsItem> list) {
-        newsItemDao.clearAll();
+        NewsItemDao.clear();
         for (int i = 0; i < list.size(); i++) {
-            newsItemDao.add(list.get(i));
+            NewsItemDao.add(list.get(i));
         }
     }
 
@@ -214,7 +198,7 @@ public class FavoriteNewsFragment extends Fragment implements FragmentInterface 
 
     @Override
     public void callBack() {
-        if (UserProxy.isLogin(activity)) {
+        if (UserProxy.isLogin(mActivity)) {
             if (newsItemList.isEmpty()) {
                 setTipTvloading();
                 loadDataByNet();

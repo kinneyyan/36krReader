@@ -13,7 +13,7 @@ import kale.adapter.ViewHolder;
 
 /**
  * desc:
- * author: shiyan
+ * author: Kinney
  * date: 2015/7/2
  */
 public class FeedAdapterItem implements AdapterItem<NewsItem> {
@@ -25,7 +25,7 @@ public class FeedAdapterItem implements AdapterItem<NewsItem> {
 
     @Override
     public int getLayoutResId() {
-        return R.layout.index_timeline_item;
+        return R.layout.view_index_timeline_item;
     }
 
     @Override
@@ -34,10 +34,10 @@ public class FeedAdapterItem implements AdapterItem<NewsItem> {
         titleTv = viewHolder.getView(R.id.index_timeline_item_title_tv);
         contentTv = viewHolder.getView(R.id.index_timeline_item_content_tv);
         dateTv = viewHolder.getView(R.id.index_timeline_item_info_tv);
-        setViews(newsItem, i);
+        setViews(newsItem);
     }
 
-    private void setViews(NewsItem item, int position) {
+    private void setViews(NewsItem item) {
         ImageLoader.getInstance().displayImage(item.getImgUrl(), picIv, MyApplication.getInstance().getOptionsWithRoundedCorner());
         titleTv.setText(item.getTitle());
         contentTv.setText(item.getContent());

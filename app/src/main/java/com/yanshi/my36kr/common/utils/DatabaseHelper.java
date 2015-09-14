@@ -2,27 +2,25 @@ package com.yanshi.my36kr.common.utils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 数据库帮助类
- * 作者：yanshi
+ * 作者：Kinney
  * 时间：2014-11-03 14:53
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String TABLE_NAME = "my36Kr.db";
-
-    private Map<String, Dao> daos = new HashMap<String, Dao>();
+    private static final String TABLE_NAME = "my36kr.db";
 
     private static DatabaseHelper instance;
 
@@ -61,26 +59,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         context = context.getApplicationContext();
         if (instance == null) {
             synchronized (DatabaseHelper.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new DatabaseHelper(context);
+                }
             }
         }
 
         return instance;
     }
 
-    public synchronized Dao getDao(Class clazz) throws SQLException {
-        Dao dao = null;
-        String className = clazz.getSimpleName();
-
-        if (daos.containsKey(className)) {
-            dao = daos.get(className);
+    public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz) {
+        try {
+            return super.getDao(clazz);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        if (dao == null) {
-            dao = super.getDao(clazz);
-            daos.put(className, dao);
-        }
-        return dao;
+        return null;
     }
 
     /**
@@ -89,10 +83,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
-
-        for (String key : daos.keySet()) {
-            Dao dao = daos.get(key);
-            dao = null;
-        }
+        DaoManager.clearCache();
     }
 }
