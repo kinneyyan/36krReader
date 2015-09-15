@@ -181,7 +181,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (null == user || Constant.USER_INFO_CHANGED) {
+        if (Constant.USER_INFO_CHANGED) {
             setUserInfo();
             Constant.USER_INFO_CHANGED = false;
         }
