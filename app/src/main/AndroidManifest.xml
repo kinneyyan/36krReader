@@ -43,11 +43,7 @@
         <activity
             android:name=".activity.ImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName=".activity.DetailActivity"
             android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.DetailActivity" />
         </activity>
         <!--个人信息页-->
         <activity
