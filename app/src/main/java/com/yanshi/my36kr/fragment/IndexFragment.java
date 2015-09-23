@@ -146,7 +146,7 @@ public class IndexFragment extends BaseFragment {
     //从缓存加载数据
     private void loadCache() {
         if (convertToList()) {
-            headlinesView.initData(headlinesList);
+            headlinesView.refreshData(headlinesList);
             if (null != mRvAdapter) mRvAdapter.notifyDataSetChanged();
         }
     }
@@ -163,7 +163,7 @@ public class IndexFragment extends BaseFragment {
                             if (null != list && list.size() > 4) {
                                 headlinesList.clear();
                                 headlinesList.addAll(list.subList(0, 4));//从网页解析到的头条一共有4条
-                                headlinesView.initData(headlinesList);
+                                headlinesView.refreshData(headlinesList);
                                 headlinesView.startAutoScroll();
 
                                 list.removeAll(headlinesList);

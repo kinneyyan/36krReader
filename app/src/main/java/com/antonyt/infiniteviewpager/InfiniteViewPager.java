@@ -2,16 +2,11 @@ package com.antonyt.infiniteviewpager;
 
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ViewParent;
-
-import com.yanshi.my36kr.bean.Constant;
 
 /**
  * A {@link ViewPager} that allows pseudo-infinite paging with a wrap-around effect. Should be used with an {@link
@@ -98,7 +93,7 @@ public class InfiniteViewPager extends ViewPager {
     private float xDistance, yDistance, xLast, yLast;
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 xDistance = yDistance = 0f;
@@ -125,7 +120,7 @@ public class InfiniteViewPager extends ViewPager {
                 }
                 break;
         }
-        return super.dispatchTouchEvent(ev);
+        return super.onTouchEvent(ev);
     }
 
 }
