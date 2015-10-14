@@ -14,15 +14,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/navigation_header_view_avatar_iv"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:background="@drawable/ic_user_avatar" />
+            android:background="@drawable/ic_user_avatar"
+            android:transitionName="@string/shared_elements_avatar_iv" />
 
         <TextView
             android:id="@+id/navigation_header_view_name_tv"

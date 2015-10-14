@@ -1,12 +1,14 @@
 package com.yanshi.my36kr.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -19,15 +21,15 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.activity.base.BaseActivity;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.UserProxy;
-import com.yanshi.my36kr.activity.base.BaseActivity;
+import com.yanshi.my36kr.common.utils.ScreenUtils;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.fragment.IndexFragment;
 import com.yanshi.my36kr.fragment.NextFragment;
 import com.yanshi.my36kr.fragment.SettingsFragment;
-import com.yanshi.my36kr.common.utils.ScreenUtils;
-import com.yanshi.my36kr.common.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +114,13 @@ public class MainActivity extends BaseActivity {
         userAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                if (!UserProxy.isLogin(MainActivity.this)) {
+                    jumpToActivity(MainActivity.this, LoginActivity.class, null);
+                } else {
+                    ActivityOptionsCompat compat = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(MainActivity.this, v, getString(R.string.shared_elements_avatar_iv));
+                    ActivityCompat.startActivity(MainActivity.this, new Intent(MainActivity.this, PersonalActivity.class), compat.toBundle());
+                }
             }
         });
         userNameTv = (TextView) headerView.findViewById(R.id.navigation_header_view_name_tv);

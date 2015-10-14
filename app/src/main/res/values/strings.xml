@@ -78,4 +78,7 @@
         <item>转发</item>
         <item>复制链接</item>
     </string-array>
+
+    <string name="shared_elements_avatar_iv">avatar_iv</string>
+
 </resources>

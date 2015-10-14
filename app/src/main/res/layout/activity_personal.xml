@@ -33,7 +33,8 @@
                 android:layout_height="72dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_user_avatar" />
+                android:src="@drawable/ic_user_avatar"
+                android:transitionName="@string/shared_elements_avatar_iv" />
 
             <Button
                 android:id="@+id/personal_user_avatar_btn"
