@@ -1,61 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="6dp">
-
-    <TextView
-        android:id="@+id/next_product_item_vote_count_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:background="@drawable/next_product_item_vote_count_bg"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="25\nvote"
-        android:textColor="@color/white"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/next_product_item_comment_count_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:drawableLeft="@drawable/ic_contact"
-        android:drawablePadding="4dp"
-        android:gravity="center"
-        android:text="12"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/next_product_item_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/next_product_item_vote_count_tv"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@id/next_product_item_comment_count_tv"
-        android:layout_toRightOf="@id/next_product_item_vote_count_tv"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="标题"
         android:textColor="@color/next_product_title_color"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:text="标题" />
 
     <TextView
         android:id="@+id/next_product_item_content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/next_product_item_title_tv"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@id/next_product_item_comment_count_tv"
-        android:layout_toRightOf="@id/next_product_item_vote_count_tv"
+        android:layout_marginTop="3dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="内容"
         android:textColor="@color/tv_primary_color"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="内容" />
+
+    <TextView
+        android:id="@+id/next_product_item_vote_count_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_toRightOf="@id/next_product_item_title_tv"
+        android:background="@drawable/next_product_item_vote_count_bg"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        tools:text="25" />
+
+    <TextView
+        android:id="@+id/next_product_item_comment_count_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/next_product_item_content_tv"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        tools:text="评论:12" />
 
 </RelativeLayout>

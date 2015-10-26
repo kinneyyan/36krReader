@@ -285,8 +285,8 @@ public class NextFragment extends BaseFragment {
                 if (null != nextItem) {
                     holder.title.setText(nextItem.getTitle());
                     holder.content.setText(nextItem.getContent());
-                    holder.voteCount.setText("vote\n" + nextItem.getVoteCount());
-                    holder.commentCount.setText(nextItem.getCommentCount() + "");
+                    holder.voteCount.setText(nextItem.getVoteCount() + "");
+                    holder.commentCount.setText("评论:" + nextItem.getCommentCount());
                 }
             }
 
