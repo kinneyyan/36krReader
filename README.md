@@ -28,3 +28,8 @@
 ![screenshot2](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152823.png "")
 
 ![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152910.png "")
+
+6、参考文章
+
+[关于使用 CardView 开发过程中要注意的细节
+](http://blog.feng.moe/2015/10/24/something-about-cardview-development/)
