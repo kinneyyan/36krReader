@@ -23,8 +23,8 @@
 
 5、app截图：
 
-![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-06-17-49-50.png "")
+![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152645.png "")
 
-![screenshot2](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-07-07-17-17-31.png "")
+![screenshot2](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152823.png "")
 
-![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/Screenshot_2015-10-26-16-11-58.png "")
+![screenshot3](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152910.png "")

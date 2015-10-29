@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/card_view_margin"
+    android:foreground="?attr/selectableItemBackground"
+    android:stateListAnimator="@anim/touch_raise"
+    card_view:cardCornerRadius="@dimen/card_view_corner_radius"
+    card_view:cardElevation="@dimen/card_view_elevation"
+    card_view:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp">
+
+        <ImageView
+            android:id="@+id/index_timeline_item_iv"
+            android:layout_width="105dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            tools:src="@drawable/ic_app_logo" />
+
+        <TextView
+            android:id="@+id/index_timeline_item_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@id/index_timeline_item_iv"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="16sp"
+            tools:text="标题" />
+
+        <TextView
+            android:id="@+id/index_timeline_item_content_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/index_timeline_item_title_tv"
+            android:layout_below="@id/index_timeline_item_title_tv"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            tools:text="概要" />
+
+        <TextView
+            android:id="@+id/index_timeline_item_info_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/index_timeline_item_content_tv"
+            android:layout_marginTop="4dp"
+            android:gravity="bottom"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            tools:text="时间" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
