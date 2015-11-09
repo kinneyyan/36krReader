@@ -57,11 +57,11 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(mActivity)) {
+        if (!UserProxy.isLogin(activity)) {
             setTipTvNotLogin();
             return;
         }
-        if (NetUtils.isConnected(mActivity)) {
+        if (NetUtils.isConnected(activity)) {
             setTipTvloading();
             loadDataByNet();
         }
@@ -73,7 +73,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
 
     private void findViews(View view) {
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
-        mListView.setAdapter(mAdapter = new CommonAdapter<NextItem>(mActivity, nextItemList, R.layout.view_next_product_item) {
+        mListView.setAdapter(mAdapter = new CommonAdapter<NextItem>(activity, nextItemList, R.layout.view_next_product_item) {
             @Override
             public void convert(ViewHolder helper, NextItem item) {
                 helper.setText(R.id.next_product_item_title_tv, item.getTitle());
@@ -95,7 +95,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(mActivity, DetailActivity.class);
+                    Intent intent = new Intent(activity, DetailActivity.class);
                     intent.putExtra(Constant.NEXT_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
@@ -125,7 +125,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
      * 读取网络数据
      */
     private void loadDataByNet() {
-        User user = UserProxy.getCurrentUser(mActivity);
+        User user = UserProxy.getCurrentUser(activity);
         if (null == user) {
             setTipTvNotLogin();
             return;
@@ -133,7 +133,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
         BmobQuery<NextItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(mActivity, new FindListener<NextItem>() {
+        query.findObjects(activity, new FindListener<NextItem>() {
             @Override
             public void onSuccess(List<NextItem> list) {
                 if (null != list && !list.isEmpty()) {
@@ -198,7 +198,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
 
     @Override
     public void callBack() {
-        if (UserProxy.isLogin(mActivity)) {
+        if (UserProxy.isLogin(activity)) {
             if (nextItemList.isEmpty()) {
                 setTipTvloading();
                 loadDataByNet();

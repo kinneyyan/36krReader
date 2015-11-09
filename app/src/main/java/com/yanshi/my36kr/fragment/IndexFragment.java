@@ -47,12 +47,12 @@ import kale.recycler.OnRecyclerViewScrollListener;
 public class IndexFragment extends BaseFragment {
 
     private static final String TAG = "IndexFragment";
-    private ACache mACache;
+    private ACache aCache;
 
     private HeadlinesView headlinesView;
-    private SwipeRefreshLayout mSrl;
-    private ExRecyclerView mRecyclerView;
-    private RvAdapter mRvAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ExRecyclerView exRecyclerView;
+    private RvAdapter rvAdapter;
     private Button reloadBtn;
 
     private List<NewsItem> headlinesList = new ArrayList<>();
@@ -61,7 +61,7 @@ public class IndexFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mACache = ACache.get(getActivity());
+        aCache = ACache.get(getActivity());
     }
 
     @Override
@@ -73,37 +73,35 @@ public class IndexFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         findViews(view);
         setListener();
-
         loadCache();
-        mHandler.postDelayed(new Runnable() {
+        swipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                setViewsVisible(true, true, false);
+                setLoadingState();
                 loadData();
             }
-        }, 300);//此处是为了自动显示Srl
-
+        }, 200);
     }
 
     private void findViews(View view) {
-        mSrl = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
-        mSrl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mRecyclerView = (ExRecyclerView) view.findViewById(R.id.index_feed_rv);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
+        swipeRefreshLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
+        exRecyclerView = (ExRecyclerView) view.findViewById(R.id.index_feed_rv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
 
-        headlinesView = new HeadlinesView(mActivity);
-        mRecyclerView.addHeaderView(headlinesView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));// 线性布局
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置item动画
-        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        headlinesView = new HeadlinesView(activity);
+        exRecyclerView.addHeaderView(headlinesView);
+        exRecyclerView.setLayoutManager(new LinearLayoutManager(activity));// 线性布局
+        exRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置item动画
+        exRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(mActivity, DetailActivity.class);
+                Intent intent = new Intent(activity, DetailActivity.class);
                 intent.putExtra(Constant.NEWS_ITEM, feedList.get(position));
                 startActivity(intent);
             }
         });
-        mRecyclerView.addOnScrollListener(new OnRecyclerViewScrollListener() {
+        exRecyclerView.addOnScrollListener(new OnRecyclerViewScrollListener() {
             @Override
             public void onScrollUp() {
 
@@ -116,7 +114,7 @@ public class IndexFragment extends BaseFragment {
 
             @Override
             public void onBottom() {
-                ToastUtils.show(mActivity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
+                ToastUtils.show(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
             }
 
             @Override
@@ -124,11 +122,11 @@ public class IndexFragment extends BaseFragment {
 
             }
         });
-        mRecyclerView.setAdapter(mRvAdapter = new RvAdapter(feedList));
+        exRecyclerView.setAdapter(rvAdapter = new RvAdapter(feedList));
     }
 
     private void setListener() {
-        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -137,7 +135,7 @@ public class IndexFragment extends BaseFragment {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setViewsVisible(true, true, false);
+                setLoadingState();
                 loadData();
             }
         });
@@ -147,7 +145,9 @@ public class IndexFragment extends BaseFragment {
     private void loadCache() {
         if (convertToList()) {
             headlinesView.refreshData(headlinesList);
-            if (null != mRvAdapter) mRvAdapter.notifyDataSetChanged();
+            if (null != rvAdapter) rvAdapter.notifyDataSetChanged();
+
+            fadeInAnim(exRecyclerView);
         }
     }
 
@@ -160,45 +160,36 @@ public class IndexFragment extends BaseFragment {
                     NewsItemBiz.getFeed(response, new OnParseListener<NewsItem>() {
                         @Override
                         public void onParseSuccess(List<NewsItem> list) {
-                            if (null != list && list.size() > 4) {
-                                headlinesList.clear();
-                                headlinesList.addAll(list.subList(0, 4));//从网页解析到的头条一共有4条
-                                headlinesView.refreshData(headlinesList);
-                                headlinesView.startAutoScroll();
+                            headlinesList.clear();
+                            headlinesList.addAll(list.subList(0, 4));//从网页解析到的头条一共有4条
+                            headlinesView.refreshData(headlinesList);
+                            headlinesView.startAutoScroll();
 
-                                list.removeAll(headlinesList);
-                                feedList.clear();
-                                feedList.addAll(list);
+                            list.removeAll(headlinesList);
+                            feedList.clear();
+                            feedList.addAll(list);
+                            if (null != rvAdapter) rvAdapter.updateData(feedList);
 
-                                if (null != mRvAdapter) mRvAdapter.updateData(feedList);
-                                setViewsVisible(false, true, false);
-
-                                mACache.put(TAG, convertToJson(headlinesList, feedList));
-                            } else {
-                                setViewsVisible(false, false, true);
-                                ToastUtils.show(mActivity, "parse html failed");
-                            }
+                            setLoadSuccState();
+                            // add cache
+                            aCache.put(TAG, convertToJson(headlinesList, feedList));
                         }
 
                         @Override
                         public void onParseFailed() {
-                            setViewsVisible(false, false, true);
-                            ToastUtils.show(mActivity, "parse html failed");
+                            setLoadFailedState();
+                            ToastUtils.show(activity, "parse html failed");
                         }
                     });
                 } else {
-                    setViewsVisible(false, false, true);
+                    setLoadFailedState();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (feedList.isEmpty()) {
-                    setViewsVisible(false, false, true);
-                } else {
-                    setViewsVisible(false, true, false);
-                }
-                ToastUtils.show(mActivity, error.getMessage());
+                setLoadFailedState();
+                ToastUtils.show(activity, error.getMessage());
             }
         });
         stringRequest.setTag(TAG);
@@ -207,7 +198,7 @@ public class IndexFragment extends BaseFragment {
 
     //读取缓存，赋给list
     public boolean convertToList() {
-        JSONObject jsonObject = mACache.getAsJSONObject(TAG);
+        JSONObject jsonObject = aCache.getAsJSONObject(TAG);
         if (null != jsonObject) {
             try {
                 JSONArray headlinesAr = jsonObject.getJSONArray("index_headlines");
@@ -257,25 +248,6 @@ public class IndexFragment extends BaseFragment {
         return outerJsonObj;
     }
 
-    //设置各种View的显示状态
-    private void setViewsVisible(boolean mSrl, boolean mRecyclerView, boolean reloadBtn) {
-        if (mSrl) {
-            if (null != this.mSrl) this.mSrl.setRefreshing(true);
-        } else {
-            if (null != this.mSrl) this.mSrl.setRefreshing(false);
-        }
-        if (mRecyclerView) {
-            if (null != this.mRecyclerView) this.mRecyclerView.setVisibility(View.VISIBLE);
-        } else {
-            if (null != this.mRecyclerView) this.mRecyclerView.setVisibility(View.GONE);
-        }
-        if (reloadBtn) {
-            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.VISIBLE);
-        } else {
-            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -292,5 +264,26 @@ public class IndexFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         headlinesView.stopAutoScroll();
+    }
+
+    // control view's state
+    private void setLoadingState() {
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(true);
+        reloadBtn.setVisibility(View.GONE);
+    }
+
+    private void setLoadSuccState() {
+        swipeRefreshLayout.setRefreshing(false);
+        fadeInAnim(exRecyclerView);
+    }
+
+    private void setLoadFailedState() {
+        swipeRefreshLayout.setRefreshing(false);
+        if (feedList != null && feedList.isEmpty()) {
+            reloadBtn.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+            exRecyclerView.setVisibility(View.GONE);
+        }
     }
 }

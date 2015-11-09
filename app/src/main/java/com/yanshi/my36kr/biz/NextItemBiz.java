@@ -52,7 +52,11 @@ public class NextItemBiz {
                     mHandler.sendEmptyMessage(MSG_FAIL);
                     return;
                 }
-                list = new ArrayList<NextItem>();
+                if (list == null) {
+                    list = new ArrayList<NextItem>();
+                } else {
+                    list.clear();
+                }
 
                 Elements product_ele = doc.getElementsByClass("product-item");
                 for (int i = 0; i < product_ele.size(); i++) {
@@ -123,7 +127,11 @@ public class NextItemBiz {
                     }
                 }
 
-                mHandler.sendEmptyMessage(MSG_SUCC);
+                if (!list.isEmpty()) {
+                    mHandler.sendEmptyMessage(MSG_SUCC);
+                } else {
+                    mHandler.sendEmptyMessage(MSG_FAIL);
+                }
             }
         }.start();
     }

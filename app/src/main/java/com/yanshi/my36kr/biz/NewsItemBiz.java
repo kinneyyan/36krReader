@@ -54,7 +54,11 @@ public class NewsItemBiz {
                     mHandler.sendEmptyMessage(MSG_FAIL);
                     return;
                 }
-                list = new ArrayList<NewsItem>();
+                if (list == null) {
+                    list = new ArrayList<NewsItem>();
+                } else {
+                    list.clear();
+                }
 
                 //1-获取头条内容
                 //jsoup使用样式class抓取数据时空格的处理：http://www.cnblogs.com/l_dragon/archive/2013/08/27/jsoup.html
@@ -67,7 +71,11 @@ public class NewsItemBiz {
                 Elements elements = doc.getElementsByTag("article");
                 handleFeedElements(list, elements);
 
-                mHandler.sendEmptyMessage(MSG_SUCC);
+                if (list.size() > 4) {
+                    mHandler.sendEmptyMessage(MSG_SUCC);// 确保回调的传过去的list符合条件
+                } else {
+                    mHandler.sendEmptyMessage(MSG_FAIL);
+                }
             }
         }.start();
     }

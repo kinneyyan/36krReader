@@ -45,11 +45,11 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class NextFragment extends BaseFragment {
 
     private static final String TAG = "NextFragment";
-    private ACache mACache;
+    private ACache aCache;
 
-    private SwipeRefreshLayout mSrl;
-    private StickyListHeadersListView mListView;
-    private MyAdapter mAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private StickyListHeadersListView stickyListHeadersListView;
+    private MyAdapter myAdapter;
     private Button reloadBtn;
 
     private List<NextItem> nextItemList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class NextFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mACache = ACache.get(getActivity());
+        aCache = ACache.get(getActivity());
     }
 
     @Override
@@ -69,29 +69,28 @@ public class NextFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         findViews(view);
         setListener();
-
         loadCache();
-        mHandler.postDelayed(new Runnable() {
+        swipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                setViewsVisible(true, true, false);
+                setLoadingState();
                 loadData();
             }
-        }, 300);
+        }, 200);
     }
 
     private void findViews(View view) {
-        mSrl = (SwipeRefreshLayout) view.findViewById(R.id.next_product_content_sl);
-        mSrl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        mListView = (StickyListHeadersListView) view.findViewById(R.id.next_product_lv);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.next_product_content_sl);
+        swipeRefreshLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
+        stickyListHeadersListView = (StickyListHeadersListView) view.findViewById(R.id.next_product_lv);
         reloadBtn = (Button) view.findViewById(R.id.next_product_reload_btn);
 
-        mAdapter = new MyAdapter(mActivity, nextItemList);
-        mListView.setAdapter(mAdapter);
+        myAdapter = new MyAdapter(activity, nextItemList);
+        stickyListHeadersListView.setAdapter(myAdapter);
     }
 
     private void setListener() {
-        mSrl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -100,17 +99,17 @@ public class NextFragment extends BaseFragment {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setViewsVisible(true, true, false);
+                setLoadingState();
                 loadData();
             }
         });
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        stickyListHeadersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int size = nextItemList.size();
                 NextItem item;
                 if (size > 0 && (item = nextItemList.get(position % size)) != null) {
-                    Intent intent = new Intent(mActivity, DetailActivity.class);
+                    Intent intent = new Intent(activity, DetailActivity.class);
                     intent.putExtra(Constant.NEXT_ITEM, item);
                     startActivity(intent);
                 }
@@ -121,7 +120,9 @@ public class NextFragment extends BaseFragment {
     //加载缓存
     private void loadCache() {
         if (convertToList()) {
-            if (null != mAdapter) mAdapter.notifyDataSetChanged();
+            if (null != myAdapter) myAdapter.notifyDataSetChanged();
+
+            fadeInAnim(stickyListHeadersListView);
         }
     }
 
@@ -134,39 +135,30 @@ public class NextFragment extends BaseFragment {
                     NextItemBiz.getFeed(response, new OnParseListener<NextItem>() {
                         @Override
                         public void onParseSuccess(List<NextItem> list) {
-                            if (null != list && !list.isEmpty()) {
-                                nextItemList.clear();
-                                nextItemList.addAll(list);
+                            nextItemList.clear();
+                            nextItemList.addAll(list);
+                            if (null != myAdapter) myAdapter.notifyDataSetChanged();
 
-                                if (null != mAdapter) mAdapter.notifyDataSetChanged();
-                                setViewsVisible(false, true, false);
-
-                                mACache.put(TAG, convertToJson(nextItemList));
-                            } else {
-                                setViewsVisible(false, false, true);
-                                ToastUtils.show(mActivity, "parse html failed");
-                            }
+                            setLoadSuccState();
+                            // add cache
+                            aCache.put(TAG, convertToJson(nextItemList));
                         }
 
                         @Override
                         public void onParseFailed() {
-                            setViewsVisible(false, false, true);
-                            ToastUtils.show(mActivity, "parse html failed");
+                            setLoadFailedState();
+                            ToastUtils.show(activity, "parse html failed");
                         }
                     });
                 } else {
-                    setViewsVisible(false, false, true);
+                    setLoadFailedState();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (null != nextItemList && nextItemList.isEmpty()) {
-                    setViewsVisible(false, false, true);
-                } else {
-                    setViewsVisible(false, true, false);
-                }
-                ToastUtils.show(mActivity, error.getMessage());
+                setLoadFailedState();
+                ToastUtils.show(activity, error.getMessage());
             }
         });
         stringRequest.setTag(TAG);
@@ -175,7 +167,7 @@ public class NextFragment extends BaseFragment {
 
     //读取缓存，赋给list
     public boolean convertToList() {
-        JSONObject jsonObject = mACache.getAsJSONObject(TAG);
+        JSONObject jsonObject = aCache.getAsJSONObject(TAG);
         if (null != jsonObject) {
             try {
                 JSONArray nextAr = jsonObject.getJSONArray("next_list");
@@ -211,29 +203,30 @@ public class NextFragment extends BaseFragment {
         return outerJsonObj;
     }
 
-    //设置各种View的显示状态
-    private void setViewsVisible(boolean mSrl, boolean mListView, boolean reloadBtn) {
-        if (mSrl) {
-            if (null != this.mSrl) this.mSrl.setRefreshing(true);
-        } else {
-            if (null != this.mSrl) this.mSrl.setRefreshing(false);
-        }
-        if (mListView) {
-            if (null != this.mListView) this.mListView.setVisibility(View.VISIBLE);
-        } else {
-            if (null != this.mListView) this.mListView.setVisibility(View.GONE);
-        }
-        if (reloadBtn) {
-            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.VISIBLE);
-        } else {
-            if (null != this.reloadBtn) this.reloadBtn.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         MyApplication.getRequestQueue().cancelAll(TAG);
+    }
+
+    private void setLoadingState() {
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(true);
+        reloadBtn.setVisibility(View.GONE);
+    }
+
+    private void setLoadSuccState() {
+        swipeRefreshLayout.setRefreshing(false);
+        fadeInAnim(stickyListHeadersListView);
+    }
+
+    private void setLoadFailedState() {
+        swipeRefreshLayout.setRefreshing(false);
+        if (nextItemList != null && nextItemList.isEmpty()) {
+            reloadBtn.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+            stickyListHeadersListView.setVisibility(View.GONE);
+        }
     }
 
     public class MyAdapter extends BaseAdapter implements StickyListHeadersAdapter {

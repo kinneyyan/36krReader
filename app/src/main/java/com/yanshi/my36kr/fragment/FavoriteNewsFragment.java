@@ -59,11 +59,11 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(mActivity)) {
+        if (!UserProxy.isLogin(activity)) {
             setTipTvNotLogin();
             return;
         }
-        if (NetUtils.isConnected(mActivity)) {
+        if (NetUtils.isConnected(activity)) {
             setTipTvloading();
             loadDataByNet();
         }
@@ -75,7 +75,7 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
 
     private void findViews(View view) {
         mListView = (ListView) view.findViewById(R.id.my_collection_item_lv);
-        mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(mActivity, newsItemList, R.layout.view_favourite_news_item) {
+        mListView.setAdapter(mAdapter = new CommonAdapter<NewsItem>(activity, newsItemList, R.layout.view_favourite_news_item) {
             @Override
             public void convert(ViewHolder helper, NewsItem item) {
                 helper.setText(R.id.index_timeline_item_title_tv, item.getTitle());
@@ -95,7 +95,7 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
                 int realPosition = position - mListView.getHeaderViewsCount();
                 NewsItem item;
                 if (size > 0 && (item = newsItemList.get(realPosition % size)) != null) {
-                    Intent intent = new Intent(mActivity, DetailActivity.class);
+                    Intent intent = new Intent(activity, DetailActivity.class);
                     intent.putExtra(Constant.NEWS_ITEM, item);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
@@ -125,7 +125,7 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
      * 读取网络数据
      */
     private void loadDataByNet() {
-        User user = UserProxy.getCurrentUser(mActivity);
+        User user = UserProxy.getCurrentUser(activity);
         if (null == user) {
             setTipTvNotLogin();
             return;
@@ -133,7 +133,7 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
         BmobQuery<NewsItem> query = new BmobQuery<>();
         query.setLimit(100);//设置单次查询返回的条目数
         query.addWhereEqualTo("userId", user.getObjectId());
-        query.findObjects(mActivity, new FindListener<NewsItem>() {
+        query.findObjects(activity, new FindListener<NewsItem>() {
             @Override
             public void onSuccess(List<NewsItem> list) {
                 if (null != list && !list.isEmpty()) {
@@ -198,7 +198,7 @@ public class FavoriteNewsFragment extends BaseFragment implements FragmentInterf
 
     @Override
     public void callBack() {
-        if (UserProxy.isLogin(mActivity)) {
+        if (UserProxy.isLogin(activity)) {
             if (newsItemList.isEmpty()) {
                 setTipTvloading();
                 loadDataByNet();

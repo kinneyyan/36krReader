@@ -2,7 +2,6 @@ package com.yanshi.my36kr.fragment.base;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,24 +13,20 @@ import android.view.ViewGroup;
  */
 public abstract class BaseFragment extends Fragment {
 
-    protected Activity mActivity;
-    protected Handler mHandler;
-
+    protected Activity activity;
     protected View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
-        mHandler = new Handler();
+        activity = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (null == rootView) {
             return onViewInit(inflater, container, savedInstanceState);
-        }
-        else {
+        } else {
             return rootView;
         }
     }
@@ -45,11 +40,22 @@ public abstract class BaseFragment extends Fragment {
                 viewGroup.removeView(rootView);
             }
         }
-        if (null != mHandler) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
     }
 
     public abstract View onViewInit(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
+    /**
+     * 渐变动画
+     *
+     * @param contentView
+     * @link http://hukai.me/android-training-course-in-chinese/animations/crossfade.html
+     */
+    protected void fadeInAnim(View contentView) {
+        contentView.setAlpha(0f);
+        contentView.setVisibility(View.VISIBLE);
+        contentView.animate()
+                .alpha(1f)
+                .setDuration(getResources()
+                        .getInteger(android.R.integer.config_mediumAnimTime));
+    }
 }
