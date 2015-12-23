@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!--WebView设置padding无效。。-->
-    <com.yanshi.my36kr.common.view.MyWebView
-        android:id="@+id/news_detail_wb"
+    <com.github.ksoichiro.android.observablescrollview.ObservableWebView
+        android:id="@+id/base_webview_wb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingTop="?attr/actionBarSize" />
 
     <LinearLayout
-        android:id="@+id/news_detail_tool_bar_with_progress_bar"
-        android:orientation="vertical"
+        android:id="@+id/base_webview_toolbar_with_progress_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
 
         <ProgressBar
-            android:id="@+id/news_detail_pb"
+            android:id="@+id/base_webview_pb"
             style="@style/Custom.Widget.Holo.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="5dp"/>
+            android:layout_height="5dp" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/news_detail_reload_btn"
+        android:id="@+id/base_webview_reload_btn"
         style="?android:borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,4 +39,4 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
-</RelativeLayout>
+</FrameLayout>

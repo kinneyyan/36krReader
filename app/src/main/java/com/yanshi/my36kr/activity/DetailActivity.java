@@ -5,38 +5,22 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.yanshi.my36kr.R;
+import com.yanshi.my36kr.activity.base.BaseWebViewActivity;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.bean.NextItem;
 import com.yanshi.my36kr.bean.bmob.User;
 import com.yanshi.my36kr.biz.CollectHelper;
 import com.yanshi.my36kr.biz.UserProxy;
+import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
-import com.yanshi.my36kr.activity.base.BaseActivity;
-import com.yanshi.my36kr.common.utils.ScreenUtils;
-import com.yanshi.my36kr.common.utils.StringUtils;
-import com.yanshi.my36kr.common.utils.ToastUtils;
-import com.yanshi.my36kr.common.view.MyWebView;
 
 import cn.bmob.v3.BmobObject;
 
@@ -45,86 +29,40 @@ import cn.bmob.v3.BmobObject;
  * 作者：yanshi
  * 时间：2014-10-27 9:54
  */
-public class DetailActivity extends BaseActivity implements ObservableScrollViewCallbacks {
-
-    private LinearLayout toolBarWithPb;
-    private Toolbar toolBar;
-    private ProgressBar progressBar;
-    private MyWebView webView;
-    private Button reloadBtn;
+public class DetailActivity extends BaseWebViewActivity {
 
     private NewsItem newsItem;
     private NextItem nextItem;
     private String title;
-    private String webUrl;
-
     private User user;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_detail);
+    protected void initParam() {
         if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
 
-        Bundle bundle = getIntent().getExtras();
-        if (null != bundle) {
-            newsItem = (NewsItem) bundle.getSerializable(Constant.NEWS_ITEM);
-            nextItem = (NextItem) bundle.getSerializable(Constant.NEXT_ITEM);
-            if (null != newsItem) { //新闻
-                title = newsItem.getTitle();
-                webUrl = newsItem.getUrl();
-            } else if (null != nextItem) {  //NEXT
-                title = nextItem.getTitle();
-                webUrl = nextItem.getUrl();
-            }
-
-            //重新调用一次onCreateOptionsMenu，更新收藏状态
-            this.invalidateOptionsMenu();
+        newsItem = (NewsItem) getIntent().getSerializableExtra(Constant.NEWS_ITEM);
+        nextItem = (NextItem) getIntent().getSerializableExtra(Constant.NEXT_ITEM);
+        if (null != newsItem) { //新闻
+            title = newsItem.getTitle();
+            url = newsItem.getUrl();
+        } else if (null != nextItem) {  //NEXT
+            title = nextItem.getTitle();
+            url = nextItem.getUrl();
         }
-        findViews();
-        setListener();
-        initWebView();
-        doRequest();
+
+        //重新调用一次onCreateOptionsMenu，更新收藏状态
+        invalidateOptionsMenu();
     }
 
-    private void setListener() {
-        reloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doRequest();
-            }
-        });
+    @Override
+    protected void onStartedLoad(WebView webView, String url) {
+
     }
 
-    //请求接口获取html
-    private void doRequest() {
-        if (!StringUtils.isBlank(webUrl)) {
-            webView.loadUrl(webUrl);
+    @Override
+    protected void onFinishedLoad(WebView webView, String url) {
 
-//            HttpUtils.doGetAsyn(webUrl, new HttpUtils.CallBack() {
-//                @Override
-//                public void onRequestComplete(String result) {
-//                    mHandler.obtainMessage(0, result).sendToTarget();
-//                }
-//            });
-        }
     }
-
-//    private Handler mHandler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            String result = (String) msg.obj;
-//            if (!TextUtils.isEmpty(result)) {
-//                reloadBtn.setVisibility(View.GONE);
-//
-//                if (null != newsItem) result = filtHtmlStr(result);
-//                webView.loadDataWithBaseURL(webUrl, result, "text/html", "UTF-8", null);
-//            }
-//            else {
-//                reloadBtn.setVisibility(View.VISIBLE);
-//            }
-//        }
-//    };
 
     //去除html字符串一些标签
 //    private String filtHtmlStr(String result) {
@@ -143,60 +81,6 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
 ////        return result.replace(result.substring(start, end), "").replace(imgStr, "");
 //        return result.replace(result.substring(start, end), "");
 //    }
-
-    private void initWebView() {
-        webView.setScrollViewCallbacks(this);
-        webView.addJavascriptInterface(new JsObject(this), "imageListener");
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (!url.contains("/hit")) {
-                    view.loadUrl(url);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(intent);
-                }
-                return true;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                // html加载完成之后，添加监听图片的点击js函数
-                addImageClickListener();
-            }
-
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                ToastUtils.show(DetailActivity.this, "Oh no! " + description);
-            }
-        });
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                progressBar.setProgress(newProgress);
-                if (newProgress == 100) {
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    if (progressBar.getVisibility() == View.GONE) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                }
-                super.onProgressChanged(view, newProgress);
-            }
-        });
-
-    }
-
-    private void findViews() {
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
-        ((LinearLayout.LayoutParams) toolBar.getLayoutParams()).setMargins(0, ScreenUtils.getStatusBarHeight(this), 0, 0);
-        setSupportActionBar(toolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolBarWithPb = (LinearLayout) findViewById(R.id.news_detail_tool_bar_with_progress_bar);
-        progressBar = (ProgressBar) this.findViewById(R.id.news_detail_pb);
-        webView = (MyWebView) this.findViewById(R.id.news_detail_wb);
-        reloadBtn = (Button) this.findViewById(R.id.news_detail_reload_btn);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -248,7 +132,7 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
             case R.id.action_send:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, title + "【" + getResources().getString(R.string.app_name) + "】" + " - " + webUrl);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, title + "【" + getResources().getString(R.string.app_name) + "】" + " - " + url);
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "分享到"));
                 break;
@@ -324,17 +208,13 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
                 }
                 break;
             case R.id.action_copy_link:
-                if (webUrl != null) {
-                    ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    clipboardManager.setPrimaryClip(ClipData.newPlainText(null, webUrl));
-                    ToastUtils.show(this, getResources().getString(R.string.has_copied_tip));
-                }
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText(null, url));
+                ToastUtils.show(this, getResources().getString(R.string.has_copied_tip));
                 break;
             case R.id.action_open_by_browser:
-                if (webUrl != null) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webUrl));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -344,100 +224,6 @@ public class DetailActivity extends BaseActivity implements ObservableScrollView
 
     private void setCollected(boolean collected) {
         isCollected = collected;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack()) {
-            // 返回键退回
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        if (null != webView) webView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        if (null != webView) webView.onResume();
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (webView != null) {
-            webView.destroy();
-            webView = null;
-        }
-//        if (null != mHandler) {
-//            mHandler.removeCallbacksAndMessages(null);
-//        }
-        super.onDestroy();
-    }
-
-    // 注入js函数监听
-    private void addImageClickListener() {
-        // 这段js函数的功能就是，遍历所有的img几点，并添加onclick函数，在还是执行的时候调用本地接口传递url过去
-        webView.loadUrl("javascript:(function(){" +
-                "var objs = document.getElementsByTagName(\"img\"); " +
-                "for(var i=0;i<objs.length;i++)  " +
-                "{"
-                + "    objs[i].onclick=function()  " +
-                "    {  "
-                + "        window.imageListener.openImage(this.src);  " +
-                "    }  " +
-                "}" +
-                "})()");
-    }
-
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (scrollState == ScrollState.UP) {
-            hideViews();
-        } else if (scrollState == ScrollState.DOWN) {
-            showViews();
-        }
-    }
-
-    private void hideViews() {
-        int pbHeight = progressBar.getVisibility() == View.VISIBLE ? progressBar.getHeight() : 0;
-        toolBarWithPb.animate().translationY(-toolBarWithPb.getHeight() + pbHeight).setInterpolator(new AccelerateInterpolator(2));
-    }
-
-    private void showViews() {
-        toolBarWithPb.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-    }
-
-    // js通信接口
-    public class JsObject {
-
-        private Context context;
-
-        public JsObject(Context context) {
-            this.context = context;
-        }
-
-        @JavascriptInterface
-        public void openImage(String img) {
-            Intent intent = new Intent(context, ImageActivity.class);
-            intent.putExtra(Constant.URL, img);
-            context.startActivity(intent);
-        }
     }
 
 }

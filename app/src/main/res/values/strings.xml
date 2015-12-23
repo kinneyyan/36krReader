@@ -7,7 +7,7 @@
     <string name="action_settings">设置</string>
     <string name="quit_tip">再按一次退出</string>
     <string name="network_not_access">未找到可用连接</string>
-    <string name="network_time_out">网络不给力&#62;_&#60;，点击刷新</string>
+    <string name="network_time_out">网络不给力，点击刷新</string>
     <string name="please_wait">请稍后……</string>
     <string name="syncing">同步中</string>
     <string name="sync_success">同步成功</string>

@@ -59,6 +59,6 @@ public class EditTextDialogFragment extends DialogFragment {
     }
 
     public interface MyOnClickListener {
-        public void onClick(String str);
+        void onClick(String str);
     }
 }

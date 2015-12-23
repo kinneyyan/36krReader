@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,7 +20,6 @@ import com.yanshi.my36kr.common.utils.ACache;
 import com.yanshi.my36kr.common.utils.DataCleanManager;
 import com.yanshi.my36kr.common.utils.SDCardUtils;
 import com.yanshi.my36kr.common.utils.ToastUtils;
-import com.yanshi.my36kr.common.view.MyWebView;
 import com.yanshi.my36kr.common.view.dialog.ConfirmDialogFragment;
 import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
 
@@ -128,7 +128,9 @@ public class SettingsFragment extends Fragment {
         ImageLoader.getInstance().clearDiskCache();
         DataCleanManager.cleanInternalCache(activity);
         DataCleanManager.cleanExternalCache(activity);
-        new MyWebView(activity).clearCache();
+        WebView webView = new WebView(activity);
+        webView.clearCache(true);
+        webView.clearHistory();
 //        DataCleanManager.cleanCustomCache(WEBVIEW_CACHE_PATH);//root时可用
     }
 
