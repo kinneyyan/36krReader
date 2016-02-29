@@ -38,7 +38,7 @@ public class DetailActivity extends BaseWebViewActivity {
 
     @Override
     protected void initParam() {
-        if (UserProxy.isLogin(this)) user = UserProxy.getCurrentUser(this);
+        if (UserProxy.getInstance().isLogin(this)) user = UserProxy.getInstance().getCurrentUser(this);
 
         newsItem = (NewsItem) getIntent().getSerializableExtra(Constant.NEWS_ITEM);
         nextItem = (NextItem) getIntent().getSerializableExtra(Constant.NEXT_ITEM);
@@ -87,7 +87,7 @@ public class DetailActivity extends BaseWebViewActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.news_detail_activity_actions, menu);
 
-        if (UserProxy.isLogin(this)) {
+        if (UserProxy.getInstance().isLogin(this)) {
             //收藏按钮
             MenuItem collectItem = menu.findItem(R.id.action_collect);
             if (null != newsItem) {
@@ -137,7 +137,7 @@ public class DetailActivity extends BaseWebViewActivity {
                 startActivity(Intent.createChooser(sendIntent, "分享到"));
                 break;
             case R.id.action_collect:
-                if (!UserProxy.isLogin(this) || null == user) {
+                if (!UserProxy.getInstance().isLogin(this) || null == user) {
                     ToastUtils.show(this, getString(R.string.personal_login_first));
                     return true;
                 }

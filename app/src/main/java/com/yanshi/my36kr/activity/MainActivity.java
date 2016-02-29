@@ -49,8 +49,6 @@ public class MainActivity extends BaseActivity {
     private List<Fragment> fragmentList;
     private Class[] classes = {IndexFragment.class, NextFragment.class, SettingsFragment.class};
 
-    private User user;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +61,8 @@ public class MainActivity extends BaseActivity {
 
         findViews();
         selectItem(0);//默认选中第一个
+        setUserUI(UserProxy.getInstance().getCurrentUser(this));
+        UserProxy.getInstance().addUserInfoChangedListener(userInfoChangedListener);
     }
 
     private void selectItem(int position) {
@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity {
         }
         fragmentTransaction.commit();
 
-        getSupportActionBar().setTitle(drawerTitles[position]);
+        setTitle(drawerTitles[position]);
     }
 
     private void findViews() {
@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
         userAvatarIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UserProxy.isLogin(MainActivity.this)) {
+                if (!UserProxy.getInstance().isLogin(MainActivity.this)) {
                     jumpToActivity(MainActivity.this, LoginActivity.class, null);
                 } else {
                     ActivityOptionsCompat compat = ActivityOptionsCompat
@@ -124,7 +124,6 @@ public class MainActivity extends BaseActivity {
             }
         });
         userNameTv = (TextView) headerView.findViewById(R.id.navigation_header_view_name_tv);
-        setUserInfo();
 
         mNavigationView.addHeaderView(headerView);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -133,22 +132,25 @@ public class MainActivity extends BaseActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.nav_index://首页
                         selectItem(0);
+                        menuItem.setChecked(true);
                         break;
                     case R.id.nav_next://NEXT
                         selectItem(1);
+                        menuItem.setChecked(true);
                         break;
                     case R.id.nav_settings://设置
                         selectItem(2);
+                        menuItem.setChecked(true);
                         break;
                     case R.id.nav_personal://个人信息
-                        if (!UserProxy.isLogin(MainActivity.this)) {
+                        if (!UserProxy.getInstance().isLogin(MainActivity.this)) {
                             jumpToActivity(MainActivity.this, LoginActivity.class, null);
                         } else {
                             jumpToActivity(MainActivity.this, PersonalActivity.class, null);
                         }
                         break;
                     case R.id.nav_favorite://我的收藏
-                        if (!UserProxy.isLogin(MainActivity.this)) {
+                        if (!UserProxy.getInstance().isLogin(MainActivity.this)) {
                             jumpToActivity(MainActivity.this, LoginActivity.class, null);
                         } else {
                             jumpToActivity(MainActivity.this, FavoriteActivity.class, null);
@@ -156,43 +158,39 @@ public class MainActivity extends BaseActivity {
                         break;
                 }
 
-                menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
                 return true;
             }
         });
     }
 
-    private void setUserInfo() {
-        if (!UserProxy.isLogin(this)) {
+    private void setUserUI(User user) {
+        if (user == null) {
             userAvatarIv.setImageResource(userAvatars[new Random().nextInt(6)]);
             userNameTv.setText("未登录");
         } else {
-            user = UserProxy.getCurrentUser(this);
-            if (null != user) {
-                if (!TextUtils.isEmpty(user.getNickname())) {
-                    userNameTv.setText(user.getNickname());
-                } else {
-                    userNameTv.setText(user.getUsername());
-                }
+            userNameTv.setText(!TextUtils.isEmpty(user.getNickname()) ? user.getNickname() : user.getUsername());
 
-                String imgUrl;
-                if (null != user.getAvatar() && null != (imgUrl = user.getAvatar().getFileUrl())) {
-                    ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(0));
-                } else {
-                    userAvatarIv.setImageResource(userAvatars[new Random().nextInt(6)]);
-                }
+            String imgUrl;
+            if (null != user.getAvatar() && null != (imgUrl = user.getAvatar().getFileUrl())) {
+                ImageLoader.getInstance().displayImage(imgUrl, userAvatarIv, mMyApplication.getOptions(0));
+            } else {
+                userAvatarIv.setImageResource(userAvatars[new Random().nextInt(6)]);
             }
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (Constant.USER_INFO_CHANGED) {
-            setUserInfo();
-            Constant.USER_INFO_CHANGED = false;
+    private UserProxy.UserInfoChangedListener userInfoChangedListener = new UserProxy.UserInfoChangedListener() {
+        @Override
+        public void onChanged() {
+            setUserUI(UserProxy.getInstance().getCurrentUser(MainActivity.this));
         }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UserProxy.getInstance().removeUserInfoChangedListener(userInfoChangedListener);
     }
 
     @Override

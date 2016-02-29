@@ -10,6 +10,7 @@ import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.dao.NewsItemDao;
 import com.yanshi.my36kr.dao.NextItemDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -26,22 +27,43 @@ import cn.bmob.v3.listener.UpdateListener;
  */
 public class UserProxy {
 
-    public interface RegisterListener {
+    private static UserProxy instance;
+
+    public interface UserProxyListener {
         void onSuccess();
 
         void onFailure(String msg);
     }
 
-    public interface LoginListener {
-        void onSuccess();
-
-        void onFailure(String msg);
+    public interface UserInfoChangedListener {
+        void onChanged();
     }
 
-    public interface UserUpdateListener {
-        void onSuccess();
+    private List<UserInfoChangedListener> listeners = new ArrayList<UserInfoChangedListener>();
 
-        void onFailure(String msg);
+    public void addUserInfoChangedListener(UserInfoChangedListener listener) {
+        if (listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeUserInfoChangedListener(UserInfoChangedListener listener) {
+        if (listener != null && listeners.contains(listener)) {
+            listeners.remove(listener);
+        }
+    }
+
+    private UserProxy() {
+    }
+
+    public static UserProxy getInstance() {
+        if (instance == null) {
+            synchronized (UserProxy.class) {
+                if (instance == null)
+                    instance = new UserProxy();
+            }
+        }
+        return instance;
     }
 
     /**
@@ -53,7 +75,7 @@ public class UserProxy {
      * @param email
      * @param registerListener
      */
-    public static void register(Context context, String username, String password, String email, final RegisterListener registerListener) {
+    public void register(Context context, String username, String password, String email, final UserProxyListener registerListener) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -79,7 +101,7 @@ public class UserProxy {
      * @param username
      * @param password
      */
-    public static void login(final Context context, String username, String password, final LoginListener loginListener) {
+    public void login(final Context context, String username, String password, final UserProxyListener loginListener) {
         final User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -87,8 +109,12 @@ public class UserProxy {
             @Override
             public void onSuccess() {
 //                syncFavoriteToLocal(context);
-
                 if (null != loginListener) loginListener.onSuccess();
+                if (listeners.size() > 0) {
+                    for (UserInfoChangedListener listener : listeners) {
+                        listener.onChanged();
+                    }
+                }
             }
 
             @Override
@@ -101,7 +127,7 @@ public class UserProxy {
     /**
      * 同步线上的收藏数据到本地数据库
      */
-    private static void syncFavoriteToLocal(final Context context) {
+    private void syncFavoriteToLocal(final Context context) {
         BmobQuery<NewsItem> newsQuery = new BmobQuery<>();
         newsQuery.setLimit(100);
         BmobQuery<NextItem> nextBmobQuery = new BmobQuery<>();
@@ -145,7 +171,7 @@ public class UserProxy {
      * @param context
      * @return
      */
-    public static Boolean isLogin(Context context) {
+    public Boolean isLogin(Context context) {
         User user = BmobUser.getCurrentUser(context, User.class);
         return user != null;
     }
@@ -156,7 +182,7 @@ public class UserProxy {
      * @param context
      * @return
      */
-    public static User getCurrentUser(Context context) {
+    public User getCurrentUser(Context context) {
         User user = BmobUser.getCurrentUser(context, User.class);
         if (null != user) {
             return user;
@@ -172,13 +198,18 @@ public class UserProxy {
      * @param avatarFile
      * @param userUpdateListener
      */
-    public static void updateUserAvatar(Context context, User user, BmobFile avatarFile, final UserUpdateListener userUpdateListener) {
+    public void updateUserAvatar(Context context, final User user, BmobFile avatarFile, final UserProxyListener userUpdateListener) {
         if (null != user) {
             if (null != avatarFile) user.setAvatar(avatarFile);
             user.update(context, new UpdateListener() {
                 @Override
                 public void onSuccess() {
                     if (null != userUpdateListener) userUpdateListener.onSuccess();
+                    if (listeners.size() > 0) {
+                        for (UserInfoChangedListener listener : listeners) {
+                            listener.onChanged();
+                        }
+                    }
                 }
 
                 @Override
@@ -197,8 +228,8 @@ public class UserProxy {
      * @param nickname
      * @param userUpdateListener
      */
-    public static void updateUserInfo(Context context, User user, String nickname, String sex, String signature,
-                                      final UserUpdateListener userUpdateListener) {
+    public void updateUserInfo(Context context, final User user, String nickname, String sex, String signature,
+                               final UserProxyListener userUpdateListener) {
         if (null != user) {
             if (null != nickname) user.setNickname(nickname);
             if (null != sex) user.setSex(sex);
@@ -207,6 +238,11 @@ public class UserProxy {
                 @Override
                 public void onSuccess() {
                     if (null != userUpdateListener) userUpdateListener.onSuccess();
+                    if (listeners.size() > 0) {
+                        for (UserInfoChangedListener listener : listeners) {
+                            listener.onChanged();
+                        }
+                    }
                 }
 
                 @Override
@@ -222,15 +258,20 @@ public class UserProxy {
      *
      * @param context
      */
-    public static void logout(Context context) {
+    public void logout(Context context) {
         BmobUser.logOut(context);
         clearDataBase();
+        if (listeners.size() > 0) {
+            for (UserInfoChangedListener listener : listeners) {
+                listener.onChanged();
+            }
+        }
     }
 
     /**
      * 清空数据库
      */
-    private static void clearDataBase() {
+    private void clearDataBase() {
         NewsItemDao.clear();
         NextItemDao.clear();
     }

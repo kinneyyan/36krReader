@@ -57,7 +57,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
         findViews(view);
         setListener();
 
-        if (!UserProxy.isLogin(activity)) {
+        if (!UserProxy.getInstance().isLogin(activity)) {
             setTipTvNotLogin();
             return;
         }
@@ -125,7 +125,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
      * 读取网络数据
      */
     private void loadDataByNet() {
-        User user = UserProxy.getCurrentUser(activity);
+        User user = UserProxy.getInstance().getCurrentUser(activity);
         if (null == user) {
             setTipTvNotLogin();
             return;
@@ -198,7 +198,7 @@ public class FavoriteNextFragment extends BaseFragment implements FragmentInterf
 
     @Override
     public void callBack() {
-        if (UserProxy.isLogin(activity)) {
+        if (UserProxy.getInstance().isLogin(activity)) {
             if (nextItemList.isEmpty()) {
                 setTipTvloading();
                 loadDataByNet();

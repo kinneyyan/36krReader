@@ -69,7 +69,7 @@ public class PersonalActivity extends BaseActivity {
         findViews();
         setListener();
 
-        user = UserProxy.getCurrentUser(this);
+        user = UserProxy.getInstance().getCurrentUser(this);
         if (null != user) setUserInfo(user);
     }
 
@@ -84,9 +84,8 @@ public class PersonalActivity extends BaseActivity {
                     confirmDialogFragment.setParams(title, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            UserProxy.logout(getApplicationContext());
-                            PersonalActivity.this.finish();
-                            Constant.USER_INFO_CHANGED = true;
+                            UserProxy.getInstance().logout(getApplicationContext());
+                            finish();
                         }
                     }, null);
                     confirmDialogFragment.show(PersonalActivity.this.getFragmentManager(), "personal_confirm_dialog");
@@ -101,12 +100,11 @@ public class PersonalActivity extends BaseActivity {
                         public void onClick(String str) {
                             if (StringUtils.isBlank(str)) return;
                             loadingDialogFragment.show(getFragmentManager(), "set_nickname_loading_dialog");
-                            UserProxy.updateUserInfo(mContext, user, str, null, null, new UserProxy.UserUpdateListener() {
+                            UserProxy.getInstance().updateUserInfo(mContext, user, str, null, null, new UserProxy.UserProxyListener() {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
                                     ToastUtils.show(mContext, getString(R.string.personal_update_success));
-                                    Constant.USER_INFO_CHANGED = true;
                                     userNicknameTv.setText(user.getNickname());
                                 }
 
@@ -127,7 +125,7 @@ public class PersonalActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             loadingDialogFragment.show(getFragmentManager(), "set_sex_loading_dialog");
-                            UserProxy.updateUserInfo(mContext, user, null, str[which], null, new UserProxy.UserUpdateListener() {
+                            UserProxy.getInstance().updateUserInfo(mContext, user, null, str[which], null, new UserProxy.UserProxyListener() {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
@@ -156,7 +154,7 @@ public class PersonalActivity extends BaseActivity {
                                 return;
                             }
                             loadingDialogFragment.show(getFragmentManager(), "set_signature_loading_dialog");
-                            UserProxy.updateUserInfo(mContext, user, null, null, str, new UserProxy.UserUpdateListener() {
+                            UserProxy.getInstance().updateUserInfo(mContext, user, null, null, str, new UserProxy.UserProxyListener() {
                                 @Override
                                 public void onSuccess() {
                                     loadingDialogFragment.dismiss();
@@ -397,12 +395,11 @@ public class PersonalActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 ToastUtils.show(mContext, getString(R.string.personal_upload_avatar_success));
-                UserProxy.updateUserAvatar(mContext, user, bmobFile, new UserProxy.UserUpdateListener() {
+                UserProxy.getInstance().updateUserAvatar(mContext, user, bmobFile, new UserProxy.UserProxyListener() {
                     @Override
                     public void onSuccess() {
                         if (loadingDialogFragment != null) loadingDialogFragment.dismiss();
                         ToastUtils.show(mContext, getString(R.string.personal_update_success));
-                        Constant.USER_INFO_CHANGED = true;
 
                         if (null != imageUri) {
                             ImageLoader.getInstance().displayImage(imageUri.toString(), userAvatarIv, mMyApplication.getOptions(R.drawable.ic_user_avatar));

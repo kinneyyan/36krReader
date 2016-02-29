@@ -7,9 +7,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.yanshi.my36kr.R;
-import com.yanshi.my36kr.bean.Constant;
-import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.activity.base.BaseActivity;
+import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.common.utils.StringUtils;
 import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.DeletableEditText;
@@ -28,7 +27,7 @@ public class LoginActivity extends BaseActivity {
 
     private String username, password, email;
 
-    private enum UserOperation{
+    private enum UserOperation {
         LOGIN, REGISTER, RESET_PASSWORD
     }
 
@@ -47,6 +46,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 判断用户信息填写是否完整
+     *
      * @return
      */
     private boolean isUserInfoComplete() {
@@ -66,7 +66,7 @@ public class LoginActivity extends BaseActivity {
             return false;
         }
         //注册情况下
-        if(userOperation == UserOperation.REGISTER) {
+        if (userOperation == UserOperation.REGISTER) {
             if (StringUtils.isBlank(email)) {
                 ToastUtils.show(mContext, getString(R.string.login_register_empty_email));
                 emailEt.setShakeAnimation();
@@ -81,17 +81,16 @@ public class LoginActivity extends BaseActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.login_login_btn://登录或注册按钮
-                    if(userOperation == UserOperation.LOGIN) {
+                    if (userOperation == UserOperation.LOGIN) {
                         if (!isUserInfoComplete()) return;
                         loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_loading_dialog");
-                        UserProxy.login(getApplicationContext(), username, password, new UserProxy.LoginListener() {
+                        UserProxy.getInstance().login(getApplicationContext(), username, password, new UserProxy.UserProxyListener() {
                             @Override
                             public void onSuccess() {
                                 loadingDialogFragment.dismiss();
                                 ToastUtils.show(mContext, getString(R.string.login_success));
                                 setResult(RESULT_OK);
-                                LoginActivity.this.finish();
-                                Constant.USER_INFO_CHANGED = true;
+                                finish();
                             }
 
                             @Override
@@ -100,17 +99,16 @@ public class LoginActivity extends BaseActivity {
                                 ToastUtils.show(mContext, getString(R.string.login_failed) + msg);
                             }
                         });
-                    }
-                    else if(userOperation == UserOperation.REGISTER) {
+                    } else if (userOperation == UserOperation.REGISTER) {
                         if (!isUserInfoComplete()) return;
                         loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_register_loading_dialog");
-                        UserProxy.register(mContext, username, password, email, new UserProxy.RegisterListener() {
+                        UserProxy.getInstance().register(mContext, username, password, email, new UserProxy.UserProxyListener() {
                             @Override
                             public void onSuccess() {
                                 loadingDialogFragment.dismiss();
                                 ToastUtils.show(mContext, getString(R.string.login_register_success));
                                 setResult(RESULT_OK);
-                                LoginActivity.this.finish();
+                                finish();
                             }
 
                             @Override
@@ -122,11 +120,10 @@ public class LoginActivity extends BaseActivity {
                     }
                     break;
                 case R.id.login_register_btn://注册
-                    if(userOperation == UserOperation.LOGIN) {
+                    if (userOperation == UserOperation.LOGIN) {
                         userOperation = UserOperation.REGISTER;
                         registerBtn.setText(getString(R.string.login_login));
-                    }
-                    else if(userOperation == UserOperation.REGISTER) {
+                    } else if (userOperation == UserOperation.REGISTER) {
                         userOperation = UserOperation.LOGIN;
                         registerBtn.setText(getString(R.string.login_register_now));
                     }
@@ -139,11 +136,10 @@ public class LoginActivity extends BaseActivity {
     };
 
     private void updateLayout(UserOperation userOperation) {
-        if(userOperation == UserOperation.LOGIN) {
+        if (userOperation == UserOperation.LOGIN) {
             loginBtn.setText(getString(R.string.login_login));
             emailEt.setVisibility(View.GONE);
-        }
-        else if(userOperation == UserOperation.REGISTER) {
+        } else if (userOperation == UserOperation.REGISTER) {
             loginBtn.setText(getString(R.string.login_register));
             emailEt.setVisibility(View.VISIBLE);
         }

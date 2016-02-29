@@ -3,6 +3,7 @@ package com.yanshi.my36kr.common.view.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -40,5 +41,10 @@ public class ConfirmDialogFragment extends DialogFragment {
         builder.setCancelable(true);
 
         return builder.create();
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        super.show(manager, tag);
     }
 }
