@@ -1,10 +1,9 @@
 package com.yanshi.my36kr.common.utils;
 
-import java.io.File;
-
 import android.content.Context;
 import android.os.Environment;
-import android.support.annotation.NonNull;
+
+import java.io.File;
 
 /**
  * 应用数据清除管理器
@@ -99,22 +98,27 @@ public class DataCleanManager {
 
     /**
      * 递归删除目录下的所有文件及子目录下所有文件
-     * @param dir
+     *
+     * @param file
      */
-    private static boolean deleteFilesByDirectory(File dir) {
-        if(null == dir) return false;
+    private static boolean deleteFilesByDirectory(File file) {
+        if (null == file) return false;
         //1、递归删除目录下的所有文件
-        if (dir.isDirectory()) {
+        if (file.isDirectory()) {
             //递归删除目录中的子目录下
-            for (File children : dir.listFiles()) {
-                boolean success = deleteFilesByDirectory(children);
-                if (!success) {
-                    return false;
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    boolean success = deleteFilesByDirectory(child);
+                    if (!success) {
+                        return false;
+                    }
                 }
+                return true;
             }
         } else {
-        //2、直接删除文件
-            return dir.delete();
+            //2、直接删除文件
+            return file.delete();
         }
         return false;
     }

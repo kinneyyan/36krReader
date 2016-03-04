@@ -115,8 +115,8 @@ public class SDCardUtils {
                 File[] children = file.listFiles();
                 double size = 0;
                 if (children != null) {
-                    for (File f : children) {
-                        size += getDirSize(f);
+                    for (File child : children) {
+                        size += getDirSize(child);
                     }
                 }
                 return size;
