@@ -3,6 +3,7 @@ package com.yanshi.my36kr.common.utils;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
+
 import com.yanshi.my36kr.bean.Constant;
 
 import java.io.File;
@@ -21,6 +22,7 @@ public class SDCardUtils {
     /**
      * 获取公用的存放图片的目录（/storage/emulated/0/Pictures/）
      * 这些文件对与用户与其他app来说是public的，当用户卸载你的app时，这些文件应该保留。例如，那些被你的app拍摄的图片或者下载的文件。
+     *
      * @param albumName
      * @return
      */
@@ -101,6 +103,7 @@ public class SDCardUtils {
     /**
      * 获取文件夹的大小
      * by yanshi
+     *
      * @param file
      * @return
      */
@@ -111,8 +114,11 @@ public class SDCardUtils {
             if (file.isDirectory()) {
                 File[] children = file.listFiles();
                 double size = 0;
-                for (File f : children)
-                    size += getDirSize(f);
+                if (children != null) {
+                    for (File f : children) {
+                        size += getDirSize(f);
+                    }
+                }
                 return size;
             } else {//如果是文件则直接返回其大小,以“兆”为单位
                 double size = (double) file.length() / 1024 / 1024;
