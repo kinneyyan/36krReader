@@ -3,7 +3,6 @@ package com.yanshi.my36kr.activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -12,8 +11,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.yanshi.my36kr.R;
-import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.activity.base.BaseActivity;
+import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.common.utils.ScreenUtils;
 import com.yanshi.my36kr.common.utils.ToastUtils;
 
@@ -79,11 +78,4 @@ public class ImageActivity extends BaseActivity {
         photoView = (PhotoView) this.findViewById(R.id.image_terminal_photo_view);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

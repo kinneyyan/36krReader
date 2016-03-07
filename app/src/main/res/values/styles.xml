@@ -5,12 +5,12 @@
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
         <item name="colorAccent">@color/secondary_color</item>
 
-        <item name="android:windowIsTranslucent">true</item>
+        <!--此属性开启会失去activity切换动画-->
+        <!--<item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme" parent="@style/AppBaseTheme">
-    </style>
+    <style name="AppTheme" parent="@style/AppBaseTheme"></style>
 
     <!--自定义progressBar-->
     <style name="Custom.Widget.Holo.ProgressBar.Horizontal" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">

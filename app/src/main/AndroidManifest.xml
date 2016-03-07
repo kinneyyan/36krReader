@@ -2,12 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yanshi.my36kr">
 
+    <!--the following are authorized when app is installed, and user cannot cancel-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--the following need to be runtime authorized-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:name=".MyApplication"
@@ -37,13 +38,18 @@
         <activity
             android:name=".activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait">
-        </activity>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!--图片终端页-->
         <activity
             android:name=".activity.ImageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:parentActivityName=".activity.DetailActivity"
             android:screenOrientation="portrait">
+            <!-- 父activity的meta-data，用来支持4.0以下版本 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.DetailActivity" />
         </activity>
         <!--个人信息页-->
         <activity
@@ -73,7 +79,7 @@
         <activity
             android:name=".activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
