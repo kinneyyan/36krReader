@@ -1,10 +1,16 @@
 package com.yanshi.my36kr.activity;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.activity.base.BaseActivity;
@@ -12,6 +18,7 @@ import com.yanshi.my36kr.biz.UserProxy;
 import com.yanshi.my36kr.common.utils.StringUtils;
 import com.yanshi.my36kr.common.utils.ToastUtils;
 import com.yanshi.my36kr.common.view.DeletableEditText;
+import com.yanshi.my36kr.common.view.dialog.ConfirmDialogFragment;
 import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
 
 /**
@@ -19,6 +26,9 @@ import com.yanshi.my36kr.common.view.dialog.LoadingDialogFragment;
  * Created by kingars on 2014/12/04.
  */
 public class LoginActivity extends BaseActivity {
+
+    private final int REQUEST_CODE_LOGIN = 100;
+    private final int REQUEST_CODE_REGISTER = 101;
 
     private DeletableEditText usernameEt, passwordEt;
     private DeletableEditText emailEt;
@@ -83,40 +93,10 @@ public class LoginActivity extends BaseActivity {
                 case R.id.login_login_btn://登录或注册按钮
                     if (userOperation == UserOperation.LOGIN) {
                         if (!isUserInfoComplete()) return;
-                        loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_loading_dialog");
-                        UserProxy.getInstance().login(getApplicationContext(), username, password, new UserProxy.UserProxyListener() {
-                            @Override
-                            public void onSuccess() {
-                                loadingDialogFragment.dismiss();
-                                ToastUtils.show(mContext, getString(R.string.login_success));
-                                setResult(RESULT_OK);
-                                finish();
-                            }
-
-                            @Override
-                            public void onFailure(String msg) {
-                                loadingDialogFragment.dismiss();
-                                ToastUtils.show(mContext, getString(R.string.login_failed) + msg);
-                            }
-                        });
+                        requestLogin();
                     } else if (userOperation == UserOperation.REGISTER) {
                         if (!isUserInfoComplete()) return;
-                        loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_register_loading_dialog");
-                        UserProxy.getInstance().register(mContext, username, password, email, new UserProxy.UserProxyListener() {
-                            @Override
-                            public void onSuccess() {
-                                loadingDialogFragment.dismiss();
-                                ToastUtils.show(mContext, getString(R.string.login_register_success));
-                                setResult(RESULT_OK);
-                                finish();
-                            }
-
-                            @Override
-                            public void onFailure(String msg) {
-                                loadingDialogFragment.dismiss();
-                                ToastUtils.show(mContext, getString(R.string.login_register_failed) + msg);
-                            }
-                        });
+                        requestRegister();
                     }
                     break;
                 case R.id.login_register_btn://注册
@@ -134,6 +114,86 @@ public class LoginActivity extends BaseActivity {
             }
         }
     };
+
+    private void requestRegister() {
+        int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                ConfirmDialogFragment dialog = new ConfirmDialogFragment();
+                dialog.setParams("需要获取电话权限来注册", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_REGISTER);
+                    }
+                }, null);
+                dialog.show(getFragmentManager(), "register_confirm_dialog");
+                return;
+            }
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_REGISTER);
+            return;
+        }
+        register();
+    }
+
+    private void register() {
+        loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_register_loading_dialog");
+        UserProxy.getInstance().register(mContext, username, password, email, new UserProxy.UserProxyListener() {
+            @Override
+            public void onSuccess() {
+                loadingDialogFragment.dismiss();
+                ToastUtils.show(mContext, getString(R.string.login_register_success));
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                loadingDialogFragment.dismiss();
+                ToastUtils.show(mContext, getString(R.string.login_register_failed) + msg);
+            }
+        });
+    }
+
+    private void requestLogin() {
+        int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+            //该方法只有在用户在上一次已经拒绝过你的这个权限申请返回true;勾选了"不再显示"时返回false
+            //你需要给用户一个解释，为什么要授权
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                ConfirmDialogFragment dialog = new ConfirmDialogFragment();
+                dialog.setParams("需要获取电话权限来登录", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_LOGIN);
+                    }
+                }, null);
+                dialog.show(getFragmentManager(), "login_confirm_dialog");
+                return;
+            }
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_LOGIN);
+            return;
+        }
+        login();
+    }
+
+    private void login() {
+        loadingDialogFragment.show(LoginActivity.this.getFragmentManager(), "login_loading_dialog");
+        UserProxy.getInstance().login(getApplicationContext(), username, password, new UserProxy.UserProxyListener() {
+            @Override
+            public void onSuccess() {
+                loadingDialogFragment.dismiss();
+                ToastUtils.show(mContext, getString(R.string.login_success));
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                loadingDialogFragment.dismiss();
+                ToastUtils.show(mContext, getString(R.string.login_failed) + msg);
+            }
+        });
+    }
 
     private void updateLayout(UserOperation userOperation) {
         if (userOperation == UserOperation.LOGIN) {
@@ -163,4 +223,39 @@ public class LoginActivity extends BaseActivity {
         loadingDialogFragment.setParams(getString(R.string.loading_dialog_title));
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_LOGIN:
+                // Permission Granted
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    login();
+                }
+                // Permission Denied
+                else {
+                    handlePermissionDenied();
+                }
+                break;
+            case REQUEST_CODE_REGISTER:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    register();
+                } else {
+                    handlePermissionDenied();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void handlePermissionDenied() {
+        //若用户在拒绝权限时勾选了"不再显示",显示对话框提示用户
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+            ConfirmDialogFragment dialog = new ConfirmDialogFragment();
+            dialog.setParams("获取电话信息权限被拒绝，请在设置-应用-权限管理中开启。", null, null);
+            dialog.show(getFragmentManager(), "login_confirm_dialog");
+            return;
+        }
+        Toast.makeText(this, "获取电话信息权限被拒绝", Toast.LENGTH_SHORT).show();
+    }
 }
