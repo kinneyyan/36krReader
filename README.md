@@ -17,6 +17,8 @@
 	
 	- style文件中设置android:windowIsTranslucent后activity切换动画失效（我这边直接不设置那个属性了）：[解决方案](http://blog.csdn.net/fancylovejava/article/details/39643449)
 
+	- 当targetSdkVersion设为23以上时，处理运行时权限：[Android M 新的运行时权限开发者需要知道的一切
+](http://jijiaxin89.com/2015/08/30/Android-s-Runtime-Permission/)
 5. 使用的第三方库
 
 	- 轻量级的缓存框架：[ASimpleCache](https://github.com/yangfuhai/ASimpleCache "")
@@ -29,7 +31,7 @@
 	- 扩展的RecyclerView，拥有添加头、底等多种操作：[ExRecyclerView](https://github.com/tianzhijiexian/ExRecyclerView "")
 	- 可无限循环滑动的ViewPager（为了配合首页自动滑动稍做改动）：[InfiniteViewPager](https://github.com/antonyt/InfiniteViewPager "")
 
-6、app截图：
+6. app截图：
 
 ![screenshot1](https://raw.githubusercontent.com/kinneyyan/36krReader/master/Screenshots/device-2015-10-29-152645.png)
 
