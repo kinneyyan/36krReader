@@ -1,34 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?android:buttonBarStyle"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="horizontal">
+    android:divider="?android:dividerVertical"
+    android:layout_gravity="center"
+    android:orientation="horizontal"
+    android:showDividers="middle">
 
-    <Button
-        android:id="@+id/personal_avatar_dialog_view_camera_btn"
-        style="?android:buttonBarButtonStyle"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/personal_avatar_dialog_camera_ll"
+        android:layout_width="144dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawablePadding="4dp"
-        android:drawableTop="@drawable/ic_camera"
-        android:padding="16dp"
-        android:text="@string/personal_camera"
-        android:textColor="@color/tv_primary_color"
-        android:textSize="16sp" />
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/personal_avatar_dialog_view_album_btn"
-        style="?android:buttonBarButtonStyle"
-        android:layout_width="0dp"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_photo_camera_black_24dp"
+            tools:ignore="MissingPrefix"
+            tools:src="@drawable/ic_photo_camera_black_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/personal_camera"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/personal_avatar_dialog_album_ll"
+        android:layout_width="144dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawablePadding="4dp"
-        android:drawableTop="@drawable/ic_album"
-        android:padding="16dp"
-        android:text="@string/personal_album"
-        android:textColor="@color/tv_primary_color"
-        android:textSize="16sp" />
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_photo_black_24dp"
+            tools:ignore="MissingPrefix"
+            tools:src="@drawable/ic_photo_black_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/personal_album"
+            android:textColor="@color/tv_primary_color"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>

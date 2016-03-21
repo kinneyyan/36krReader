@@ -57,6 +57,7 @@ public class PersonalActivity extends BaseActivity {
     TextView userNicknameTv, userSexTv, userSignatureTv;//昵称、性别、个性签名
     Button userAvatarBtn, userNicknameBtn, userSexBtn, userSignatureBtn;
     Button userLogoutBtn;//退出账号按钮
+    AlertDialog avatarDialog;
     LoadingDialogFragment loadingDialogFragment;
 
     User user;
@@ -264,24 +265,28 @@ public class PersonalActivity extends BaseActivity {
      * 点击头像弹出的dialog
      */
     private void showAvatarDialog() {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-        alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.show();
-        alertDialog.setContentView(R.layout.view_personal_avatar_dialog);
+        if (avatarDialog != null) {
+            avatarDialog.show();
+            return;
+        }
+        avatarDialog = new AlertDialog.Builder(mContext).create();
+        avatarDialog.setCanceledOnTouchOutside(true);
+        avatarDialog.show();
+        avatarDialog.setContentView(R.layout.view_personal_avatar_dialog);
 
-        Button cameraBtn = (Button) alertDialog.findViewById(R.id.personal_avatar_dialog_view_camera_btn);
-        Button albumBtn = (Button) alertDialog.findViewById(R.id.personal_avatar_dialog_view_album_btn);
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
+        LinearLayout cameraLl = (LinearLayout) avatarDialog.findViewById(R.id.personal_avatar_dialog_camera_ll);
+        LinearLayout albumLl = (LinearLayout) avatarDialog.findViewById(R.id.personal_avatar_dialog_album_ll);
+        cameraLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                avatarDialog.dismiss();
                 takePhotoFromCamera();
             }
         });
-        albumBtn.setOnClickListener(new View.OnClickListener() {
+        albumLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                avatarDialog.dismiss();
                 getAvatarFromAlbum();
             }
         });

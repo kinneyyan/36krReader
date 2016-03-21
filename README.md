@@ -11,6 +11,8 @@
 
 4. 一些知识点
 
+	- 矢量图片的使用：[VectorDrawable怎么玩](http://www.jianshu.com/p/456df1434739)、[Android Support Library 23.2](http://chinagdg.org/2016/03/android-support-library-23-2/)
+	
 	- CardView的使用：[关于使用 CardView 开发过程中要注意的细节](http://blog.feng.moe/2015/10/24/something-about-cardview-development/)
 
 	- 在清单文件中设置android:parentActivityName的问题：[解决方案](http://blog.csdn.net/mengweiqi33/article/details/41285699)
