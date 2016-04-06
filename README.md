@@ -1,5 +1,6 @@
 36krReader
 ======
+PS：由于[ExRecyclerView](https://github.com/tianzhijiexian/ExRecyclerView "")这个项目被删除了，导致clone下来的小伙伴找不到这个依赖无法build，近期会尽快解决！
 
 个人开发的36氪Android阅读客户端，数据通过Jsoup解析web端网页获取，由于最近网站改版，暂时不支持加载分页数据T T。
 
