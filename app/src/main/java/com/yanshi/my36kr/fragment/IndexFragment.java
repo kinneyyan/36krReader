@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 
 import com.android.volley.Response;
@@ -18,7 +18,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.yanshi.my36kr.MyApplication;
 import com.yanshi.my36kr.R;
 import com.yanshi.my36kr.activity.DetailActivity;
-import com.yanshi.my36kr.adapter.index.RvAdapter;
+import com.yanshi.my36kr.adapter.index.FeedAdapter;
 import com.yanshi.my36kr.bean.Constant;
 import com.yanshi.my36kr.bean.NewsItem;
 import com.yanshi.my36kr.biz.NewsItemBiz;
@@ -35,9 +35,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import kale.recycler.ExRecyclerView;
-import kale.recycler.OnRecyclerViewScrollListener;
-
 /**
  * 首页
  * 36氪网站改版，移除了分页加载
@@ -49,10 +46,10 @@ public class IndexFragment extends BaseFragment {
     private static final String TAG = "IndexFragment";
     private ACache aCache;
 
-    private HeadlinesView headlinesView;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ExRecyclerView exRecyclerView;
-    private RvAdapter rvAdapter;
+    private HeadlinesView headlinesView;//列表头部轮播view
+    private SwipeRefreshLayout srl;
+    private RecyclerView rv;
+    private FeedAdapter adapter;
     private Button reloadBtn;
 
     private List<NewsItem> headlinesList = new ArrayList<>();
@@ -71,10 +68,10 @@ public class IndexFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        findViews(view);
-        setListener();
+        initViews(view);
+        initEvents();
         loadCache();
-        swipeRefreshLayout.postDelayed(new Runnable() {
+        srl.postDelayed(new Runnable() {
             @Override
             public void run() {
                 setLoadingState();
@@ -83,50 +80,29 @@ public class IndexFragment extends BaseFragment {
         }, 200);
     }
 
-    private void findViews(View view) {
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
-        swipeRefreshLayout.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
-        exRecyclerView = (ExRecyclerView) view.findViewById(R.id.index_feed_rv);
+    private void initViews(View view) {
+        srl = (SwipeRefreshLayout) view.findViewById(R.id.index_content_sl);
+        srl.setColorSchemeResources(R.color.secondary_color, R.color.primary_color, R.color.next_product_title_color, R.color.next_product_count_bg);
+        rv = (RecyclerView) view.findViewById(R.id.index_feed_rv);
         reloadBtn = (Button) view.findViewById(R.id.index_reload_btn);
-
         headlinesView = new HeadlinesView(activity);
-        exRecyclerView.addHeaderView(headlinesView);
-        exRecyclerView.setLayoutManager(new LinearLayoutManager(activity));// 线性布局
-        exRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置item动画
-        exRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        rv.setLayoutManager(new LinearLayoutManager(activity));// 线性布局
+        rv.setItemAnimator(new DefaultItemAnimator());// 设置item动画
+        rv.setAdapter(adapter = new FeedAdapter(feedList));
+        adapter.setHeaderView(headlinesView);
+        adapter.setOnItemClickListener(new FeedAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(int position) {
                 Intent intent = new Intent(activity, DetailActivity.class);
                 intent.putExtra(Constant.NEWS_ITEM, feedList.get(position));
                 startActivity(intent);
             }
         });
-        exRecyclerView.addOnScrollListener(new OnRecyclerViewScrollListener() {
-            @Override
-            public void onScrollUp() {
-
-            }
-
-            @Override
-            public void onScrollDown() {
-
-            }
-
-            @Override
-            public void onBottom() {
-                ToastUtils.show(activity, "36氪网站改版获取不了分页数据/(ㄒoㄒ)/~~");
-            }
-
-            @Override
-            public void onMoved(int i, int i1) {
-
-            }
-        });
-        exRecyclerView.setAdapter(rvAdapter = new RvAdapter(feedList));
     }
 
-    private void setListener() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    private void initEvents() {
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -145,9 +121,9 @@ public class IndexFragment extends BaseFragment {
     private void loadCache() {
         if (convertToList()) {
             headlinesView.refreshData(headlinesList);
-            if (null != rvAdapter) rvAdapter.notifyDataSetChanged();
+            if (null != adapter) adapter.notifyDataSetChanged();
 
-            fadeInAnim(exRecyclerView);
+            fadeInAnim(rv);
         }
     }
 
@@ -168,9 +144,9 @@ public class IndexFragment extends BaseFragment {
                             list.removeAll(headlinesList);
                             feedList.clear();
                             feedList.addAll(list);
-                            if (null != rvAdapter) rvAdapter.updateData(feedList);
+                            if (null != adapter) adapter.notifyDataSetChanged();
 
-                            setLoadSuccState();
+                            setLoadSuccessState();
                             // add cache
                             aCache.put(TAG, convertToJson(headlinesList, feedList));
                         }
@@ -268,22 +244,22 @@ public class IndexFragment extends BaseFragment {
 
     // control view's state
     private void setLoadingState() {
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setRefreshing(true);
+        srl.setVisibility(View.VISIBLE);
+        srl.setRefreshing(true);
         reloadBtn.setVisibility(View.GONE);
     }
 
-    private void setLoadSuccState() {
-        swipeRefreshLayout.setRefreshing(false);
-        fadeInAnim(exRecyclerView);
+    private void setLoadSuccessState() {
+        srl.setRefreshing(false);
+        fadeInAnim(rv);
     }
 
     private void setLoadFailedState() {
-        swipeRefreshLayout.setRefreshing(false);
+        srl.setRefreshing(false);
         if (feedList != null && feedList.isEmpty()) {
             reloadBtn.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-            exRecyclerView.setVisibility(View.GONE);
+            srl.setVisibility(View.GONE);
+            rv.setVisibility(View.GONE);
         }
     }
 }

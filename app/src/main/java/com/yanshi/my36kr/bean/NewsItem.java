@@ -2,13 +2,13 @@ package com.yanshi.my36kr.bean;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
 import cn.bmob.v3.BmobObject;
-import kale.adapter.AdapterModel;
 
 /**
  * 新闻实体类
@@ -16,7 +16,7 @@ import kale.adapter.AdapterModel;
  * 时间：2014-10-24 15:22
  */
 @DatabaseTable(tableName = "tb_news_item")
-public class NewsItem extends BmobObject implements Serializable, AdapterModel {
+public class NewsItem extends BmobObject implements Serializable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -125,7 +125,7 @@ public class NewsItem extends BmobObject implements Serializable, AdapterModel {
     }
 
     public static NewsItem parse(JSONObject jsonObject) {
-        if(jsonObject == null) {
+        if (jsonObject == null) {
             return null;
         }
         NewsItem newsItem = new NewsItem();
@@ -139,13 +139,4 @@ public class NewsItem extends BmobObject implements Serializable, AdapterModel {
         return newsItem;
     }
 
-    @Override
-    public int getDataTypeCount() {
-        return 2;
-    }
-
-    @Override
-    public Object getDataType() {
-        return 1 + (int) (Math.random() * 2);
-    }
 }
